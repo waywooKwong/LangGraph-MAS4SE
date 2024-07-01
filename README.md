@@ -1,2 +1,3 @@
-# CSI-LangChain-LLM-Chatbot
-LLM of Customer Service based on LongChain, project in Chinasoft International
+# 分支简介
+
+中软国际 lang-chain项目
