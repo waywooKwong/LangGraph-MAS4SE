@@ -15,6 +15,7 @@ const db = mysql.createConnection({
     database: 'test' //注意在 SCHEMAS 确认
 });
 
+
 db.connect((err) => {
   if (err) {
     throw err;
@@ -24,8 +25,27 @@ db.connect((err) => {
 
 app.use(cors());
 app.use(bodyParser.json());
+// 管理员登录
+app.get('/AdminLogin', (req, res) => {
+  const sql = 'SELECT * FROM Admin WHERE account = ? AND password = ?';
+  const newData = req.query;
+  const values = [newData.account, newData.password];
 
-
+  db.query(sql, values, (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json('false');
+    } else {
+      if (results.length === 1) {
+        // 找到匹配的管理员账号和密码
+        res.json('true');
+      } else {
+        // 未找到匹配的管理员账号和密码
+        res.status(404).json('false');
+      }
+    }
+  });
+});
 //// 获取日志的请求
 app.get('/ShowLog', (req, res) => {
   const sql = 'SELECT * FROM Log';
