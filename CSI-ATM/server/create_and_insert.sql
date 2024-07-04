@@ -40,9 +40,9 @@ INSERT INTO Admin (admin_id, account, password) VALUES
 
 -- Insert statements for the User table
 INSERT INTO User (user_id, account, password, balance) VALUES
-('user1', 201, 'userpass123', 1000),
-('user2', 202, 'userpass456', 2000),
-('user3', 203, 'userpass789', 3000);
+('user1', 201, '123456', 1000),
+('user2', 202, '456789', 2000),
+('user3', 203, '147258', 3000);
 
 -- Insert statements for the Log table
 INSERT INTO Log (Log_id, timestamp, event, object, balance, state, User_user_id) VALUES
