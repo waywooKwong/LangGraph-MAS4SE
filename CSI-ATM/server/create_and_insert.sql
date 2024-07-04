@@ -34,19 +34,20 @@ CREATE TABLE IF NOT EXISTS Log (
 
 -- 插入初始信息
 -- Insert statements for the Admin table
-INSERT INTO `mydb`.`Admin` (`admin_id`, `account`, `password`) VALUES
+-- Insert statements for the Admin table
+INSERT INTO Admin (admin_id, account, password) VALUES
 ('admin1', 101, 'password123'),
 ('admin2', 102, 'password456'),
 ('admin3', 103, 'password789');
 
 -- Insert statements for the User table
-INSERT INTO `mydb`.`User` (`user_id`, `account`, `password`, `balance`) VALUES
+INSERT INTO User (user_id, account, password, balance) VALUES
 ('user1', 201, 'userpass123', 1000),
 ('user2', 202, 'userpass456', 2000),
 ('user3', 203, 'userpass789', 3000);
 
 -- Insert statements for the Log table
-INSERT INTO `mydb`.`Log` (`Log_id`, `timestamp`, `event`, `object`, `balance`, `state`, `User_user_id`) VALUES
+INSERT INTO Log (Log_id, timestamp, event, object, balance, state, User_user_id) VALUES
 ('log1', '2024-07-03 10:00:00', 'Login', 'user1', 1000, 1, 'user1'),
 ('log2', '2024-07-03 11:00:00', 'Logout', 'user2', 2000, 0, 'user2'),
 ('log3', '2024-07-03 12:00:00', 'Transaction', 'user3', 1500, 1, 'user3');
