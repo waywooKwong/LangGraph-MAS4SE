@@ -6,8 +6,8 @@ import log from "@/components/log.vue";
 
 export default {
   components: {
-  log
- },
+    log,
+  },
   setup() {},
 };
 </script>

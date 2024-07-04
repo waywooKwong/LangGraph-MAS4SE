@@ -7,8 +7,8 @@ import outBalance from "@/components/outBalance.vue";
 
 export default {
   components: {
-  outBalance
- },
+    outBalance,
+  },
   setup() {},
 };
 </script>
