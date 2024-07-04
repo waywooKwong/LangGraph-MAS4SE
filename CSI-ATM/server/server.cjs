@@ -26,20 +26,16 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
-//// 根据需求添加数据库请求 
-
-app.get('/getLog', (req, res) => {
-  const { canteen, floor, seat, time } = req.body;
-  
+//// 获取日志的请求
+app.get('/ShowLog', (req, res) => {
+  const sql = 'SELECT * FROM Log';
   //3. 此处根据需求修改 SQL 语句
-  const sql = 'INSERT INTO reservations (id, canteen, floor, seat, time) VALUES (NULL, ?, ?, ?, ?)';
-  db.query(sql, [canteen, floor, seat, time], (err, result) => {
-    
+  db.query(sql, (err, results) => {
     if (err) {
-      res.status(500).send({ error: 'Failed to save reservation' });
+      res.status(500).send({ error: 'Failed to access Log' });
       return;
     }
-    res.status(201).send({ message: 'Reservation saved successfully' });
+    res.json(results);
   });
 });
 
