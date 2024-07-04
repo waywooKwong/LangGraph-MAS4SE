@@ -6,8 +6,11 @@
 </template>
 <script>
 import inBalance from "@/components/inBalance.vue";
-components: {
-  inBalance;
-}
+export default {
+  components: {
+  inBalance
+ },
+  setup() {},
+};
 </script>
 <style scoped></style>
