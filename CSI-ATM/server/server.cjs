@@ -10,9 +10,9 @@ const port = 3000; // 这是固定的端口，最好不要修改
 // 2. 根据需求 create table
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'canteen',
-    password: '',
-    database: 'dbcanteen' //注意在 SCHEMAS 确认
+    user: 'myuser',
+    password: 'america1',
+    database: 'dbsclab2018' //注意在 SCHEMAS 确认
 });
 
 db.connect((err) => {
