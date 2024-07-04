@@ -72,4 +72,11 @@ td {
 th {
   background-color: #f2f2f2;
 }
+div{
+    display: flex;
+    justify-content: center;
+}
+h1{
+    width: 50px;
+}
 </style>
