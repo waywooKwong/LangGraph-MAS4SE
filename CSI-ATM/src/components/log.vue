@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div >
         <h1>日志表</h1>
         <table>
             <thead>
@@ -63,6 +63,7 @@ table{
     width: 100%;
     border-collapse: collapse; 
     border-spacing: 20px; 
+    
 }
 th, td{
     border: 1px solid black;
@@ -71,6 +72,13 @@ th, td{
 }
 th{
     background-color: #f2f2f2;
+}
+div{
+    display: flex;
+    justify-content: center;
+}
+h1{
+    width: 50px;
 }
 </style>
  
