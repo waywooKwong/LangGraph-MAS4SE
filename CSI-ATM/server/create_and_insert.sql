@@ -1,6 +1,4 @@
-
 -- 建表语句
-
 CREATE TABLE IF NOT EXISTS Admin (
   admin_id VARCHAR(32) NOT NULL,
   account INT NULL,
