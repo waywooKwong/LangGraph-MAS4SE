@@ -77,19 +77,45 @@ app.put('/inBalance', (req, res) => {
     res.send({ success: 'inBalance updated successfully' });
   });
 });
+//存款服务更新日志
+app.post('/inBalanceInsertLog', (req, res) => {
+  const newData = req.body;
+  const sql = 'INSERT INTO Log (timestamp, event, object, balance, state, User_user_id) VALUES (?,?,?,?,?,?)';
+  const values = [newData.timestamp, newData.event, newData.object, newData.balance, newData.state, newData.User_user_id];
 
-// 获取用户数据的API
-app.get('/UserData', (req, res) => {
-  const sql = 'SELECT * FROM User';
-  //3. 此处根据需求修改 SQL 语句
-  db.query(sql, (err, results) => {
+  db.query(sql, values, (err, results) => {
     if (err) {
-      res.status(500).send({ error: 'Failed to access User' });
+      console.error('日志插入失败: ', err); // 打印错误信息
+      res.status(500).send({ error: 'Failed to update Log' });
       return;
     }
-    res.json(results);
+    res.send({ success: 'inBalance updated successfully' });
   });
 });
+
+// GET 请求处理，根据账号 ID 查询用户数据
+app.get('/UserData', (req, res) => {
+  const account = req.query.account; // 从查询参数中获取账号 ID
+  const sql = 'SELECT * FROM User WHERE account = ?'; // 根据账号 ID 查询用户数据的 SQL 语句
+
+  // 执行 SQL 查询
+  db.query(sql, [account], (err, results) => {
+    if (err) {
+      console.error('数据库查询错误:', err);
+      res.status(500).json({ error: 'Failed to fetch user data' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    // 查询成功，返回查询到的用户数据
+    res.json(results[0]); // 假设只返回第一个匹配的用户数据
+  });
+});
+
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
