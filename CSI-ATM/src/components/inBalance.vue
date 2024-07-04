@@ -24,6 +24,8 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -53,7 +55,18 @@ export default {
         message: message,
       })
         .then(() => {
-          // on confirm
+          // 确认账户、密码、金额输入合法后，数据发送更新请求
+          axios
+            .put('http://localhost:3000/inBalance',{
+              balance: this.withdrawBalance,
+              account: this.withdrawAmount
+            })
+            .then((response)=>{
+              console.log(response.data);
+            })
+            .catch(error=>{
+              console.error(error);
+            })
         })
         .catch(() => {
           // on cancel
