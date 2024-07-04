@@ -40,26 +40,24 @@ app.get('/ShowLog', (req, res) => {
   });
 });
 
-// //// 更新日志的请求
-// app.put('/', (req, res) => {
-//   const logId = req.params.id;
-//   const newData = req.body;
+//// 存款服务的请求
+app.put('/inBalance', (req, res) => {
+  const newData = req.body;
+  const sql = 'UPDATE User SET balance = balance + ? WHERE account = ?';
+  const values = [newData.balance, newData.account];
 
-//   const sql = 'UPDATE Log SET balance = balance - ?, timestamp = ? WHERE id = ?';
-//   const values = [newData.message, newData.timestamp, logId];
-
-//   db.query(sql, values, (err, results) => {
-//     if (err) {
-//       res.status(500).send({ error: 'Failed to update Log' });
-//       return;
-//     }
-//     if (results.affectedRows === 0) {
-//       res.status(404).send({ error: 'Log not found' });
-//       return;
-//     }
-//     res.send({ success: 'Log updated successfully' });
-//   });
-// });
+  db.query(sql, values, (err, results) => {
+    if (err) {
+      res.status(500).send({ error: 'Failed to update User' });
+      return;
+    }
+    if (results.affectedRows === 0) {
+      res.status(404).send({ error: 'User table not found' });
+      return;
+    }
+    res.send({ success: 'inBalance updated successfully' });
+  });
+});
 
 
 app.listen(port, () => {
