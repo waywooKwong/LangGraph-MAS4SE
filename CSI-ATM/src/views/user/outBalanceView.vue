@@ -5,8 +5,11 @@
 <script>
 import outBalance from "@/components/outBalance.vue";
 
-components: {
-  outBalance;
-}
+export default {
+  components: {
+    outBalance,
+  },
+  setup() {},
+};
 </script>
 <style scoped></style>

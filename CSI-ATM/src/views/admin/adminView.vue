@@ -3,10 +3,11 @@
 </template>
 <script>
 import log from "@/components/log.vue";
-components: {
-  log;
-}
+
 export default {
+  components: {
+    log,
+  },
   setup() {},
 };
 </script>
