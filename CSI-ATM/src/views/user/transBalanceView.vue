@@ -4,8 +4,11 @@
 </template>
 <script>
 import transBalance from "@/components/transBalance.vue";
-components: {
-  transBalance;
-}
+export default {
+  components: {
+    transBalance,
+  },
+  setup() {},
+};
 </script>
 <style scoped></style>
