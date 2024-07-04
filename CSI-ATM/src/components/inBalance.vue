@@ -24,15 +24,21 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
+      userData: [],
       withdrawAmount: 0, //用户输入的账号
       withdrawPassword: 0, //用户输入的密码
       withdrawBalance: 0, //用户输入存款金额
       balance: 0, //用户余额
       Lable: 0, //判断弹出类型
     };
+  },
+  created() {
+    //从数据库获取数据
+    this.fetchData();
   },
   methods: {
     // 账号密码错误警示框
@@ -59,15 +65,28 @@ export default {
           // on cancel
         });
     },
+    //点击确认触发事件
     WithDraw() {
       console.log(this.withdrawAmount);
       console.log(this.withdrawPassword);
       console.log(this.withdrawBalance);
+      console.log(this.userData);
       if (this.Lable == 0) {
         this.ShowDialog();
       } else if (this.Lable == 1) {
         this.ShowAmountPasswordWarning();
       }
+    },
+    //获取数据
+    fetchData() {
+      axios
+        .get("http://localhost:3000/UserData")
+        .then((response) => {
+          this.userData = response.data;
+        })
+        .catch((error) => {
+          console.error("获取日志数据失败", error);
+        });
     },
   },
 };
