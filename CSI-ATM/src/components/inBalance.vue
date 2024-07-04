@@ -63,6 +63,8 @@ export default {
             })
             .then((response)=>{
               console.log(response.data);
+              showConfirmDialog({
+                title: "存款成功！",})
             })
             .catch(error=>{
               console.error(error);

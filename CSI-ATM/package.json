@@ -12,6 +12,7 @@
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "element-plus": "^2.7.6",
     "express": "^4.19.2",
     "mysql": "^2.18.1",
     "vant": "^4.9.1",
