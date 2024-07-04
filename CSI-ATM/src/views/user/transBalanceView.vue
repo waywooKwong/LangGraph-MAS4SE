@@ -6,8 +6,8 @@
 import transBalance from "@/components/transBalance.vue";
 export default {
   components: {
-  transBalance
- },
+    transBalance,
+  },
   setup() {},
 };
 </script>
