@@ -10,9 +10,9 @@ const port = 3000; // 这是固定的端口，最好不要修改
 // 2. 根据需求 create table
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'canteen',
-    password: '',
-    database: 'dbcanteen' //注意在 SCHEMAS 确认
+    user: 'myuser',
+    password: 'wp200424',
+    database: 'test' //注意在 SCHEMAS 确认
 });
 
 db.connect((err) => {
@@ -58,6 +58,18 @@ app.put('/inBalance', (req, res) => {
   });
 });
 
+// 获取用户数据的API
+app.get('/UserData', (req, res) => {
+  const sql = 'SELECT * FROM User';
+  //3. 此处根据需求修改 SQL 语句
+  db.query(sql, (err, results) => {
+    if (err) {
+      res.status(500).send({ error: 'Failed to access User' });
+      return;
+    }
+    res.json(results);
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
