@@ -2,7 +2,7 @@
 <template>
   <div class="out">
     <router-link to="/outBalanceView">
-      <button>取款</button>
+      <button class="button">取款</button>
     </router-link>
   </div>
 </template>
