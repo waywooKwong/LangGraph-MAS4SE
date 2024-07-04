@@ -2,28 +2,35 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
-## Recommended IDE Setup
+## 1. Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+确保你本地已经配置
 
-## Customize configuration
+- Node.js
+- MySQL Workbench
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+```
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+## 2. Database
 
-```sh
+ /Server 文件夹下，MySQL 运行 create_and_insert.sql 创建信息存储环境
+
+server.cjs 中配置本地的 MySQL config 信息
+
+```
+node server.cjs
+```
+
+出现下述语句说明连接成功，其它情况请检查你的服务器配置
+
+Server running on http://localhost:3000
+MySQL connected...
+
+## 3. Run
+
+```
 npm run dev
 ```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
