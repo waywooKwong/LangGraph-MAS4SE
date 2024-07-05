@@ -78,7 +78,8 @@ const adminLogin = () => {
 
 <style scoped>
 .el-button{
-     color: #000;
+  
+      color: #000;
       border: none;
       border-radius: 16px;
       text-align: center;
