@@ -1,3 +1,4 @@
+    <!-- 取款组件 -->
 <template>
   <div class="form-container">
     <!-- 账号输入框 -->
@@ -11,6 +12,7 @@
       />
       <div class="error">{{ this.accountError }}</div>
     </div>
+
     <!-- 密码输入框 -->
     <div class="form-group">
       <label>密码</label>
@@ -22,6 +24,8 @@
       />
       <div class="error">{{ this.passwordError }}</div>
     </div>
+
+    
     <!-- 金额输入框 -->
     <div class="form-group">
       <label>存入金额</label>
