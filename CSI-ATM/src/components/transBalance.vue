@@ -1,46 +1,58 @@
+    <!-- 转账组件 -->
 <template>
-  <!-- 账号输入框 -->
-  <div>
-    <div>账号</div>
-    <input
+  
+  <div class="form=-container">
+    <!-- 账号输入框 -->
+    <div class="form-group">
+      <label>账号</label> 
+      <input
       type="number"
       v-model="withdrawAmount"
       placeholder="输入银行卡账号"
       @input="handleAccountChange"
-    />
-    <div>{{ this.accountError }}</div>
-  </div>
-  <!-- 密码输入框 -->
-  <div>
-    <div>密码</div>
-    <input
-      type="number"
-      v-model="withdrawPassword"
-      placeholder="输入密码"
-      @input="handlePasswordChange"
-    />
-    <div>{{ this.passwordError }}</div>
-  </div>
-  <!-- 转入账号输入框 -->
-  <div>
-    <div>转入账号</div>
-    <input
+      />
+     <div class="error">{{ this.accountError }}</div>
+    </div>
+
+    <!-- 密码输入框 -->
+    <div class="form-group">
+      <label>密码</label>
+      <input
+        type="number"
+        v-model="withdrawPassword"
+        placeholder="输入密码"
+        @input="handlePasswordChange"
+      />
+      <div class="error">{{ this.passwordError }}</div>
+    </div>
+
+    <!-- 转入账号输入框 -->
+    <div class="form-group">
+      <label>转入账号</label>
+      <input
       type="number"
       v-model="targetAmount"
       placeholder="转入银行卡账号"
-    />
-    <div>{{ this.accountError }}</div>
+      />
+      <div class="error">{{ this.accountError }}</div>
+    </div>
+
+    <!-- 金额输入框 -->
+    <div class="form-group">
+      <label>存入金额</label>
+      <input type="number" v-model="withdrawBalance" placeholder="输入存款金额" />
+    </div>
+    <!-- 确认密码 -->
+    <div class="button-container">
+      <button @click="WithDraw" class="button">确认</button>
+    </div>
+
   </div>
-  <!-- 金额输入框 -->
-  <div>
-    <div>转帐金额</div>
-    <input type="number" v-model="withdrawBalance" placeholder="输入转账金额" />
-  </div>
-  <!-- 确认密码 -->
-  <div>
-    <button @click="WithDraw">确认</button>
-  </div>
+
 </template>
+
+
+
 <script>
 import axios from "axios";
 export default {
@@ -274,29 +286,57 @@ export default {
   },
 };
 </script>
+
 <style scoped>
-#app {
-  text-align: center;
-  margin-top: 50px;
+.form-container {
+  width: 600px;
+  margin: 0 auto;
 }
 
-input {
-  display: block;
-  margin: 10px auto;
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  width: 100px; /* 定义标签的固定宽度 */
+  text-align: right;
+  margin-right: 10px;
+}
+
+.form-group input {
+  width: 300px; /* 定义输入框的固定宽度 */
   padding: 10px;
   font-size: 16px;
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #42b983;
-  color: white;
-  border: none;
-  cursor: pointer;
+.error {
+  color: red;
+  font-size: 14px;
 }
 
-button:hover {
-  background-color: #358a70;
+.button-container {
+  display: flex;
+  justify-content:center ;
+  margin-top: 20px;
+}
+
+.button {
+  height: 40px;
+  width: 80px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.button:hover {
+  background-color: #d24646;
 }
 </style>
