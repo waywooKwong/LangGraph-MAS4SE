@@ -9,8 +9,8 @@
   </div>
 </template>
 <script>
-import inBalance from '@/components/inBalance.vue'
-import { onMounted } from 'vue'
+import inBalance from "@/components/inBalance.vue"
+import { onMounted } from "vue"
 
 export default {
   components: {
@@ -19,18 +19,18 @@ export default {
   setup() {
     // 设置图标
     onMounted(() => {
-      setFavicon('/icons/favicon-balance.ico')
+      setFavicon("/icons/favicon-balance.ico")
     })
   },
 }
 function setFavicon(href) {
   let link =
     document.querySelector("link[rel*='icon']") ||
-    document.createElement('link')
-  link.type = 'image/x-icon'
-  link.rel = 'shortcut icon'
+    document.createElement("link")
+  link.type = "image/x-icon"
+  link.rel = "shortcut icon"
   link.href = href
-  document.getElementsByTagName('head')[0].appendChild(link)
+  document.getElementsByTagName("head")[0].appendChild(link)
 }
 </script>
 <style scoped>
@@ -49,7 +49,7 @@ function setFavicon(href) {
   align-items: center;
 }
 .deposit-title {
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   font-size: 200%;
   margin-right: 200px;
   margin-bottom: 50px;
