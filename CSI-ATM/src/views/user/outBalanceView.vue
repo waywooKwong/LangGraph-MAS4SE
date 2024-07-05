@@ -1,43 +1,40 @@
- <!-- 取款页面 -->
+<!-- 取款页面 -->
 <template>
- <div class="container">
+  <div class="container">
+    <div class="deposit-title">取款界面</div>
 
-  <div class="deposit-title">
-     取款界面
+    <main>
+      <OutBalance />
+    </main>
   </div>
-  
-  <main>
-    <OutBalance />
-  </main>
-  </div>
-  
 </template>
 
 <script>
-import outBalance from "@/components/outBalance.vue";
-import { onMounted } from 'vue'; 
+import outBalance from '@/components/outBalance.vue'
+import { onMounted } from 'vue'
 
 export default {
   components: {
-    outBalance
+    outBalance,
   },
   setup() {
     // 设置图标
     onMounted(() => {
-      setFavicon('/icons/favicon-balance.ico');
-    });
+      setFavicon('/icons/favicon-balance.ico')
+    })
   },
-};
+}
 function setFavicon(href) {
-  let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-  link.type = 'image/x-icon';
-  link.rel = 'shortcut icon';
-  link.href = href;
-  document.getElementsByTagName('head')[0].appendChild(link);
+  let link =
+    document.querySelector("link[rel*='icon']") ||
+    document.createElement('link')
+  link.type = 'image/x-icon'
+  link.rel = 'shortcut icon'
+  link.href = href
+  document.getElementsByTagName('head')[0].appendChild(link)
 }
 </script>
 <style scoped>
-
 .container {
   position: relative;
   height: 600px;
@@ -52,9 +49,9 @@ function setFavicon(href) {
   justify-content: center;
   align-items: center;
 }
-.deposit-title{
+.deposit-title {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
- font-size: 200%;
+  font-size: 200%;
   margin-right: 200px;
   margin-bottom: 50px;
 }
