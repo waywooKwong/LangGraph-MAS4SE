@@ -1,8 +1,6 @@
 <template>
   <div class="admin">
-    <el-button plain @click="showDialog = true">
-      管理员登录
-    </el-button>
+    <el-button plain @click="showDialog = true"> 管理员登录 </el-button>
 
     <el-dialog
       v-model="showDialog"
@@ -31,19 +29,19 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
-import { ref } from 'vue';
-import { ElMessageBox } from 'element-plus';
-import router from '@/router';
+import axios from "axios";
+import { ref } from "vue";
+import { ElMessageBox } from "element-plus";
+import router from "@/router";
 
 const showDialog = ref(false);
 const adminData = ref({
-  account: '',
-  password: ''
+  account: "",
+  password: "",
 });
 
 const handleClose = (done: () => void) => {
-  ElMessageBox.confirm('确定关闭对话框？')
+  ElMessageBox.confirm("确定关闭对话框？")
     .then(() => {
       done();
     })
@@ -54,38 +52,36 @@ const handleClose = (done: () => void) => {
 
 const adminLogin = () => {
   const params = new URLSearchParams();
-  params.append('account', adminData.value.account);
-  params.append('password', adminData.value.password);
+  params.append("account", adminData.value.account);
+  params.append("password", adminData.value.password);
 
-  axios.get('http://localhost:3000/AdminLogin', { params })
-    .then(response => {
-      if (response.data === 'true') {
+  axios
+    .get("http://localhost:3000/AdminLogin", { params })
+    .then((response) => {
+      if (response.data === "true") {
         // 登录成功的处理
-        alert('登录成功');
+        alert("登录成功");
         // 使用 Vue Router 进行路由跳转
-        router.push('/adminView'); // 假设 router 是你的 Vue Router 实例
+        router.push("/adminView"); // 假设 router 是你的 Vue Router 实例
       } else {
-        alert('管理员账号或密码错误');
+        alert("管理员账号或密码错误");
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
-      alert('登录失败，请重试');
+      alert("登录失败，请重试");
     });
 };
-
 </script>
 
 <style scoped>
-.el-button{
-  
-      color: #000;
-      border: none;
-      border-radius: 16px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 18px;
+.el-button {
+  color: #000;
+  border: none;
+  border-radius: 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
 }
-
 </style>
