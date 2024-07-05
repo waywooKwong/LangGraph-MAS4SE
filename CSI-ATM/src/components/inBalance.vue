@@ -221,7 +221,7 @@ export default {
           timestamp: this.formattedDateTime,
           event: this.nowEvent,
           object: this.nowobject,
-          balance: this.balance,
+          balance: this.withdrawBalance,
           state: this.state,
           User_user_id: this.User_user_id,
         })
