@@ -23,7 +23,7 @@
   </div>
   <!-- 金额输入框 -->
   <div>
-    <div>存入金额</div>
+    <div>存款金额</div>
     <input type="number" v-model="withdrawBalance" placeholder="输入存款金额" />
   </div>
   <!-- 确认密码 -->
@@ -216,7 +216,7 @@ export default {
           timestamp: this.formattedDateTime,
           event: this.nowEvent,
           object: this.nowobject,
-          balance: this.balance,
+          balance: this.withdrawBalance,
           state: this.state,
           User_user_id: this.User_user_id,
         })
