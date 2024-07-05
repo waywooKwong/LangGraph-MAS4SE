@@ -1,41 +1,39 @@
 <!--存款页面-->
 <template>
   <div class="container">
+    <div class="deposit-title">存款界面</div>
 
-  <div class="deposit-title">
-    存款界面
-  </div>
-  
-  <main>
-    <inBalance />
-  </main>
+    <main>
+      <inBalance />
+    </main>
   </div>
 </template>
 <script>
-import inBalance from "@/components/inBalance.vue";
-import { onMounted } from 'vue'; 
+import inBalance from '@/components/inBalance.vue'
+import { onMounted } from 'vue'
 
 export default {
   components: {
-    inBalance
+    inBalance,
   },
   setup() {
     // 设置图标
     onMounted(() => {
-      setFavicon('/icons/favicon-balance.ico');
-    });
+      setFavicon('/icons/favicon-balance.ico')
+    })
   },
-};
+}
 function setFavicon(href) {
-  let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-  link.type = 'image/x-icon';
-  link.rel = 'shortcut icon';
-  link.href = href;
-  document.getElementsByTagName('head')[0].appendChild(link);
+  let link =
+    document.querySelector("link[rel*='icon']") ||
+    document.createElement('link')
+  link.type = 'image/x-icon'
+  link.rel = 'shortcut icon'
+  link.href = href
+  document.getElementsByTagName('head')[0].appendChild(link)
 }
 </script>
 <style scoped>
-
 .container {
   position: relative;
   height: 600px;
@@ -50,9 +48,9 @@ function setFavicon(href) {
   justify-content: center;
   align-items: center;
 }
-.deposit-title{
+.deposit-title {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
- font-size: 200%;
+  font-size: 200%;
   margin-right: 200px;
   margin-bottom: 50px;
 }
