@@ -1,35 +1,34 @@
-    <!-- 转账组件 -->
+<!-- 转账组件 -->
 <template>
-  
   <div class="form=-container">
     <!-- 账号输入框 -->
     <div class="form-group">
-      <label>账号</label> 
-      <input
-      type="number"
-      v-model="withdrawAmount"
-      placeholder="输入银行卡账号"
-      @input="handleAccountChange"
-      />
-     <div class="error">{{ this.accountError }}</div>
-    </div>
-
-    <!-- 密码输入框 -->
-    <div class="form-group">
-      <label>密码</label>
+      <label>账号</label>
       <input
         type="number"
-        v-model="withdrawPassword"
-        placeholder="输入密码"
-        @input="handlePasswordChange"
+        v-model="withdrawAmount"
+        placeholder="输入银行卡账号"
+        @input="handleAccountChange"
       />
-      <div class="error">{{ this.passwordError }}</div>
+      <div class="error">{{ this.accountError }}</div>
     </div>
+  </div>
+  <!-- 密码输入框 -->
+  <div class="form-group">
+    <label>密码</label>
+    <input
+      type="number"
+      v-model="withdrawPassword"
+      placeholder="输入密码"
+      @input="handlePasswordChange"
+    />
+    <div class="error">{{ this.passwordError }}</div>
+  </div>
 
-    <!-- 转入账号输入框 -->
-    <div class="form-group">
-      <label>转入账号</label>
-      <input
+  <!-- 转入账号输入框 -->
+  <div class="form-group">
+    <label>转入账号</label>
+    <input
       type="number"
       v-model="targetAmount"
       placeholder="转入银行卡账号"
@@ -46,10 +45,7 @@
   <div>
     <button @click="WithDraw">确认</button>
   </div>
-
 </template>
-
-
 
 <script>
 import axios from "axios";
@@ -68,7 +64,7 @@ export default {
       passwordError: "", //用于密码错误判断
       timeStamp: 0, //当前时间
       formattedDateTime: "", // 格式化后的日期时间
-      nowEvent: "deposit", //存款事件
+      nowEvent: "transMoney", //转账事件
       nowobject: "", //当前用户
       state: 0, //状态
       User_user_id: "", //用户id
@@ -212,7 +208,8 @@ export default {
         } else {
           this.Lable = 0;
         }
-        this.nowobject = this.withdrawAmount + " " + this.targetAmount;
+        this.nowobject =
+          this.withdrawAmount + "向" + this.targetAmount + "转账";
       }
     },
     //在这里处理密码输入框变化后的逻辑
@@ -340,7 +337,7 @@ export default {
 
 .button-container {
   display: flex;
-  justify-content:center ;
+  justify-content: center;
   margin-top: 20px;
 }
 
