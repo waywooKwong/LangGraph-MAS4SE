@@ -10,7 +10,7 @@ components: {
 
 <template>
   <div class="container">
-    <div class="title">
+    <div class="home-title">
       ATM简易系统
     </div>
     <!-- 用户按钮组 -->
@@ -29,38 +29,33 @@ components: {
   </div>
 </template>
 
+
 <style scoped>
 .container {
   position: relative;
   height: 600px;
   width: 1024px;
-  /* 设置容器高度和宽度 */
   border: 2px solid #151414;
-  /* 外框样式，可以根据需要调整颜色和粗细 */
   padding: 20px;
-  /* 外框与内容之间的间距 */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.title {
+.home-title {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: 200%;
   text-align: center;
+  margin-top: 30px; /* 调整顶部间距 */
   margin-bottom: 40px;
-  /* 与按钮组之间的间距 */
 }
 
 .user-container {
   display: flex;
   justify-content: center;
-  /* 水平居中 */
   align-items: center;
-  /* 垂直居中 */
-  height: 400px;
-  /* 占满父容器的高度 */
+  height: 200px; /* 调整按钮组容器的高度 */
 }
 
 .button-group {
@@ -68,15 +63,24 @@ components: {
 }
 
 .button {
-  margin: 0 10px;
-  /* 按钮之间的间距 */
+  margin: 0 15px; /* 调整按钮之间的间距 */
+  padding: 10px 20px; /* 调整按钮的内边距 */
+  font-size: 18px; /* 调整按钮字体大小 */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color:  #007bff;
 }
 
 .admin-container {
+  background-color: #4481c3;
   position: absolute;
   bottom: 80px;
-  /* 距离底部 80 像素 */
-  right: 200px;
-  /* 距离右侧 200 像素 */
+  right: 200px; /* 调整管理员按钮的右侧距离 */
 }
 </style>
