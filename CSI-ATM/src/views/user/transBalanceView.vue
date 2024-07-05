@@ -1,4 +1,4 @@
- <!-- 转账页面 -->
+ <!-- 转账页面2.0 -->
 <template>
   <div class="container">
     <div class="outBanlance-title">
