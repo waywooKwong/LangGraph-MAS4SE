@@ -29,7 +29,11 @@
     <!-- 金额输入框 -->
     <div class="form-group">
       <label>存入金额</label>
-      <input type="number" v-model="withdrawBalance" placeholder="输入存款金额" />
+      <input
+        type="number"
+        v-model="withdrawBalance"
+        placeholder="输入存款金额"
+      />
     </div>
     <!-- 确认密码 -->
     <div class="button-container">
@@ -38,9 +42,7 @@
   </div>
 </template>
 
-
 <script>
-
 import axios from "axios";
 export default {
   data() {
@@ -66,6 +68,12 @@ export default {
     this.formattedDateTime = this.formatDateTime(this.timeStamp); // 转换为指定格式
   },
   methods: {
+    //清空所有输入
+    Clean() {
+      this.withdrawAmount = "";
+      this.withdrawBalance = "";
+      this.withdrawPassword = "";
+    },
     //获取当前时间
     getTimeStamp() {
       return new Date().getTime(); // 获取当前时间戳
@@ -89,6 +97,7 @@ export default {
         theme: "round-button",
       }).then(() => {
         // on close
+        this.Clean();
       });
     },
     // 输入正确弹出框
@@ -122,9 +131,7 @@ export default {
             // on close
           });
           //清空所有内容
-          this.withdrawAmount = "";
-          this.withdrawBalance = "";
-          this.withdrawPassword = "";
+          this.Clean();
         })
         .catch(() => {
           // on cancel
@@ -238,10 +245,8 @@ export default {
     },
   },
 };
-
-
 </script>
- <!-- 通用样式，适用于存款，取款页面 -->
+<!-- 通用样式，适用于存款，取款页面 -->
 
 <style scoped>
 .form-container {
@@ -274,7 +279,7 @@ export default {
 
 .button-container {
   display: flex;
-  justify-content:center ;
+  justify-content: center;
   margin-top: 20px;
 }
 

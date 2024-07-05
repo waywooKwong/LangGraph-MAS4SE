@@ -11,8 +11,8 @@ const port = 3000; // 这是固定的端口，最好不要修改
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'myuser',
-  password: 'qmyyb763',
-  database: 'atm' //注意在 SCHEMAS 确认
+  password: 'wp200424',
+  database: 'test' //注意在 SCHEMAS 确认
 });
 
 
