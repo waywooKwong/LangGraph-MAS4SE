@@ -1,20 +1,20 @@
 <!-- 转账组件 -->
 <template>
-  <div class="form=-container">
+  <div class="form-container">
     <!-- 账号输入框 -->
-    <div class="form-group">
-      <label>账号</label>
-      <input
+      <div class="form-group">
+        <label>账号</label>
+        <input
         type="number"
         v-model="withdrawAmount"
         placeholder="输入银行卡账号"
         @input="handleAccountChange"
-      />
-      <div class="error">{{ this.accountError }}</div>
-    </div>
-  </div>
-  <!-- 密码输入框 -->
-  <div class="form-group">
+        />
+        <div class="error">{{ this.accountError }}</div>
+      </div>
+  
+      <!-- 密码输入框 -->
+    <div class="form-group">
     <label>密码</label>
     <input
       type="number"
@@ -34,17 +34,18 @@
       placeholder="转入银行卡账号"
       @input="handleTargetAccountChange"
     />
-    <div>{{ this.transAccountError }}</div>
+    <div class="error">{{ this.transAccountError }}</div>
   </div>
   <!-- 金额输入框 -->
-  <div>
-    <div>转帐金额</div>
+  <div class="form-group">
+    <label>转帐金额</label>
     <input type="number" v-model="withdrawBalance" placeholder="输入转账金额" />
   </div>
   <!-- 确认密码 -->
-  <div>
-    <button @click="WithDraw">确认</button>
+  <div class="button-container">
+    <button @click="WithDraw" class="button">确认</button>
   </div>
+</div>
 </template>
 
 <script>
@@ -318,15 +319,13 @@ export default {
 }
 
 .form-group label {
-  width: 100px;
-  /* 定义标签的固定宽度 */
+  width: 100px; /* 定义标签的固定宽度 */
   text-align: right;
   margin-right: 10px;
 }
 
 .form-group input {
-  width: 300px;
-  /* 定义输入框的固定宽度 */
+  width: 300px; /* 定义输入框的固定宽度 */
   padding: 10px;
   font-size: 16px;
 }
