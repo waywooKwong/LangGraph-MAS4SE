@@ -9,11 +9,11 @@
 <script>
 export default {
   setup() {},
-};
+}
 </script>
 <style scoped>
 .button {
-  background-color:#007bff;
+  background-color: #007bff;
   border: none;
   border-radius: 4px;
   color: white;
@@ -23,5 +23,4 @@ export default {
   display: inline-block;
   font-size: 16px;
 }
-
 </style>

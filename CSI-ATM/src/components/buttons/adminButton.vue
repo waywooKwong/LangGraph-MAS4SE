@@ -29,28 +29,42 @@
 </template>
 
 <script setup lang="ts">
+<<<<<<< HEAD
 import axios from "axios";
 import { ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import router from "@/router";
+=======
+import axios from 'axios'
+import { ref } from 'vue'
+import { ElMessageBox } from 'element-plus'
+import router from '@/router'
+>>>>>>> caeba258b777fa2c7f0cc326573133eb8e390c4c
 
-const showDialog = ref(false);
+const showDialog = ref(false)
 const adminData = ref({
+<<<<<<< HEAD
   account: "",
   password: "",
 });
+=======
+  account: '',
+  password: '',
+})
+>>>>>>> caeba258b777fa2c7f0cc326573133eb8e390c4c
 
 const handleClose = (done: () => void) => {
   ElMessageBox.confirm("确定关闭对话框？")
     .then(() => {
-      done();
+      done()
     })
     .catch(() => {
       // 捕获错误
-    });
-};
+    })
+}
 
 const adminLogin = () => {
+<<<<<<< HEAD
   const params = new URLSearchParams();
   params.append("account", adminData.value.account);
   params.append("password", adminData.value.password);
@@ -72,6 +86,29 @@ const adminLogin = () => {
       alert("登录失败，请重试");
     });
 };
+=======
+  const params = new URLSearchParams()
+  params.append('account', adminData.value.account)
+  params.append('password', adminData.value.password)
+
+  axios
+    .get('http://localhost:3000/AdminLogin', { params })
+    .then((response) => {
+      if (response.data === 'true') {
+        // 登录成功的处理
+        alert('登录成功')
+        // 使用 Vue Router 进行路由跳转
+        router.push('/adminView') // 假设 router 是你的 Vue Router 实例
+      } else {
+        alert('管理员账号或密码错误')
+      }
+    })
+    .catch((error) => {
+      console.error(error)
+      alert('登录失败，请重试')
+    })
+}
+>>>>>>> caeba258b777fa2c7f0cc326573133eb8e390c4c
 </script>
 
 <style scoped>
