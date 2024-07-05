@@ -208,12 +208,8 @@ export default {
         } else {
           this.Lable = 0
         }
-<<<<<<< HEAD
         this.nowobject =
           this.withdrawAmount + "向" + this.targetAmount + "转账";
-=======
-        this.nowobject = this.withdrawAmount + ' ' + this.targetAmount
->>>>>>> caeba258b777fa2c7f0cc326573133eb8e390c4c
       }
     },
     //在这里处理密码输入框变化后的逻辑
