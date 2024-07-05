@@ -20,10 +20,12 @@
           </el-form-item>
         </el-form>
       </form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">取消</el-button>
-        <el-button type="primary" @click="adminLogin">登录</el-button>
-      </span>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="showDialog = false">取消</el-button>
+          <el-button type="primary" @click="adminLogin">登录</el-button>
+        </span>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -75,16 +77,14 @@ const adminLogin = () => {
 </script>
 
 <style scoped>
-.button{
-    background-color: #8f9192;
+.el-button{
+     color: #000;
       border: none;
-      border-radius: 4px;
-      color: white;
-      padding: 15px 32px;
+      border-radius: 16px;
       text-align: center;
       text-decoration: none;
       display: inline-block;
-      font-size: 12px;
+      font-size: 18px;
 }
 
 </style>
