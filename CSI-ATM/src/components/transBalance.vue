@@ -28,8 +28,9 @@
       type="number"
       v-model="targetAmount"
       placeholder="转入银行卡账号"
+      @input="handleTargetAccountChange"
     />
-    <div>{{ this.accountError }}</div>
+    <div>{{ this.transAccountError }}</div>
   </div>
   <!-- 金额输入框 -->
   <div>
@@ -52,8 +53,9 @@ export default {
       withdrawPassword: "", //用户输入的密码
       withdrawBalance: "", //用户输入存款金额
       balance: 0, //用户余额
-      Lable: 0, //判断弹出类型 0:账户密码均正确 1：账户密码有一个错误
+      Lable: 0, //判断弹出类型 0:账户密码均正确 1：账户密码有一个错误 2:转账错误
       accountError: "", //用于账号错误判断
+      transAccountError: "", //用于判断目账户错误判断
       passwordError: "", //用于密码错误判断
       timeStamp: 0, //当前时间
       formattedDateTime: "", // 格式化后的日期时间
@@ -68,6 +70,13 @@ export default {
     this.formattedDateTime = this.formatDateTime(this.timeStamp); // 转换为指定格式
   },
   methods: {
+    //清空输入
+    Clean() {
+      this.withdrawAmount = "";
+      this.targetAmount = "";
+      this.withdrawBalance = "";
+      this.withdrawPassword = "";
+    },
     //获取当前时间
     getTimeStamp() {
       return new Date().getTime(); // 获取当前时间戳
@@ -83,6 +92,17 @@ export default {
       let seconds = String(date.getSeconds()).padStart(2, "0");
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     },
+    //转账错误提示框
+    ShowTransWaring() {
+      showDialog({
+        title: "Warning",
+        message: "转入账号不能与本账号一致!!!",
+        theme: "round-button",
+      }).then(() => {
+        // on close
+        this.Clean();
+      });
+    },
     // 账号密码错误警示框
     ShowAmountPasswordWarning() {
       showDialog({
@@ -90,12 +110,13 @@ export default {
         message: "账号密码错误，请重新输入!!!",
         theme: "round-button",
       }).then(() => {
-        // on close
+        //清空
+        this.Clean();
       });
     },
     // 输入正确弹出框
     ShowDialog() {
-      var message = `您的余额为：${this.balance}，请确认向账号${this.targetAmount}转入入${this.withdrawBalance}元`;
+      var message = `您的余额为：${this.balance}，请确认向账号${this.targetAmount}转入${this.withdrawBalance}元`;
       showConfirmDialog({
         title: "确认",
         message: message,
@@ -125,10 +146,7 @@ export default {
             // on close
           });
           //清空所有内容
-          this.withdrawAmount = "";
-          this.targetAmount = "";
-          this.withdrawBalance = "";
-          this.withdrawPassword = "";
+          this.Clean();
         })
         .catch(() => {
           // on cancel
@@ -140,6 +158,8 @@ export default {
         this.ShowDialog();
       } else if (this.Lable == 1) {
         this.ShowAmountPasswordWarning();
+      } else {
+        this.ShowTransWaring();
       }
     },
     //// 在这里处理账号输入框变化后的逻辑
@@ -161,7 +181,7 @@ export default {
         this.fetchData(account);
       }
     },
-    //// 在这里处理账号输入框变化后的逻辑
+    //// 在这里处理目标账号输入框变化后的逻辑
     handleTargetAccountChange() {
       console.log("账号输入框变化后的值:", this.targetAmount);
       const account = String(this.targetAmount);
@@ -169,16 +189,21 @@ export default {
       // 检查账号长度
       if (account.length > 16) {
         this.targetAmount = account.slice(0, 16); // 截取前三个字符
-        this.accountError = "账号长度不能超过十六位!!!";
+        this.transAccountError = "账号长度不能超过十六位!!!";
       } else if (account.length < 16) {
-        this.accountError = "请输入十六位账号";
+        this.transAccountError = "请输入十六位账号";
       } else {
-        this.accountError = ""; // 清空错误提示
+        this.transAccountError = ""; // 清空错误提示
       }
       if (typeof account === "string" && account.length === 16) {
         console.log("当前账号长度:", account.length);
+        if (String(this.withdrawAmount) === String(this.targetAmount)) {
+          this.Lable = 2;
+          console.log("转账错误");
+        } else {
+          this.Lable = 0;
+        }
         this.nowobject = this.withdrawAmount + " " + this.targetAmount;
-        this.fetchData(account);
       }
     },
     //在这里处理密码输入框变化后的逻辑
@@ -260,7 +285,7 @@ export default {
           timestamp: this.formattedDateTime,
           event: this.nowEvent,
           object: this.nowobject,
-          balance: this.balance,
+          balance: this.withdrawBalance,
           state: this.state,
           User_user_id: this.User_user_id,
         })

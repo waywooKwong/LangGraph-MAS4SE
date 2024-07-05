@@ -63,6 +63,12 @@ export default {
     this.formattedDateTime = this.formatDateTime(this.timeStamp); // 转换为指定格式
   },
   methods: {
+    //清空所有输入
+    Clean() {
+      this.withdrawAmount = "";
+      this.withdrawBalance = "";
+      this.withdrawPassword = "";
+    },
     //获取当前时间
     getTimeStamp() {
       return new Date().getTime(); // 获取当前时间戳
@@ -86,6 +92,7 @@ export default {
         theme: "round-button",
       }).then(() => {
         // on close
+        this.Clean();
       });
     },
     //输入金额超限警示框
@@ -97,6 +104,7 @@ export default {
         theme: "round-button",
       }).then(() => {
         // on close
+        this.Clean();
       });
     },
     //余额不足警示框
@@ -108,6 +116,7 @@ export default {
         theme: "round-button",
       }).then(() => {
         // on close
+        this.Clean();
       });
     },
     // 输入正确弹出框
@@ -141,9 +150,7 @@ export default {
             // on close
           });
           //清空所有内容
-          this.withdrawAmount = "";
-          this.withdrawBalance = "";
-          this.withdrawPassword = "";
+          clean();
         })
         .catch(() => {
           // on cancel
