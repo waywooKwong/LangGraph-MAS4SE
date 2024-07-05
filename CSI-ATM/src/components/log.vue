@@ -44,7 +44,7 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+import axios from "axios"
 export default {
   data() {
     return {
@@ -57,12 +57,12 @@ export default {
   methods: {
     ShowLog() {
       axios
-        .get('http://localhost:3000/ShowLog')
+        .get("http://localhost:3000/ShowLog")
         .then((response) => {
           this.logs = response.data
         })
         .catch((error) => {
-          console.error('获取日志数据失败', error)
+          console.error("获取日志数据失败", error)
         })
     },
   },

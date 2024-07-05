@@ -1,24 +1,24 @@
 <script setup>
-import inBalanceButton from '@/components/buttons/inBalanceButton.vue'
-import outBalanceButton from '@/components/buttons/outBalanceButton.vue'
-import transBalanceButton from '@/components/buttons/transBalanceButton.vue'
-import adminButton from '@/components/buttons/adminButton.vue'
+import inBalanceButton from "@/components/buttons/inBalanceButton.vue"
+import outBalanceButton from "@/components/buttons/outBalanceButton.vue"
+import transBalanceButton from "@/components/buttons/transBalanceButton.vue"
+import adminButton from "@/components/buttons/adminButton.vue"
 components: {
   inBalanceButton, outBalanceButton, transBalanceButton, adminButton
 }
 
-import { onMounted } from 'vue' //设置图标
+import { onMounted } from "vue" //设置图标
 onMounted(() => {
-  setFavicon('/icons/favicon-home.ico')
+  setFavicon("/icons/favicon-home.ico")
 })
 function setFavicon(href) {
   let link =
     document.querySelector("link[rel*='icon']") ||
-    document.createElement('link')
-  link.type = 'image/x-icon'
-  link.rel = 'shortcut icon'
+    document.createElement("link")
+  link.type = "image/x-icon"
+  link.rel = "shortcut icon"
   link.href = href
-  document.getElementsByTagName('head')[0].appendChild(link)
+  document.getElementsByTagName("head")[0].appendChild(link)
 }
 </script>
 
@@ -55,7 +55,7 @@ function setFavicon(href) {
 }
 
 .home-title {
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   font-size: 200%;
   text-align: center;
   margin-top: 30px; /* 调整顶部间距 */
