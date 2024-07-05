@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h1>日志表</h1>
     <table>
       <thead>
@@ -57,6 +57,20 @@ export default {
 
 <!-- 基础的表格大小已经调整合适，需要调整样式使表格居中显示 -->
 <style scoped>
+.container {
+  position: relative;
+  height: 600px;
+  width: 1024px;
+  /* 设置容器高度和宽度 */
+  border: 2px solid #151414;
+  /* 外框样式，可以根据需要调整颜色和粗细 */
+  padding: 20px;
+  /* 外框与内容之间的间距 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 table {
   text-align: center;
   width: 100%;
@@ -77,6 +91,6 @@ div{
     justify-content: center;
 }
 h1{
-    width: 50px;
+    width: 100px;
 }
 </style>
