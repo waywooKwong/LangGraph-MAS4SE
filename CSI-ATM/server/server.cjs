@@ -77,6 +77,24 @@ app.put('/inBalance', (req, res) => {
     res.send({ success: 'inBalance updated successfully' });
   });
 });
+//取款服务请求、更新用户账户
+app.put('/outBalance', (req, res) => {
+  const newData = req.body;
+  const sql = 'UPDATE User SET balance = balance - ? WHERE account = ?';
+  const values = [newData.balance, newData.account];
+
+  db.query(sql, values, (err, results) => {
+    if (err) {
+      res.status(500).send({ error: 'Failed to update User' });
+      return;
+    }
+    if (results.affectedRows === 0) {
+      res.status(404).send({ error: 'User table not found' });
+      return;
+    }
+    res.send({ success: 'inBalance updated successfully' });
+  });
+});
 //存款服务更新日志
 app.post('/inBalanceInsertLog', (req, res) => {
   const newData = req.body;
