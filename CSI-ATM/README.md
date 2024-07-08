@@ -25,8 +25,10 @@ node server.cjs
 
 出现下述语句说明连接成功，其它情况请检查你的服务器配置
 
+```
 Server running on http://localhost:3000
 MySQL connected...
+```
 
 ## 3. Run
 
