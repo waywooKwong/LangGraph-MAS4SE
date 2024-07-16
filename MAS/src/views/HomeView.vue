@@ -10,7 +10,7 @@
 <script>
 import axios from "axios";
 const apiClinet = axios.create({
-  baseURL: 'http://10.22.14.142:9090',
+  baseURL: 'http://192.168.147.33:9090',
   headers:{
     'Content-Type':'application/json'
   }
