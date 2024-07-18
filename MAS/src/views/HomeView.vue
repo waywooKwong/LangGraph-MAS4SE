@@ -10,7 +10,7 @@
 <script>
 import axios from "axios";
 const apiClinet = axios.create({
-  baseURL: 'http://192.168.147.33:9090',
+  baseURL: 'http://10.22.18.71:9090',
   headers:{
     'Content-Type':'application/json'
   }
@@ -19,23 +19,24 @@ const apiClinet = axios.create({
 export default {
   data() {
     return {
-      query: "",
-      response: "",
-    };
+      query: '',
+      response: ''
+    }
   },
   methods: {
     async sendQuery() {
       try {
-        const res = await apiClinet.post("/query", {
-          query: this.query,
-        });
-        this.response = res.data.response;
+        // 换成目标路由的话需要 change 成目标
+        const res = await apiClinet.post('/query', {
+          query: this.query
+        })
+        this.response = res.data.response
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style scoped>
