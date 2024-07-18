@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+<<<<<<< HEAD
 import axios from 'axios'
 import { ref } from 'vue'
 import { ElMessageBox } from 'element-plus'
@@ -38,6 +39,17 @@ const showDialog = ref(false)
 const adminData = ref({
   account: '',
   password: '',
+=======
+import axios from "axios"
+import { ref } from "vue"
+import { ElMessageBox } from "element-plus"
+import router from "@/router"
+
+const showDialog = ref(false)
+const adminData = ref({
+  account: "",
+  password: "",
+>>>>>>> fe3f470c309d3405cc235c43e8a9340c6495e822
 })
 
 const handleClose = (done: () => void) => {
@@ -52,6 +64,7 @@ const handleClose = (done: () => void) => {
 
 const adminLogin = () => {
   const params = new URLSearchParams()
+<<<<<<< HEAD
   params.append('account', adminData.value.account)
   params.append('password', adminData.value.password)
 
@@ -65,11 +78,26 @@ const adminLogin = () => {
         router.push('/adminView') // 假设 router 是你的 Vue Router 实例
       } else {
         alert('管理员账号或密码错误')
+=======
+  params.append("account", adminData.value.account)
+  params.append("password", adminData.value.password)
+
+  axios
+    .get("http://localhost:3000/AdminLogin", { params })
+    .then((response) => {
+      if (response.data === "true") {
+        // 登录成功的处理
+        alert("登录成功")
+        // 使用 Vue Router 进行路由跳转
+        router.push("/adminView") // 假设 router 是你的 Vue Router 实例
+      } else {
+        alert("管理员账号或密码错误")
+>>>>>>> fe3f470c309d3405cc235c43e8a9340c6495e822
       }
     })
     .catch((error) => {
       console.error(error)
-      alert('登录失败，请重试')
+      alert("登录失败，请重试")
     })
 }
 </script>
