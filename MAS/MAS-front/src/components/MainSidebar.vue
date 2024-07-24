@@ -5,14 +5,14 @@
         index="chat"
         :class="{'active-menu-item': activeMenu === 'chat', 'menu-item': true}"
       >
-        <i class="el-icon-chat-line-round"></i>
+        <!-- <i class="el-icon-chat-line-round"></i> -->
         <span>对话</span>
       </el-menu-item>
       <el-menu-item
         index="agent-map"
         :class="{'active-menu-item': activeMenu === 'agent-map', 'menu-item': true}"
       >
-        <i class="el-icon-s-help"></i>
+        <!-- <i class="el-icon-s-help"></i> -->
         <span>自定义智能体</span>
       </el-menu-item>
     </el-menu>
@@ -47,7 +47,7 @@ export default {
 
 <style scoped>
 .sidebar {
-  background-color: #f4f4f4;
+  background-color: #b3b0b0;
   border-right: 1px solid #dcdfe6;
   height: 100%;
   display: flex;
