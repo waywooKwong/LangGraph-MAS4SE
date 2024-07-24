@@ -1,6 +1,8 @@
 <template>
   <div class="chat-main">
+    <!-- 聊天窗口 -->
     <div class="chat-window" ref="chatWindow">
+      <!-- 遍历并渲染每条消息 -->
       <Message
         v-for="(message, index) in messages"
         :key="index"
@@ -8,7 +10,9 @@
         :sender="message.sender"
       />
     </div>
+    <!-- 底部区域，包括输入框、上传按钮和发送按钮 -->
     <el-footer class="footer">
+      <!-- 文件上传组件 -->
       <el-upload
         class="upload-demo"
         ref="upload"
@@ -19,34 +23,39 @@
         :disabled="isSending"
         multiple
       >
+        <!-- 自定义上传按钮 -->
         <template v-slot:trigger>
           <el-button size="small" :disabled="isSending">
-            <el-icon><Plus /></el-icon>
+            <el-icon> <Plus /></el-icon>
           </el-button>
         </template>
       </el-upload>
+      <!-- 文件列表 -->
       <ul class="file-list">
         <li v-for="(file, index) in files" :key="index">
           {{ file.name }}
           <el-button type="text" @click="removeFile(index)">删除</el-button>
         </li>
       </ul>
+      <!-- 消息输入框 -->
       <el-input
         v-model="query"
         placeholder="Type a message"
         @keyup.enter="sendQuery"
         :disabled="isSending"
       ></el-input>
+      <!-- 发送按钮 -->
       <el-button
         type="primary"
         @click="sendQuery"
         :disabled="isSending"
-      >Send</el-button>
+      >发送</el-button>
+      <!-- 上传文件按钮 -->
       <el-button
         type="success"
         @click="uploadFiles"
         :disabled="isSending || files.length === 0"
-      >Upload Files</el-button>
+      >上传文件</el-button>
     </el-footer>
   </div>
 </template>
@@ -63,43 +72,51 @@ export default {
   },
   data() {
     return {
-      query: '',
-      response: '',
-      messages: [],
-      isSending: false,
-      files: [],
+      query: '', // 用户输入的消息
+      response: '', // 服务器响应
+      messages: [], // 消息列表
+      isSending: false, // 是否正在发送消息或上传文件
+      files: [], // 待上传的文件列表
     };
   },
   methods: {
+    // 处理文件上传，防止默认上传行为
     handleFileUpload(file) {
       this.files.push(file);
-      return false; // Prevent default upload behavior
+      return false; // 阻止默认上传行为
     },
+    // 删除指定索引的文件
     removeFile(index) {
       this.files.splice(index, 1);
     },
+    // 发送用户输入的消息
     async sendQuery() {
       if (this.query.trim() === '') return;
 
+      // 添加用户消息到消息列表
       this.messages.push({ text: this.query, sender: 'user' });
       this.scrollToBottom();
 
       this.isSending = true;
 
       try {
+        // 发送请求到服务器
         const res = await apiClient.post('/ask', {
           query: this.query,
         });
+        // 添加服务器响应到消息列表
         this.messages.push({ text: res.data.response, sender: 'bot' });
       } catch (error) {
         console.error(error);
         this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
       } finally {
+        // 清空输入框并重置发送状态
         this.query = '';
         this.isSending = false;
         this.scrollToBottom();
       }
     },
+    // 上传文件
     async uploadFiles() {
       if (this.files.length === 0) {
         alert('请选择要上传的文件');
@@ -114,11 +131,13 @@ export default {
       }
 
       try {
+        // 发送文件上传请求
         await apiClient.post('/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
+        // 上传成功消息
         this.messages.push({ text: '文件上传成功', sender: 'bot' });
         this.files = [];
       } catch (error) {
@@ -134,6 +153,7 @@ export default {
         this.scrollToBottom();
       }
     },
+    // 滚动到聊天窗口底部
     scrollToBottom() {
       this.$nextTick(() => {
         const chatWindow = this.$refs.chatWindow;
