@@ -2,14 +2,6 @@
     <div class="agent-map">
       <h2>自定义智能体</h2>
       <!-- 这里可以添加你需要的其他内容 -->
-
-
-
-
-
-
-
-      
     </div>
   </template>
   
@@ -17,15 +9,6 @@
   export default {
     name: 'AgentMap',
   };
-
-
-
-
-
-
-
-
-
   </script>
   
   <style scoped>
