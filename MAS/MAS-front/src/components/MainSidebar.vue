@@ -12,7 +12,7 @@
         index="agent-map"
         :class="{'active-menu-item': activeMenu === 'agent-map', 'menu-item': true}"
       >
-        <i class="el-icon-s-help"></i>
+        <!-- <i class="el-icon-s-help"></i> -->
         <span>自定义智能体</span>
       </el-menu-item>
     </el-menu>
