@@ -54,6 +54,6 @@ export default {
   flex: 1; /* 使主内容区域占满剩余空间 */
   display: flex; /* 使用弹性盒子布局 */
   flex-direction: column; /* 垂直方向排列 */
-  overflow: hidden; /* 隐藏超出区域的内容 */
+  /* overflow: hidden; 隐藏超出区域的内容 */
 }
 </style>
