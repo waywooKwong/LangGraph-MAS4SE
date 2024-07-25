@@ -179,6 +179,10 @@ export default {
   border-bottom: 1px solid #dcdfe6;
 }
 
+
+
+
+
 .footer {
   display: flex;
   padding: 10px;
