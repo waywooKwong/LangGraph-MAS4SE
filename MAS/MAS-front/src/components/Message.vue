@@ -1,7 +1,10 @@
 <template>
   <div :class="['message', sender]">
     <img :src="getAvatar(sender)" class="avatar" />
-    <span class="message-text">{{ text }}</span>
+
+    <div class="message-bubble">
+      {{ text }}
+    </div>
   </div>
 </template>
 
@@ -35,15 +38,15 @@ export default {
 
 .message.user {
   flex-direction: row-reverse;
-  background-color: #409eff;
-  color: white;
+  /* background-color: #409eff; */
+  /* color: white; */
   text-align: right;
 }
 
 .message.bot {
   flex-direction: row;
-  background-color: #f1f1f1;
-  color: black;
+  /* background-color: #f1f1f1; */
+  /* color: black; */
   text-align: left;
 }
 
@@ -52,10 +55,25 @@ export default {
   height: 30px;
   border-radius: 50%;
   margin: 0 10px;
+ 
 }
 
-.message-text {
-  max-width: 70%;
-  word-wrap: break-word;
+.message-bubble {
+  max-width: 60%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f1f1f1;
+}
+
+.message.user .message-bubble {
+  background-color: #006bde;
+  color: #fff4f4;
+  border-bottom-right-radius: 0;
+}
+
+.message.bot .message-bubble {
+  background-color: #e5e5ea;
+  color: #000;
+  border-bottom-left-radius: 0;
 }
 </style>
