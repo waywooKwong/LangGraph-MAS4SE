@@ -1,8 +1,14 @@
 <template>
-  
   <div class="chat-main">
+    <!-- 侧边栏 -->
+    <div class="side-bar">
+      <div class="toggle-bar">
+        <div @click="goToAgentMap()" class="icon go-to-agent" 
+        data-tooltip="Go to AgentMap">
+        </div>
+      </div>
+    </div>
     <!-- 聊天窗口 -->
-    <Sidebar />
     <div class="chat-window" ref="chatWindow">
       <!-- 遍历并渲染每条消息 -->
       <Message
@@ -63,14 +69,12 @@
 </template>
 
 <script>
-import Sidebar from '@/components/MainSidebar.vue'; // 导入侧边栏组件
 import Message from '@/components/Message.vue';
 import apiClient from '@/axios';
 
 export default {
   components: {
     Message,
-    Sidebar, // 注册侧边栏组件
   },
   data() {
     return {
@@ -162,11 +166,16 @@ export default {
         chatWindow.scrollTop = chatWindow.scrollHeight;
       });
     },
+    goToAgentMap() {
+      this.$router.push({ name: 'AgentMap' }); // 路由跳转到 AgentMap
+    },
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/assets/fonts/index";
+
 .chat-main {
   flex: 1;
   display: flex;
@@ -211,4 +220,70 @@ export default {
   border-radius: 3px;
   margin-bottom: 5px;
 }
+
+.side-bar {
+  height: 100%;
+  max-width: 250px;
+  z-index: 2;
+  background: none;
+  display: flex;
+
+  .toggle-bar {
+    height: 100%;
+    width: 50px;
+    background: #222222;
+    z-index: 2;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    padding: 13px;
+
+    .icon {
+      margin-bottom: 26px;
+      font-size: 24px;
+      color: #FFFFFF;
+      cursor: pointer;
+      position: relative;
+
+      &:before {
+        @include icon;
+      }
+
+      /* Tooltip styling */
+      &::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        top: 50%;
+        left: 100%;
+        transform: translateY(-50%) translateX(10px); /* 右侧显示并略微偏移 */
+        background: #333;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+        font-size: 12px; /* 缩小字体 */
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+        z-index: 10;
+      }
+
+      &:hover::after {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+    .go-to-agent {
+      &:before {
+        content: '\E8AF'; /* 请确保这个内容与您的字体图标设置相匹配 */
+      }
+    }
+
+    .disabled-icon {
+      opacity: 0.35;
+    }
+  }
+}
 </style>
+

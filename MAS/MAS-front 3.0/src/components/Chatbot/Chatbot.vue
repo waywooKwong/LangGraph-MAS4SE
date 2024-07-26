@@ -3,6 +3,11 @@
         <div ref="toolbar"></div>
         <div class="side-bar">
             <div class="toggle-bar">
+
+                <div @click="goToChatView()" class="icon go-to-chat"
+                     data-tooltip="Go to ChatView"
+                     data-tooltip-position-selector=".toggle-bar"></div>
+
                 <div @click="toggleStencil()" class="icon toggle-stencil"
                      :class="{'disabled-icon': !stencilOpened}"
                      data-tooltip="Toggle Element Palette"
@@ -10,10 +15,6 @@
                 <div @click="toggleJsonEditor()" class="icon toggle-editor"
                      :class="{'disabled-icon': !jsonEditorOpened}"
                      data-tooltip="Toggle JSON Editor"
-                     data-tooltip-position-selector=".toggle-bar"></div>
-
-                <div @click="goToChatView()" class="icon go-to-chat"
-                     data-tooltip="Go to ChatView"
                      data-tooltip-position-selector=".toggle-bar"></div>
 
             </div>
