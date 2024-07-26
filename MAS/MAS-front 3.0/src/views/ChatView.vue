@@ -1,5 +1,6 @@
 <template>
-  <div class="chat-main">
+  
+    <div class="chat-main">
     <!-- 侧边栏 -->
     <div class="side-bar">
       <div class="toggle-bar">
@@ -66,6 +67,8 @@
       >上传文件</el-button>
     </el-footer>
   </div>
+ 
+  
 </template>
 
 <script>
