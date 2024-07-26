@@ -1,70 +1,74 @@
 <template>
   <div class="chat-main">
     <!-- 侧边栏 -->
-    <div class="side-bar">
-      <div class="toggle-bar">
-        <div @click="goToAgentMap()" class="icon go-to-agent" 
-        data-tooltip="Go to AgentMap">
+    
+      <div class="side-bar">
+        <div class="toggle-bar">
+          <div @click="goToAgentMap()" class="icon go-to-agent" 
+          data-tooltip="Go to AgentMap">
+          </div>
         </div>
       </div>
+    <div class="main-content">
+      <!-- 聊天窗口 -->
+      <div class="chat-window" ref="chatWindow">
+        <!-- 遍历并渲染每条消息 -->
+        <Message
+          v-for="(message, index) in messages"
+          :key="index"
+          :text="message.text"
+          :sender="message.sender"
+        />
+      </div>
+    
+      <!-- 底部区域，包括输入框、上传按钮和发送按钮 -->
+      <el-footer class="footer">
+        <!-- 文件上传组件 -->
+        <el-upload
+          class="upload-demo"
+          ref="upload"
+          action=""
+          :file-list="fileList"
+          :show-file-list="false"
+          :before-upload="handleFileUpload"
+          :disabled="isSending"
+          multiple
+        >
+          <!-- 自定义上传按钮 -->
+          <template v-slot:trigger>
+            <el-button size="small" :disabled="isSending">
+              <i class="el-icon-plus"></i>
+            </el-button>
+          </template>
+        </el-upload>
+        <!-- 文件列表 -->
+        <ul class="file-list">
+          <li v-for="(file, index) in files" :key="index">
+            {{ file.name }}
+            <el-button type="text" @click="removeFile(index)">删除</el-button>
+          </li>
+        </ul>
+        <!-- 消息输入框 -->
+        <el-input
+          v-model="query"
+          placeholder="Type a message"
+          @keyup.enter="sendQuery"
+          :disabled="isSending"
+        ></el-input>
+        <!-- 发送按钮 -->
+        <el-button
+          type="primary"
+          @click="sendQuery"
+          :disabled="isSending"
+        >发送</el-button>
+        <!-- 上传文件按钮 -->
+        <el-button
+          type="success"
+          @click="uploadFiles"
+          :disabled="isSending || files.length === 0"
+        >上传文件</el-button>
+      </el-footer>
     </div>
-    <!-- 聊天窗口 -->
-    <div class="chat-window" ref="chatWindow">
-      <!-- 遍历并渲染每条消息 -->
-      <Message
-        v-for="(message, index) in messages"
-        :key="index"
-        :text="message.text"
-        :sender="message.sender"
-      />
-    </div>
-    <!-- 底部区域，包括输入框、上传按钮和发送按钮 -->
-    <el-footer class="footer">
-      <!-- 文件上传组件 -->
-      <el-upload
-        class="upload-demo"
-        ref="upload"
-        action=""
-        :file-list="fileList"
-        :show-file-list="false"
-        :before-upload="handleFileUpload"
-        :disabled="isSending"
-        multiple
-      >
-        <!-- 自定义上传按钮 -->
-        <template v-slot:trigger>
-          <el-button size="small" :disabled="isSending">
-            <i class="el-icon-plus"></i>
-          </el-button>
-        </template>
-      </el-upload>
-      <!-- 文件列表 -->
-      <ul class="file-list">
-        <li v-for="(file, index) in files" :key="index">
-          {{ file.name }}
-          <el-button type="text" @click="removeFile(index)">删除</el-button>
-        </li>
-      </ul>
-      <!-- 消息输入框 -->
-      <el-input
-        v-model="query"
-        placeholder="Type a message"
-        @keyup.enter="sendQuery"
-        :disabled="isSending"
-      ></el-input>
-      <!-- 发送按钮 -->
-      <el-button
-        type="primary"
-        @click="sendQuery"
-        :disabled="isSending"
-      >发送</el-button>
-      <!-- 上传文件按钮 -->
-      <el-button
-        type="success"
-        @click="uploadFiles"
-        :disabled="isSending || files.length === 0"
-      >上传文件</el-button>
-    </el-footer>
   </div>
 </template>
 
@@ -177,10 +181,16 @@ export default {
 @import "@/assets/fonts/index";
 
 .chat-main {
-  flex: 1;
+  
   display: flex;
-  flex-direction: column;
+  
   height: 100%;
+}
+.main-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  
 }
 
 .chat-window {
@@ -188,6 +198,7 @@ export default {
   overflow-y: auto;
   padding: 10px;
   border-bottom: 1px solid #dcdfe6;
+  
 }
 
 .footer {
