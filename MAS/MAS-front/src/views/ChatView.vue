@@ -25,9 +25,11 @@
       >
         <!-- 自定义上传按钮 -->
         <template v-slot:trigger>
-          <el-button size="small" :disabled="isSending">
-            <el-icon> <Plus /></el-icon>
-          </el-button>
+          <el-tooltip class="box-item" effect="dark" content="添加文件" placement="top">
+            <el-button size="small" :disabled="isSending">
+              <el-icon><DocumentAdd /></el-icon>
+            </el-button>
+          </el-tooltip>
         </template>
       </el-upload>
       <!-- 文件列表 -->
@@ -45,30 +47,24 @@
         :disabled="isSending"
       ></el-input>
       <!-- 发送按钮 -->
-      <el-button
-        type="primary"
-        @click="sendQuery"
-        :disabled="isSending"
-      >发送</el-button>
+      <el-button type="primary" @click="sendQuery" :disabled="isSending">发送</el-button>
       <!-- 上传文件按钮 -->
-      <el-button
-        type="success"
-        @click="uploadFiles"
-        :disabled="isSending || files.length === 0"
-      >上传文件</el-button>
+      <el-button type="success" @click="uploadFiles" :disabled="isSending || files.length === 0"
+        >上传文件</el-button
+      >
     </el-footer>
   </div>
 </template>
 
 <script>
-import { Plus } from '@element-plus/icons-vue';
-import Message from '@/components/Message.vue';
-import apiClient from '@/axios';
+import { DocumentAdd } from '@element-plus/icons-vue'
+import Message from '@/components/Message.vue'
+import apiClient from '@/axios'
 
 export default {
   components: {
-    Plus,
-    Message,
+    DocumentAdd,
+    Message
   },
   data() {
     return {
@@ -76,92 +72,92 @@ export default {
       response: '', // 服务器响应
       messages: [], // 消息列表
       isSending: false, // 是否正在发送消息或上传文件
-      files: [], // 待上传的文件列表
-    };
+      files: [] // 待上传的文件列表
+    }
   },
   methods: {
     // 处理文件上传，防止默认上传行为
     handleFileUpload(file) {
-      this.files.push(file);
-      return false; // 阻止默认上传行为
+      this.files.push(file)
+      return false // 阻止默认上传行为
     },
     // 删除指定索引的文件
     removeFile(index) {
-      this.files.splice(index, 1);
+      this.files.splice(index, 1)
     },
     // 发送用户输入的消息
     async sendQuery() {
-      if (this.query.trim() === '') return;
+      if (this.query.trim() === '') return
 
       // 添加用户消息到消息列表
-      this.messages.push({ text: this.query, sender: 'user' });
-      this.scrollToBottom();
+      this.messages.push({ text: this.query, sender: 'user' })
+      this.scrollToBottom()
 
-      this.isSending = true;
+      this.isSending = true
 
       try {
         // 发送请求到服务器
         const res = await apiClient.post('/ask', {
-          query: this.query,
-        });
+          query: this.query
+        })
         // 添加服务器响应到消息列表
-        this.messages.push({ text: res.data.response, sender: 'bot' });
+        this.messages.push({ text: res.data.response, sender: 'bot' })
       } catch (error) {
-        console.error(error);
-        this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
+        console.error(error)
+        this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' })
       } finally {
         // 清空输入框并重置发送状态
-        this.query = '';
-        this.isSending = false;
-        this.scrollToBottom();
+        this.query = ''
+        this.isSending = false
+        this.scrollToBottom()
       }
     },
     // 上传文件
     async uploadFiles() {
       if (this.files.length === 0) {
-        alert('请选择要上传的文件');
-        return;
+        alert('请选择要上传的文件')
+        return
       }
 
-      this.isSending = true;
+      this.isSending = true
 
-      const formData = new FormData();
+      const formData = new FormData()
       for (let i = 0; i < this.files.length; i++) {
-        formData.append('file', this.files[i]);
+        formData.append('file', this.files[i])
       }
 
       try {
         // 发送文件上传请求
         await apiClient.post('/upload', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+            'Content-Type': 'multipart/form-data'
+          }
+        })
         // 上传成功消息
-        this.messages.push({ text: '文件上传成功', sender: 'bot' });
-        this.files = [];
+        this.messages.push({ text: '文件上传成功', sender: 'bot' })
+        this.files = []
       } catch (error) {
-        console.error(error);
+        console.error(error)
         this.messages.push({
           text: `文件上传失败，请稍后再试。错误信息: ${
             error.response ? error.response.data : error.message
           }`,
-          sender: 'bot',
-        });
+          sender: 'bot'
+        })
       } finally {
-        this.isSending = false;
-        this.scrollToBottom();
+        this.isSending = false
+        this.scrollToBottom()
       }
     },
     // 滚动到聊天窗口底部
     scrollToBottom() {
       this.$nextTick(() => {
-        const chatWindow = this.$refs.chatWindow;
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-      });
-    },
-  },
-};
+        const chatWindow = this.$refs.chatWindow
+        chatWindow.scrollTop = chatWindow.scrollHeight
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -178,10 +174,6 @@ export default {
   padding: 10px;
   border-bottom: 1px solid #dcdfe6;
 }
-
-
-
-
 
 .footer {
   display: flex;
