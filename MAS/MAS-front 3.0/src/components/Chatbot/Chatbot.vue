@@ -5,7 +5,7 @@
             <div class="toggle-bar">
 
                 <div @click="goToChatView()" class="icon go-to-chat"
-                     data-tooltip="Go to ChatView"
+                     data-tooltip="返回对话界面"
                      data-tooltip-position-selector=".toggle-bar"></div>
 
                 <div @click="toggleStencil()" class="icon toggle-stencil"
@@ -17,6 +17,9 @@
                      data-tooltip="Toggle JSON Editor"
                      data-tooltip-position-selector=".toggle-bar"></div>
 
+                <div @click="sendJsonToServer()" class="icon commit-user-design"
+                     data-tooltip="提交设计结果"
+                     data-tooltip-position-selector=".toggle-bar"></div>
             </div>
             <div v-show="stencilOpened" ref="stencil" class="stencil-container"></div>
         </div>
@@ -32,6 +35,8 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Subscription } from 'rxjs';
+
+import apiClient from '@/axios'; // Import apiClient
 
 import JointPlusService from '../../services/joint-plus.service';
 import JsonEditor from './Json-editor/Json-editor.vue';
@@ -99,6 +104,14 @@ export default class Chatbot extends Vue {
     }
     public goToChatView() {
         this.$router.push({ name: 'ChatView' }); // 路由跳转到 ChatView
+    }
+    public async sendJsonToServer(): Promise<void> { //将json发送到服务器
+        try {
+            const response = await apiClient.post('/upload-agent', this.fileJSON);
+            console.log('JSON sent successfully:', response.data);
+        } catch (error) {
+            console.error('Error sending JSON:', error);
+        }
     }
 
     private onStart(): void {
@@ -213,6 +226,12 @@ export default class Chatbot extends Vue {
             .go-to-chat {
                 &:before {
                     content: '\E8AF'
+                }
+            }
+
+            .commit-user-design {
+                &:before {
+                    content: '\E92F'
                 }
             }
 
