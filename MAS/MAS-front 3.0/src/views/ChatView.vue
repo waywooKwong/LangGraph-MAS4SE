@@ -1,5 +1,6 @@
 <template>
-  <div class="chat-main">
+  
+    <div class="chat-main">
     <!-- 侧边栏 -->
     
       <div class="side-bar">
@@ -70,6 +71,8 @@
       </el-footer>
     </div>
   </div>
+ 
+  
 </template>
 
 <script>
