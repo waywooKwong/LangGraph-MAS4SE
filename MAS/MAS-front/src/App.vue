@@ -1,30 +1,51 @@
 <template>
   <div id="app">
-    <!-- 使用 Element UI 的容器布局组件 -->
-    <el-container style="height: 100vh;">
-      <!-- 侧边栏组件 -->
-      <Sidebar />
+    <el-container style="height: 100vh">
+      <!-- 头部区域，显示标题和侧边栏切换按钮 -->
+      <el-header class="header">
+        <el-button type="primary" class="toggle-button" @click="toggleDrawer"> open </el-button>
+        多智能体客服
+      </el-header>
       <el-container>
-        <!-- 头部区域，显示标题“多智能体客服” -->
-        <el-header class="header">多智能体客服</el-header>
         <!-- 主内容区域 -->
         <el-main class="main">
           <!-- 路由视图，用于显示路由对应的组件 -->
           <router-view />
         </el-main>
+        <!-- 侧边栏组件 -->
+        <el-drawer
+          :model-value="drawerVisible"
+          title="I am the title"
+          :with-header="false"
+          @update:model-value="drawerVisible = $event"
+        >
+          <span>Hi there!</span>
+
+          <Sidebar />
+        </el-drawer>
       </el-container>
     </el-container>
   </div>
 </template>
 
 <script>
-import Sidebar from '@/components/MainSidebar.vue'; // 导入侧边栏组件
+import Sidebar from '@/components/MainSidebar.vue' // 导入侧边栏组件
 
 export default {
   components: {
-    Sidebar, // 注册侧边栏组件
+    Sidebar // 注册侧边栏组件
   },
-};
+  data() {
+    return {
+      drawerVisible: false // 控制侧边栏显示的变量
+    }
+  },
+  methods: {
+    toggleDrawer() {
+      this.drawerVisible = !this.drawerVisible // 切换侧边栏显示状态
+    }
+  }
+}
 </script>
 
 <style>
@@ -39,14 +60,25 @@ export default {
 
 /* 头部区域的样式 */
 .header {
-  background-color: #1b6cbe; /* 背景颜色 */
+  background-color: #409eff; /* 背景颜色#409EFF */
   color: white; /* 字体颜色 */
-  text-align: center; /* 文本居中 */
-  padding: 15px; /* 内边距 */
+  display: flex; /* 使用弹性盒子布局 */
+  justify-content: center; /* 水平方向居中 */
+  align-items: center; /* 垂直方向居中 */
+  height: 60px; /* 设置固定高度 */
   font-size: 20px; /* 更改字体大小 */
   font-weight: 700; /* 更改字体粗细 */
   font-family: 'Arial', sans-serif; /* 更改字体族 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  position: relative; /* 使按钮可以绝对定位 */
+}
+
+/* 控制侧边栏显示的按钮样式 */
+.toggle-button {
+  position: absolute; /* 绝对定位 */
+  left: 20px; /* 左边距 */
+  top: 50%; /* 垂直居中 */
+  transform: translateY(-50%); /* 垂直居中 */
 }
 
 /* 主内容区域的样式 */
