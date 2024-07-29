@@ -4,13 +4,13 @@
 </template>
 
 <script>
-import Sidebar from '@/components/MainSidebar.vue'; // 导入侧边栏组件
+// import Sidebar from '@/components/MainSidebar.vue'; // 导入侧边栏组件
 
-export default {
-  components: {
-    Sidebar, // 注册侧边栏组件
-  },
-};
+// export default {
+//   components: {
+//     Sidebar, // 注册侧边栏组件
+//   },
+// };
 </script>
 
 <style>

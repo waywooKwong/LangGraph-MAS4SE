@@ -1,0 +1,7 @@
+我现在需要你提取出src\components\Chatbot\Chatbot.vue中的<div class="side-bar">部分，并在src\views\ChatView.vue中实现相同样式的侧边栏，按钮只保留class="icon go-to-chat"这个按钮，请给出ChatView.vue的代码
+
+以下是一个vue项目中的src\components\Chatbot\Json-editor\Json-editor.vue，我想在src\components\Chatbot\Chatbot.vue中创建一个按钮，点击后通过axios将内容传到后端，内容为Json-editor.vue中的<div class="json-editor-container">
+        <textarea :placeholder="placeholder" spellcheck="false" :value="content | json"
+                  @input="parseJSON($event.target.value)"></textarea>
+    </div>里显示的json字符串，该如何做？ 下面是Json-editor.vue：
+

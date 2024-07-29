@@ -18,8 +18,12 @@
                      data-tooltip-position-selector=".toggle-bar"></div>
 
                 <div @click="sendJsonToServer()" class="icon commit-user-design"
+                    :disabled="isUploading"
                      data-tooltip="提交设计结果"
                      data-tooltip-position-selector=".toggle-bar"></div>
+
+                
+                
             </div>
             <div v-show="stencilOpened" ref="stencil" class="stencil-container"></div>
         </div>
@@ -35,6 +39,8 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Subscription } from 'rxjs';
+import { MessageBox } from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 import apiClient from '@/axios'; // Import apiClient
 
@@ -59,6 +65,7 @@ export default class Chatbot extends Vue {
     public stencilOpened = true;
     public jsonEditorOpened = true;
     public fileJSON = {};
+    public isUploading = false; // 添加上传状态
 
     private subscriptions = new Subscription();
 
@@ -105,14 +112,62 @@ export default class Chatbot extends Vue {
     public goToChatView() {
         this.$router.push({ name: 'ChatView' }); // 路由跳转到 ChatView
     }
-    public async sendJsonToServer(): Promise<void> { //将json发送到服务器
+    // public async sendJsonToServer(): Promise<void> { //将json发送到服务器
+    //     try {
+    //         const response = await apiClient.post('/upload-agent', this.fileJSON);
+    //         console.log('JSON sent successfully:', response.data);
+    //     } catch (error) {
+    //         console.error('Error sending JSON:', error);
+    //     }
+    // }
+    public async sendJsonToServer(): Promise<void> {
+        if (this.isUploading) return; // 如果正在上传则返回
+        
+        this.isUploading = true; // 开始上传时设置为 true
+
         try {
-            const response = await apiClient.post('/upload-agent', this.fileJSON);
-            console.log('JSON sent successfully:', response.data);
+            // Convert JSON to a Blob
+            const jsonBlob = new Blob([JSON.stringify(this.fileJSON)], { type: 'application/json' });
+            // Create FormData and append the Blob
+            const formData = new FormData();
+            formData.append('file', jsonBlob, 'agent-jsonfile.json');
+
+            // Send the FormData using axios with a timeout of 10 seconds
+            const response = await apiClient.post('/upload-agent', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                timeout: 10000 // 设置超时时间为10秒
+            });
+            this.openSuccess();
+            console.log('JSON file sent successfully:', response.data);
         } catch (error) {
-            console.error('Error sending JSON:', error);
+            if (error.code === 'ECONNABORTED') {
+                this.openTimeout();
+            } else {
+                this.openFail();
+            }
+            console.error('Error sending JSON file:', error);
+        }
+        finally {
+            this.isUploading = false; // 上传完成后设置为 false
         }
     }
+   
+    
+    private openSuccess() {
+        this.$message({
+          message: '智能体结构上传成功',
+          type: 'success'
+        });
+    }
+    private openFail() {
+        this.$message.error('智能体结构上传失败');
+    }
+    private openTimeout() {
+        this.$message.error('智能体结构上传超时');
+    }
+    
 
     private onStart(): void {
         const { joint } = this;
@@ -209,6 +264,14 @@ export default class Chatbot extends Vue {
                 &:before {
                     @include icon;
                 }
+                &.disabled-icon {
+                    opacity: 0.35;
+                    cursor: not-allowed; /* 添加禁止图标 */
+                }
+
+                &[disabled] {
+                    cursor: not-allowed; /* 添加禁止图标 */
+                }
             }
 
             .toggle-stencil {
@@ -234,6 +297,9 @@ export default class Chatbot extends Vue {
                     content: '\E92F'
                 }
             }
+            
+            
+
 
             .disabled-icon {
                 opacity: 0.35;
