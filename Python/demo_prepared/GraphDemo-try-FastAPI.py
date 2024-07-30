@@ -235,12 +235,16 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
         keys = list(round.keys())
         first_key = keys[0]
         round_data = round[first_key]
+        round_data_message = round_data["messages"]
+        recent_message = round_data_message[-1]
+        recent_content = recent_message.content
+        print("content to front end:", recent_message.content)
         serialized_round = {
-        "sender": round_data['sender'],
-        "progress": round_data['progress']
+            "sender": round_data["sender"],
+            "progress": round_data["progress"],
+            "message": recent_content,
         }
-        print('serialized_round:',serialized_round)
-        await websocket.send_text(json.dumps(serialized_round))
+        print("serialized_round:", json.dumps(serialized_round))
         print("----")
 
 # WebSocket endpoint for running the workflow
@@ -269,25 +273,4 @@ async def websocket_endpoint(websocket: WebSocket):
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=8000)
-# graph = workflow.compile()
-# timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-# file_path = f"src/workflow_graph/workflow_graph_{timestamp}.png"
-# save_graph_image(graph, file_path)
-
-# # # 代码运行部分
-# events = graph.stream(
-#     {
-#         "sender": "__start__",
-#         "progress": "initial",
-#         "messages": [initial_question],
-#         "next": "need to check",
-#     },
-#     {"recursion_limit": 10},
-# )
-
-# for round in events:
-#     print("----")
-#     print(round)
-#     print("----")
