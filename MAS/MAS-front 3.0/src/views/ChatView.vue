@@ -1,4 +1,3 @@
-<!-- 智能客服聊天页面 v- 1.0-->
 <template>
   <div class="chat-main">
     <!-- 侧边栏 -->
@@ -13,6 +12,12 @@
       <!-- 聊天窗口头部 -->
       <div class="chat-header">
         <h2>智能对话客服</h2>
+        <!-- 打开抽屉按钮 -->
+        <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
+          <el-button :disabled="isSending" class="drawer-button" type="text" @click="toggleDrawer">
+            历史记录
+          </el-button>
+        </el-tooltip>
         <!-- "关于"按钮，点击后跳转到GitHub -->
         <el-tooltip effect="dark" content="跳转到 GitHub 页面" placement="bottom">
           <el-button :disabled="isSending" class="about-button" type="text" @click="goToGithub">
@@ -22,36 +27,11 @@
       </div>
 
       <div class="main-window">
-        <!-- 历史记录窗口 -->
-        <div class="history-contain">
-          <div class="history-header">
-            <h3>历史记录</h3>
-            <!-- 新建聊天按钮 -->
-            <button class="new-chat-button" @click="createNewChat">New Chat</button>
-            <!-- 手动保存历史记录按钮 -->
-            <button class="save-history-button" @click="saveHistory">Save Chat to History</button>
-          </div>
-          <!-- 历史聊天记录 -->
-          <div class="chat-history">
-            <h3>Chat History</h3>
-            <div v-for="(history, index) in chatHistory" :key="index" class="chat-history-message"
-              @click="continueChat(history)">
-              <span>{{ history.summary }}</span>
-            </div>
-          </div>
-
-        </div>
-
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息 -->
           <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" />
-
         </div>
-
-        <!-- 底部区域，包括输入框、上传按钮和发送按钮 -->
-
-
       </div>
 
       <el-footer class="footer">
@@ -83,6 +63,31 @@
         <el-button type="success" @click="uploadFiles" :disabled="isSending || files.length === 0">上传文件</el-button>
       </el-footer>
     </div>
+
+    <!-- 抽屉组件 -->
+    <el-drawer
+      title="历史记录"
+      :visible.sync="drawerVisible"
+      direction="ltr"
+      size="20%">
+      <div class="history-contain">
+        <div class="history-header">
+          <!-- 新建聊天按钮 -->
+          <button class="new-chat-button" @click="createNewChat">新建对话</button>
+          <!-- 手动保存历史记录按钮 -->
+          <button :disabled="messages.length === 0" class="save-history-button" @click="saveHistory">保存对话</button>
+          <!-- 清除历史记录按钮 -->
+          <button class="clear-history-button" @click="clearHistory">清除记录</button>
+        </div>
+        <!-- 历史聊天记录 -->
+        <div class="chat-history">
+          <div v-for="(history, index) in chatHistory" :key="index" class="chat-history-message"
+            @click="continueChat(history)">
+            <span>{{ history.summary }}</span>
+          </div>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -101,14 +106,18 @@ export default {
       messages: [], // 消息列表
       isSending: false, // 是否正在发送消息或上传文件
       files: [], // 待上传的文件列表
-      chatHistory: []      // 聊天历史记录
+      chatHistory: [], // 聊天历史记录
+      drawerVisible: false // 抽屉是否可见
     };
   },
   mounted() {
-    this.loadMessages();  // 加载当前聊天记录
-    this.loadHistory();   // 加载聊天历史记录
+    this.loadMessages(); // 加载当前聊天记录
+    this.loadHistory(); // 加载聊天历史记录
   },
   methods: {
+    toggleDrawer() {
+      this.drawerVisible = !this.drawerVisible;
+    },
     // 处理文件上传，防止默认上传行为
     handleFileUpload(file) {
       this.files.push(file);
@@ -206,6 +215,11 @@ export default {
         this.chatHistory = JSON.parse(savedHistory);
       }
     },
+    clearHistory() {
+      // 清除聊天历史记录
+      this.chatHistory = [];
+      localStorage.removeItem('chatHistory');
+    },
     createNewChat() {
       // 清空当前聊天记录
       this.messages = [];
@@ -280,39 +294,44 @@ export default {
     text-align: center;
   }
 
+  .drawer-button {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto; /* 自动宽度适应文字 */
+    height: 30px; /* 自动高度适应文字 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white; /* 修改背景颜色为白色 */
+    padding: 0;
+  }
+
   .about-button {
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    // border-radius: 20%;
-    width: 10px; /* 设置按钮宽度 */
-    height: 40px; /* 设置按钮高度 */
+    width: auto; /* 自动宽度适应文字 */
+    height: 30px; /* 自动高度适应文字 */
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color:#006bde;
-    
+    background-color: white; /* 修改背景颜色为白色 */
     padding: 0;
   }
 }
 
-.main-window{
+.main-window {
   display: flex;
-  height: 100%;
-}
-
-.history-contain{
-  background-color: #bdbdbd;
-  width: 20%;
-  h3{
-    text-align: center;
-  }
+  flex: 1;
+  overflow: hidden; /* 避免整个窗口的滚动条 */
 }
 
 .chat-window {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto; /* 仅对话信息框可以滚动 */
   padding: 10px;
   border-bottom: 1px solid #dcdfe6;
 }
@@ -321,6 +340,7 @@ export default {
   display: flex;
   padding: 10px;
   background-color: #fff;
+  align-items: center; /* 底部水平对齐 */
 }
 
 .footer .el-input {
@@ -336,7 +356,6 @@ export default {
   list-style: none;
   padding: 0;
   margin: 0 10px 10px 0;
-  
 }
 
 .file-list li {
@@ -411,6 +430,53 @@ export default {
     .disabled-icon {
       opacity: 0.35;
     }
+  }
+}
+
+.history-contain {
+  padding: 10px; /* 增加内边距 */
+  h3 {
+    text-align: center;
+    margin-bottom: 10px; /* 增加下边距 */
+    color: #333;
+  }
+
+  .history-header {
+    display: flex;
+    flex-direction: column; /* 垂直排列按钮 */
+    align-items: center; /* 居中对齐 */
+    margin-bottom: 10px; /* 增加下边距 */
+
+    button {
+      margin: 5px 0; /* 增加上下间距 */
+      padding: 5px 10px; /* 增加内边距 */
+      width: 100%; /* 按钮宽度为100% */
+      box-sizing: border-box; /* 包括内边距和边框在内的宽度和高度 */
+    }
+  }
+
+  .chat-history {
+    display: flex;
+    flex-direction: column; /* 垂直排列历史记录 */
+    gap: 5px; /* 增加历史记录之间的间距 */
+  }
+
+  .chat-history-message {
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px; /* 圆角边框 */
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+.el-drawer__wrapper {
+  .el-drawer__container {
+    margin-left: 50px; /* 从侧边栏展开 */
   }
 }
 </style>
