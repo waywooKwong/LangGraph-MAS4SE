@@ -45,19 +45,6 @@ app.add_middleware(
 class QueryRequest(BaseModel):
     query: str
 
-
-# WebSocket endpoint
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        while True:
-            data = await websocket.receive_text()
-            await websocket.send_text(f"Message text was: {data}")
-    except WebSocketDisconnect:
-        print("Client disconnected")
-
-
 # 初始化角色
 # role1 = "项目经理"
 # role2 = "开发工程师1"
@@ -245,10 +232,16 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
     )
     for round in events:
         print("----")
-        print(round)
+        keys = list(round.keys())
+        first_key = keys[0]
+        round_data = round[first_key]
+        serialized_round = {
+        "sender": round_data['sender'],
+        "progress": round_data['progress']
+        }
+        print('serialized_round:',serialized_round)
+        await websocket.send_text(json.dumps(serialized_round))
         print("----")
-        await websocket.send_text(json.dumps(round))
-
 
 # WebSocket endpoint for running the workflow
 @app.websocket("/ws/run_workflow")
@@ -261,6 +254,17 @@ async def websocket_run_workflow(websocket: WebSocket):
     except Exception as e:
         print(f"Error: {e}")
         await websocket.send_text(json.dumps({"error": str(e)}))
+
+# WebSocket endpoint
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"Message text was: {data}")
+    except WebSocketDisconnect:
+        print("Client disconnected")
 
 
 if __name__ == "__main__":
