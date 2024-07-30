@@ -61,8 +61,7 @@
         <el-button type="primary" @click="sendQuery" :disabled="isSending">发送</el-button>
         <!-- 上传文件按钮 -->
         <el-button type="success" @click="uploadFiles" :disabled="isSending || files.length === 0">上传文件</el-button>
-        <el-button type="test" @click="MASquery" :disabled="isSending">MAS 发送</el-button>
-        <el-button type="primary" @click="wstest" :disabled="isSending">发送 WebSocket 消息</el-button>
+        <el-button type="primary" @click="wstest" :disabled="isSending">MAS-WebSocket</el-button>
 
       </el-footer>
     </div>
@@ -195,30 +194,6 @@ export default {
         });
         this.messages.push({ text: res.data.response, sender: 'bot' });
         // ????可能是在这里接收
-      } catch (error) {
-        console.error(error);
-        this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
-      } finally {
-        this.saveMessages();
-        this.query = '';
-        this.isSending = false;
-        this.scrollToBottom();
-      }
-    },
-    async MASquery() {
-      if (this.query.trim() === '') return;
-
-      this.messages.push({ text: this.query, sender: 'user' });
-      this.scrollToBottom();
-
-      this.isSending = true;
-
-      try {
-        // 通过 WebSocket 发送消息到服务器
-        this.client.send(JSON.stringify({
-          type: 'query',
-          content: this.query,
-        }));
       } catch (error) {
         console.error(error);
         this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
