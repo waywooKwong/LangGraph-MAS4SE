@@ -1,0 +1,89 @@
+{
+    "数据库表数量": "7",
+    "数据表名称": [
+        "User",
+        "Account",
+        "Transaction",
+        "Loan",
+        "Investment",
+        "CreditCard",
+        "RiskControl"
+    ],
+    "数据库表属性": {
+        "User": {
+            "UserID": "Unique identifier for the user",
+            "Username": "User's chosen name for login",
+            "Password": "Hashed password for user security",
+            "AccountNumber": "Unique account number for the user",
+            "Role": "Indicates if the user is a regular user or an admin",
+            "CreateTime": "Timestamp when the user account was created"
+        },
+        "Account": {
+            "AccountID": "Unique identifier for the account",
+            "UserID": "Reference to the user who owns the account",
+            "AccountType": "Type of account",
+            "Balance": "Current balance in the account",
+            "Status": "Status of the account"
+        },
+        "Transaction": {
+            "TransactionID": "Unique identifier for the transaction",
+            "AccountID": "Account involved in the transaction",
+            "Amount": "The amount of money involved in the transaction",
+            "TransactionType": "Type of transaction",
+            "Timestamp": "Time when the transaction occurred"
+        },
+        "Loan": {
+            "LoanID": "Unique identifier for the loan",
+            "UserID": "User who has applied for the loan",
+            "LoanType": "Type of loan",
+            "Amount": "Loan amount",
+            "Status": "Current status of the loan"
+        },
+        "Investment": {
+            "InvestmentID": "Unique identifier for the investment",
+            "UserID": "User who made the investment",
+            "ProductName": "Name of the investment product",
+            "AmountInvested": "Amount of money invested",
+            "Status": "Status of the investment"
+        },
+        "CreditCard": {
+            "CreditCardID": "Unique identifier for the credit card",
+            "UserID": "User who owns the credit card",
+            "CreditLimit": "Maximum credit limit",
+            "Balance": "Current balance on the card"
+        },
+        "RiskControl": {
+            "RiskControlID": "Unique identifier for the risk control entry",
+            "TransactionID": "Transaction that triggered the risk control",
+            "Description": "Description of the risk detected",
+            "ActionTaken": "Action taken by the system to control the risk"
+        }
+    },
+    "数据库表关联": {
+        "User": {
+            "Account": "User has one or more Accounts",
+            "Loan": "User can have one or more Loans",
+            "Investment": "User can make Investments",
+            "CreditCard": "User can own one or more Credit Cards",
+            "RiskControl": "User transactions can trigger Risk Controls"
+        },
+        "Account": {
+            "Transaction": "Account will have Transactions",
+            "Loan": "Account may be linked to a Loan",
+            "Investment": "Account may be used for Investments",
+            "CreditCard": "Account may be associated with a Credit Card"
+        },
+        "Transaction": {
+            "RiskControl": "Transaction can trigger Risk Control"
+        },
+        "Loan": {
+            "RiskControl": "Loan may trigger Risk Control"
+        },
+        "Investment": {
+            "RiskControl": "Investment may trigger Risk Control"
+        },
+        "CreditCard": {
+            "RiskControl": "Credit Card usage can trigger Risk Control"
+        }
+    }
+}

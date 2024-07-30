@@ -1,0 +1,145 @@
+{
+    "界面数量": "5 regions",
+    "界面设计": {
+        "North Region": {
+            "Content": "Logo, Navigation Menu, User Avatar/Profile, Notifications",
+            "Style": "Clean and professional with bank's color theme, non-intrusive font size, clear call to action for login"
+        },
+        "South Region": {
+            "Content": "Copyright information, contact details, links to terms of service or help",
+            "Style": "Consistent with North region, smaller font size for legal disclaimers"
+        },
+        "East Region": {
+            "Content": "Quick access to Account Balance, Recent Transactions, and links to services",
+            "Style": "Vertical menu with icons and concise text, interactive elements with hover effects"
+        },
+        "West Region": {
+            "Content": "Filters for transaction searches, search bar, additional information panels",
+            "Style": "Subtle, light background to distinguish from Center, without drawing too much attention"
+        },
+        "Center Region": {
+            "Content": "Dynamic content such as user management forms, account statements, etc.",
+            "Style": "White background, clear and concise forms, data tables, use case-specific styling"
+        }
+    },
+    "界面跳转关联": "Not explicitly defined in the text, but can be assumed that each region will have links or actions that navigate to related functionalities or information within the system."
+}{
+    "界面数量": {
+        "主要界面": "1",
+        "二级界面": "6"
+    },
+    "界面设计": {
+        "主要界面": {
+            "北面": "系统logo，主要导航链接",
+            "南面": "状态栏和操作按钮",
+            "东面": "快捷导航链接",
+            "西面": "额外的信息或广告",
+            "中间": "动态区域，显示不同内容"
+        },
+        "二级界面": {
+            "账户开设": {
+                "中间": "个人信息和账户信息表单",
+                "南面": "提交按钮"
+            },
+            "存款": {
+                "中间": "账户选择，输入存款金额表单",
+                "南面": "确认存款按钮"
+            },
+            "取款": {
+                "中间": "账户选择，输入取款金额表单",
+                "南面": "确认取款按钮"
+            },
+            "转账": {
+                "中间": "填写转账信息表单",
+                "南面": "确认转账按钮"
+            },
+            "贷款申请": {
+                "中间": "填写贷款信息表单",
+                "南面": "提交贷款申请按钮"
+            },
+            "账户查询": {
+                "中间": "账户余额和交易历史列表",
+                "南面": "打印或导出交易记录按钮（可选）"
+            }
+        }
+    },
+    "界面跳转关联": {
+        "主要界面": "通过顶部导航链接跳转到二级界面",
+        "二级界面": "通过操作按钮或链接返回主要界面或其他二级界面"
+    }
+}{
+    "界面数量": "10",
+    "界面设计": {
+        "Main Dashboard": {
+            "North": "Logo and main navigation bar",
+            "South": "Status bar and footer information",
+            "East": "Quick access links or account overview",
+            "West": "Vertical menu with links to each service",
+            "Center": "Summary of accounts, recent transactions, and alerts"
+        },
+        "User Account Creation Interface": {
+            "North": "Title of the page and a navigation back button",
+            "South": "Not specified",
+            "East": "Terms and conditions and a submit button",
+            "West": "Form fields for personal information",
+            "Center": "Fields for account details and security questions"
+        },
+        "Deposit and Withdrawal Interface": {
+            "North": "Account selection dropdown and transaction type",
+            "South": "Not specified",
+            "East": "Transaction history for the selected account",
+            "West": "Fields for amount, account details, and a note section",
+            "Center": "Summary of the transaction and a confirmation button"
+        },
+        "Fund Transfer Interface": {
+            "North": "Title and a link back to account management",
+            "South": "Not specified",
+            "East": "Recent transfers list",
+            "West": "From and To account dropdowns and a transfer amount field",
+            "Center": "Confirmation of the transfer details and a submit button"
+        },
+        "Loan Application Interface": {
+            "North": "Title and a progress bar for the application steps",
+            "South": "Not specified",
+            "East": "Buttons for next step or submit",
+            "West": "Form fields for loan details and personal information",
+            "Center": "Eligibility criteria and terms of the loan"
+        },
+        "Credit Card Service Interface": {
+            "North": "Title and card type selection",
+            "South": "Not specified",
+            "East": "Application status and a button to submit the application",
+            "West": "Form for application details",
+            "Center": "Card benefits and terms"
+        },
+        "Account Inquiry Interface": {
+            "North": "Title and a search bar to filter transactions",
+            "South": "Not specified",
+            "East": "Downloadable statements and a print button",
+            "West": "Account selection and date range pickers",
+            "Center": "Transaction history and account balance"
+        },
+        "Report Generation Interface": {
+            "North": "Report type selector and date range filter",
+            "South": "Not specified",
+            "East": "List of available reports and an export button",
+            "West": "Report parameters and filters",
+            "Center": "Preview of the report and a generate button"
+        },
+        "Risk Management Interface": {
+            "North": "Title and risk alert summary",
+            "South": "Not specified",
+            "East": "Logs and a button to acknowledge risks",
+            "West": "Risk analysis tools and settings",
+            "Center": "Real-time risk monitoring dashboard"
+        },
+        "System Management Interface": {
+            "North": "Title and a system status summary",
+            "South": "Not specified",
+            "East": "Maintenance tools and a button to apply updates",
+            "West": "User management and permission settings",
+            "Center": "System logs and update notifications"
+        }
+    },
+    "界面跳转关联": "Not specified in the provided text"
+}
