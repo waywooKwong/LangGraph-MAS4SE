@@ -33,12 +33,11 @@ from langchain_community.agent_toolkits.load_tools import load_tools
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-from ModelChoose import Model
+from demo_prepared.ModelChoise.modelchoise import get_zhipuai_chat_model
 from 提示词模板生成器01 import PromptGenerator
 from langchain_core.prompts import PromptTemplate
 from typing import Dict, Any
 
-Model.os_setenv()
 # 禁用并行处理
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -70,13 +69,13 @@ class BuildChainAgent:
             "USER_AGENT"] = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                              "Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
         # os.environ["TOKENIZERS_PARALLELISM"]=True
-        self.base_dir = "D:\WorkSpace\Pycharm\Langchain_homework\mydocuments"
+        self.base_dir = "D:\\WorkSpace\\Pycharm\\Langchain_Final\\Python\\demo_prepared\\src\\mydocuments"
         self.embedding_dir = "D:\WorkSpace\Pycharm\pythonProject\m3e-base"
 
         self.role = role
         self.duty = duty
         self.object = ""
-        self.chat_model = Model.get_zhupuai_model()
+        self.chat_model = chat_model = get_zhipuai_chat_model()
         self.docs = self.load_documents()
         self.embeddings = self.load_embeddings()
         self.vector_retriever = self.create_vector_retriever()
