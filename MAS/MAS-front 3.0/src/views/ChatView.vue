@@ -61,6 +61,9 @@
         <el-button type="primary" @click="sendQuery" :disabled="isSending">发送</el-button>
         <!-- 上传文件按钮 -->
         <el-button type="success" @click="uploadFiles" :disabled="isSending || files.length === 0">上传文件</el-button>
+        <el-button type="test" @click="MASquery" :disabled="isSending">MAS 发送</el-button>
+        <el-button type="primary" @click="wstest" :disabled="isSending">发送 WebSocket 消息</el-button>
+
       </el-footer>
     </div>
 
@@ -94,6 +97,7 @@
 <script>
 import Message from '@/components/Message.vue';
 import apiClient from '@/axios';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 export default {
   components: {
@@ -102,60 +106,129 @@ export default {
   data() {
     return {
       query: '', // 用户输入的消息
-      response: '', // 服务器响应
       messages: [], // 消息列表
       isSending: false, // 是否正在发送消息或上传文件
       files: [], // 待上传的文件列表
       chatHistory: [], // 聊天历史记录
-      drawerVisible: false // 抽屉是否可见
+      drawerVisible: false, // 抽屉是否可见
+      client: null // WebSocket 客户端实例
     };
   },
   mounted() {
     this.loadMessages(); // 加载当前聊天记录
     this.loadHistory(); // 加载聊天历史记录
+    this.initWebSocket(); // 初始化 WebSocket 连接
   },
   methods: {
+    initWebSocket() {
+    this.client = new WebSocket('ws://localhost:8000/ws/run_workflow');
+    
+    this.client.onopen = () => {
+      console.log('WebSocket Client Connected');
+    };
+
+    this.client.onmessage = (message) => {
+      this.messages.push({ text: message.data, sender: 'bot' });
+      this.saveMessages();
+      this.scrollToBottom();
+    };
+
+    this.client.onclose = () => {
+      console.log('WebSocket Client Closed');
+    };
+
+    this.client.onerror = (error) => {
+      console.error('WebSocket Client Error', error);
+    };
+  },
+
+  wstest() {
+    if (this.query.trim() === '') return;
+
+    // 添加用户消息到消息列表
+    this.messages.push({ text: this.query, sender: 'user' });
+    this.scrollToBottom();
+
+    this.isSending = true;
+
+    try {
+      // 通过 WebSocket 发送消息到服务器
+      this.client.send(this.query);
+    } catch (error) {
+      console.error(error);
+      this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
+    } finally {
+      // 清空输入框并重置发送状态
+      this.saveMessages();
+      this.query = '';
+      this.isSending = false;
+      this.scrollToBottom();
+    }
+  },
+    handleIncomingMessage(message) {
+      // 将接收到的消息添加到消息列表中
+      this.messages.push({ text: message, sender: 'backend' });
+      this.saveMessages();
+      this.scrollToBottom();
+    },
     toggleDrawer() {
       this.drawerVisible = !this.drawerVisible;
     },
-    // 处理文件上传，防止默认上传行为
     handleFileUpload(file) {
       this.files.push(file);
       return false; // 阻止默认上传行为
     },
-    // 删除指定索引的文件
     removeFile(index) {
       this.files.splice(index, 1);
     },
-    // 发送用户输入的消息
     async sendQuery() {
       if (this.query.trim() === '') return;
 
-      // 添加用户消息到消息列表
       this.messages.push({ text: this.query, sender: 'user' });
       this.scrollToBottom();
 
       this.isSending = true;
 
       try {
-        // 发送请求到服务器
         const res = await apiClient.post('/ask', {
           query: this.query,
         });
-        // 添加服务器响应到消息列表
         this.messages.push({ text: res.data.response, sender: 'bot' });
+        // ????可能是在这里接收
       } catch (error) {
         console.error(error);
         this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
       } finally {
-        // 清空输入框并重置发送状态
         this.saveMessages();
         this.query = '';
         this.isSending = false;
         this.scrollToBottom();
       }
     },
-    // 上传文件
+    async MASquery() {
+      if (this.query.trim() === '') return;
+
+      this.messages.push({ text: this.query, sender: 'user' });
+      this.scrollToBottom();
+
+      this.isSending = true;
+
+      try {
+        // 通过 WebSocket 发送消息到服务器
+        this.client.send(JSON.stringify({
+          type: 'query',
+          content: this.query,
+        }));
+      } catch (error) {
+        console.error(error);
+        this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
+      } finally {
+        this.saveMessages();
+        this.query = '';
+        this.isSending = false;
+        this.scrollToBottom();
+      }
+    },
     async uploadFiles() {
       if (this.files.length === 0) {
         alert('请选择要上传的文件');
@@ -170,92 +243,64 @@ export default {
       }
 
       try {
-        // 发送文件上传请求
         await apiClient.post('/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-        // 上传成功消息
         this.messages.push({ text: '文件上传成功', sender: 'bot' });
         this.files = [];
       } catch (error) {
-        console.error(error)
+        console.error(error);
         this.messages.push({
-          text: `文件上传失败，请稍后再试。错误信息: ${error.response ? error.response.data : error.message
-            }`,
+          text: `文件上传失败，请稍后再试。错误信息: ${error.response ? error.response.data : error.message}`,
           sender: 'bot'
-        })
+        });
       } finally {
-        this.isSending = false
-        this.scrollToBottom()
+        this.isSending = false;
+        this.scrollToBottom();
       }
     },
-    // 保存当前聊天记录到 localStorage
     saveMessages() {
-      // 保存当前聊天记录到 localStorage
       localStorage.setItem('chatMessages', JSON.stringify(this.messages));
     },
     loadMessages() {
-      // 从 localStorage 加载当前聊天记录
       const savedMessages = localStorage.getItem('chatMessages');
       if (savedMessages) {
         this.messages = JSON.parse(savedMessages);
       }
     },
     saveHistory() {
-      // 保存当前聊天记录到聊天历史记录中，并存储到 localStorage
       this.chatHistory.push({ summary: this.messages.map(msg => msg.text).join(' | '), messages: this.messages });
       localStorage.setItem('chatHistory', JSON.stringify(this.chatHistory));
     },
     loadHistory() {
-      // 从 localStorage 加载聊天历史记录
       const savedHistory = localStorage.getItem('chatHistory');
       if (savedHistory) {
         this.chatHistory = JSON.parse(savedHistory);
       }
     },
     clearHistory() {
-      // 清除聊天历史记录
       this.chatHistory = [];
       localStorage.removeItem('chatHistory');
     },
     createNewChat() {
-      // 清空当前聊天记录
       this.messages = [];
       this.saveMessages();
     },
     continueChat(history) {
-      // 点击历史记录条目时，将其加载为当前聊天记录
       this.messages = history.messages;
       this.saveMessages();
     },
-    handleFileUpload(event) {
-      // 处理文件上传
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const content = e.target.result;
-          this.messages.push({ sender: 'user', text: content });
-          this.saveMessages();
-        };
-        reader.readAsText(file);
-      }
-    },
-
-    // 滚动到聊天窗口底部
     scrollToBottom() {
       this.$nextTick(() => {
         const chatWindow = this.$refs.chatWindow;
         chatWindow.scrollTop = chatWindow.scrollHeight;
       });
     },
-    // 路由跳转到 AgentMap
     goToAgentMap() {
       this.$router.push({ name: 'AgentMap' });
     },
-    // 跳转到 GitHub 页面
     goToGithub() {
       window.open('https://github.com/waywooKwong/CSI-LangChain-LLM-Chatbot', '_blank');
     }
