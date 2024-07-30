@@ -8,18 +8,38 @@ from langgraph.graph import END, StateGraph, START
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain_core.prompts import PromptTemplate
-from ModelChoose import Model
+from starlette.websockets import WebSocketDisconnect, WebSocket
+
+from demo_prepared.ModelChoise.modelchoise import get_zhipuai_chat_model
+
 from 用户定制001 import BuildChainAgent
+from diffusers import StableDiffusionPipeline
+import torch
+from fastapi import FastAPI, HTTPException, File, UploadFile, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Qdrant
+from langchain.retrievers.multi_query import MultiQueryRetriever
+from langchain.chains.retrieval_qa.base import RetrievalQA
+from demo_prepared.ModelChoise.modelchoise import get_zhipuai_chat_model
+
+from typing import List
+from fastapi.responses import StreamingResponse
+from io import BytesIO
+import os
+from fastapi.responses import StreamingResponse, JSONResponse
 
 # 设置模型和环境变量
-Model.os_setenv()
-chat_model = Model.get_zhupuai_model()
+
+chat_model = get_zhipuai_chat_model()
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "wangpu_test"
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGCHAIN_API_KEY"] = "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"
-
 
 # 初始化角色
 # role1 = "项目经理"
@@ -31,6 +51,22 @@ os.environ["LANGCHAIN_API_KEY"] = "lsv2_pt_73acaa148449449c869cb908fb9e09c7_1074
 # model_role1 = BuildChainAgent(role=role1, duty=duty1)
 # model_role2 = BuildChainAgent(role=role2, duty=duty2)
 # model_role3 = BuildChainAgent(role=role3, duty=duty3)
+# Initialize FastAPI app
+app = FastAPI()
+
+# Allow CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # You can specify specific domains
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+
+class QueryRequest(BaseModel):
+    query: str
+
 
 class AgentState(TypedDict):
     sender: str
@@ -67,6 +103,9 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     }
 
 
+import httpx
+
+
 def router_concurrent_choice(state: AgentState, members: Dict[str, Any]) -> str:
     # 获取已有的消息中已出现的成员名称
     visited_members = {message.name for message in state["messages"]}
@@ -83,51 +122,13 @@ def router_concurrent_choice(state: AgentState, members: Dict[str, Any]) -> str:
     return "Finish"
 
 
-#
-# workflow = StateGraph(AgentState)
-# conditional_map = {role2: role2, role3: role3, "Finish": END}
-# members = [value for value in conditional_map.values() if value != END]
-# print("members:", members)
-# options = ["END"] + members
-# print("options:", options)
-#
-# # 只允许从项目经理到开发工程师的单向边
-# workflow.add_edge(START, role1)
-# workflow.add_edge(role1, role2)  # 项目经理 -> 开发工程师1
-# workflow.add_edge(role1, role3)  # 项目经理 -> 开发工程师2
-#
-# # 不允许开发工程师返回到项目经理
-# # workflow.add_edge(role2, role1)  # 这行代码应被删除
-# # workflow.add_edge(role3, role1)  # 这行代码应被删除
-#
-# # 设置节点及条件边
-# workflow.add_node(role1, partial(func_node, node_name=role1, chat_model=model_role1))
-# workflow.add_node(role2, partial(func_node, node_name=role2, chat_model=model_role2))
-# workflow.add_node(role3, partial(func_node, node_name=role3, chat_model=model_role3))
-# workflow.add_conditional_edges(role1, supervisor_chain, conditional_map)
-#
-# # 代码运行部分
-# graph = workflow.compile()
-# timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-# file_path = f"workflow_graph_{timestamp}.png"
-# save_graph_image(graph, file_path)
-#
-# events = graph.stream(
-#     {
-#         "sender": "__start__",
-#         "progress": "initial",
-#         "messages": [initial_question],
-#         "next": "need to check",
-#     },
-#     {"recursion_limit": 10},
-# )
-#
-# for round in events:
-#     print("----")
-#     print(round)
-#     print("----")
-#
-json_file_path = "frontend-0729_simpified.json"
+# def process_technology(state: AgentState, members: Dict[str, Any]) -> AgentState:
+#     # 发送消息到 QA1 和 QA2
+#     for member in members.keys():
+#         state["messages"].append(HumanMessage(content=f"发送消息到 {member}"))
+#     return state
+json_file_path = ("D:/WorkSpace/Pycharm/Langchain_Final/Python/demo_prepared/frontend_json_process/frontend"
+                  "-0729_simpified.json")
 with open(json_file_path, "r", encoding="utf-8") as file:
     data = json.load(file)
 
@@ -164,14 +165,14 @@ for source_label, targets in link_edges.items():
 
     elif len(targets) > 1:
         conditional_map = {target: target for target in targets}
-        # conditional_map["Finish"] = END
+        conditional_map["Finish"] = END
         print("----")
         print("conditional_map:", conditional_map)
         print("----")
-        # members = [value for value in conditional_map.values() if value != END]
-        # for member in members:
-        #     workflow.add_edge(member, source_label)
-
+        members = [value for value in conditional_map.values() if value != END]
+        for member in members:
+            workflow.add_edge(member, source_label)
+        # workflow.add_node(source_label, partial(process_technology, members=conditional_map))
         workflow.add_conditional_edges(source_label,
                                        lambda state: router_concurrent_choice(state, conditional_map),
                                        conditional_map)
@@ -187,21 +188,170 @@ import datetime
 
 graph = workflow.compile()
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-file_path = f"workflow_graph_{timestamp}.png"
+file_path = f"D:/WorkSpace/Pycharm/Langchain_Final/Python/demo_prepared/src/workflow_graph/workflow_graph_{timestamp}.png"
 save_graph_image(graph, file_path)
 
-# # 代码运行部分
-events = graph.stream(
-    {
-        "sender": "__start__",
-        "progress": "initial",
-        "messages": [initial_question],
-        "next": "need to check",
-    },
-    {"recursion_limit": 10},
-)
 
-for round in events:
-    print("----")
-    print(round)
-    print("----")
+# def serialize_initial_question() -> Dict[str, str]:
+#     return {
+#         "sender": "user",
+#         "content": initial_question.content,
+#     }
+#
+#
+# # 使用时
+# messages = [serialize_initial_question()]
+#
+#
+def serialize_message(message: BaseMessage) -> Dict[str, str]:
+    return {
+        "sender": message.name,
+        "content": message.content,
+    }
+#
+#
+# @app.websocket("/ws")
+# async def websocket_endpoint(websocket: WebSocket):
+#     await websocket.accept()
+#     try:
+#         while True:
+#             data = await websocket.receive_text()
+#             await websocket.send_text(f"Message text was: {data}")
+#     except WebSocketDisconnect:
+#         print("Client disconnected")
+#
+#
+# async def run_workflow_and_send_updates(websocket: WebSocket):
+#     async def async_stream():
+#         for item in graph.stream(
+#                 {
+#                     "sender": "__start__",
+#                     "progress": "initial",
+#                     "messages": [initial_question],
+#                     "next": "need to check",
+#                 },
+#                 {"recursion_limit": 10},
+#         ):
+#             yield item
+#
+#     try:
+#         async for round in async_stream():
+#             print("Raw round data:", round)  # 调试输出
+#
+#             key = list(round.keys())
+#
+#             values = round.values()
+#             print("keys=", key)
+#             print("key=", key[0])
+#             print("values=", values)
+#             print("value=", round.get(key[0]))
+#             value=round.get(key[0])
+#             # serialized_round = {
+#             #     "sender": round.get("sender", ""),
+#             #     "progress": round.get("progress", ""),
+#             #     "messages": [serialize_message(msg) for msg in round.get("messages", [])],
+#             #     "next": round.get("next", ""),
+#             # }
+#             serialized_messages = [serialize_message(msg) for msg in value['messages']]
+#             value['messages'] = serialized_messages
+#             json_string = json.dumps(value, ensure_ascii=False, indent=2)
+#             await websocket.send_text(json_string)
+#     except WebSocketDisconnect:
+#         print("Client disconnected")
+#     except Exception as e:
+#         print(f"Error: {e}")
+#         await websocket.send_text(json.dumps({"error": str(e)}))
+#
+#
+# @app.websocket("/ws/run_workflow")
+# async def websocket_run_workflow(websocket: WebSocket):
+#     await websocket.accept()
+#     await run_workflow_and_send_updates(websocket)
+
+
+#
+#
+# # 代码运行部分
+# events = graph.stream(
+#     {
+#         "sender": "__start__",
+#         "progress": "initial",
+#         "messages": [initial_question],
+#         "next": "need to check",
+#     },
+#     {"recursion_limit": 10},
+# )
+#
+# for round in events:
+#     print("----")
+#     print(round)
+#     print(round.keys())
+#     print(round.values())
+#     print("----")
+
+import datetime
+
+graph = workflow.compile()
+timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+file_path = f"src/workflow_graph/workflow_graph_{timestamp}.png"
+save_graph_image(graph, file_path)
+async def run_workflow_and_send_updates(websocket: WebSocket):
+
+    events = graph.stream(
+        {
+            "sender": "__start__",
+            "progress": "initial",
+            "messages": [initial_question],
+            "next": "need to check",
+        },
+        {"recursion_limit": 10},
+    )
+    for round in events:
+        # print("----")
+        # print(round)
+        # key = list(round.keys())
+        # value = round.get(key[0])
+        # print("----")
+        # serialized_messages = [serialize_message(msg) for msg in value['messages']]
+        # value['messages'] = serialized_messages
+        # json_string = json.dumps(value, ensure_ascii=False, indent=2)
+        # print("json_string:",json_string)
+        # await websocket.send_text(json_string)
+        print("----")
+        keys = list(round.keys())
+        first_key = keys[0]
+        round_data = round[first_key]
+        serialized_round = {
+            "sender": round_data['sender'],
+            "progress": round_data['progress']
+        }
+        print('serialized_round:', serialized_round)
+        await websocket.send_text(json.dumps(serialized_round))
+        print("----")
+
+# WebSocket endpoint for running the workflow
+@app.websocket("/ws/run_workflow")
+async def websocket_run_workflow(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        await run_workflow_and_send_updates(websocket)
+    except WebSocketDisconnect:
+        print("Client disconnected")
+    except Exception as e:
+        print(f"Error: {e}")
+        await websocket.send_text(json.dumps({"error": str(e)}))
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"Message text was: {data}")
+    except WebSocketDisconnect:
+        print("Client disconnected")
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)

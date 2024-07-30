@@ -9,7 +9,8 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Qdrant
 from langchain.retrievers.multi_query import MultiQueryRetriever
 from langchain.chains.retrieval_qa.base import RetrievalQA
-from ModelChoose import Model
+from demo_prepared.ModelChoise.modelchoise import get_zhipuai_chat_model
+
 from typing import List
 from fastapi.responses import StreamingResponse
 from io import BytesIO
@@ -34,7 +35,7 @@ app.add_middleware(
 )
 
 # System variable settings
-Model.os_setenv()
+
 
 
 # Define request model
@@ -63,7 +64,7 @@ def process_uploaded_file(file_path: str):
         raise HTTPException(status_code=400, detail="文件类型不支持！！！")
 
 
-base_dir = '../mydocuments'
+base_dir = 'D:/WorkSpace/Pycharm/Langchain_Final/Python/demo_prepared/src/mydocuments'
 documents = []
 for filename in os.listdir(base_dir):
     file_path = os.path.join(base_dir, filename)
@@ -128,7 +129,7 @@ from langchain.chains import create_history_aware_retriever
 from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
 
 # Generate LLM chat model
-chat_model = Model.get_zhupuai_model()
+chat_model = get_zhipuai_chat_model()
 retriever = vectorstore.as_retriever()
 # Generate ChatModel session prompt messages
 prompt = ChatPromptTemplate.from_messages([
