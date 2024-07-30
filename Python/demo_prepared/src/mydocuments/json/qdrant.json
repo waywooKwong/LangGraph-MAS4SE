@@ -1,0 +1,26 @@
+[
+    {
+        "page_content": "This is a document with label a",
+        "metadata": {
+            "label": "a"
+        }
+    },
+    {
+        "page_content": "This is a document with label b",
+        "metadata": {
+            "label": "b"
+        }
+    },
+    {
+        "page_content": "This is b document with label a",
+        "metadata": {
+            "label": "a"
+        }
+    },
+    {
+        "page_content": "This is b document with label b",
+        "metadata": {
+            "label": "b"
+        }
+    }
+]

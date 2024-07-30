@@ -1,0 +1,83 @@
+{
+    "数据库表数量": "7",
+    "数据表名称": [
+        "user_info",
+        "account",
+        "transaction_log",
+        "loan_info",
+        "credit_card",
+        "investment",
+        "financial_planning"
+    ],
+    "数据库表属性": [
+        {
+            "user_info": [
+                "user_id (INT, PRIMARY KEY, AUTO_INCREMENT)",
+                "username (VARCHAR(255), UNIQUE)",
+                "password (VARCHAR(255))",
+                "account_type (VARCHAR(255))",
+                "created_at (DATETIME)"
+            ]
+        },
+        {
+            "account": [
+                "account_id (INT, PRIMARY KEY, AUTO_INCREMENT)",
+                "user_id (INT, FOREIGN KEY)",
+                "balance (DECIMAL(15, 2))",
+                "account_status (VARCHAR(255))"
+            ]
+        },
+        {
+            "transaction_log": [
+                "log_id (INT, PRIMARY KEY, AUTO_INCREMENT)",
+                "account_id (INT, FOREIGN KEY)",
+                "transaction_type (VARCHAR(255))",
+                "amount (DECIMAL(15, 2))",
+                "timestamp (DATETIME)",
+                "status (VARCHAR(255))"
+            ]
+        },
+        {
+            "loan_info": [
+                "loan_id (INT, PRIMARY KEY, AUTO_INCREMENT)",
+                "user_id (INT, FOREIGN KEY)",
+                "loan_type (VARCHAR(255))",
+                "amount (DECIMAL(15, 2))",
+                "status (VARCHAR(255))"
+            ]
+        },
+        {
+            "credit_card": [
+                "card_id (INT, PRIMARY KEY, AUTO_INCREMENT)",
+                "user_id (INT, FOREIGN KEY)",
+                "card_number (VARCHAR(255), UNIQUE)",
+                "limit (DECIMAL(15, 2))",
+                "balance (DECIMAL(15, 2))"
+            ]
+        },
+        {
+            "investment": [
+                "investment_id (INT, PRIMARY KEY, AUTO_INCREMENT)",
+                "user_id (INT, FOREIGN KEY)",
+                "product_type (VARCHAR(255))",
+                "amount (DECIMAL(15, 2))"
+            ]
+        },
+        {
+            "financial_planning": [
+                "plan_id (INT, PRIMARY KEY, AUTO_INCREMENT)",
+                "user_id (INT, FOREIGN KEY)",
+                "plan_details (TEXT)",
+                "recommended_products (TEXT)"
+            ]
+        }
+    ],
+    "数据库表关联": [
+        "user_info与account通过user_id关联",
+        "account与transaction_log通过account_id关联",
+        "user_info与loan_info通过user_id关联",
+        "user_info与credit_card通过user_id关联",
+        "user_info与investment通过user_id关联",
+        "user_info与financial_planning通过user_id关联"
+    ]
+}

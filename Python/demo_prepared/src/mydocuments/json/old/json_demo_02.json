@@ -1,0 +1,10 @@
+{
+    "数据库表数量": "8",
+    "数据表名称": "User, Account, Transaction, LoanApplication, PaymentSettlement, Report, RiskManagement, CustomerService",
+    "数据库表属性": "User: userID, username, password, fullName, IDNumber, contactInfo; Account: accountID, userID, balance, accountType; Transaction: transactionID, fromAccountID, toAccountID, amount, transactionType, timestamp; LoanApplication: applicationID, userID, amount, status, creditScore; PaymentSettlement: settlementID, accountID, amount, paymentType, timestamp; Report: reportID, reportType, reportData, timestamp; RiskManagement: riskID, riskType, description, mitigationAction, timestamp; CustomerService: serviceID, userID, issueDescription, status, resolution",
+    "数据库表关联": "User与Account: 一对多; Account与Transaction: 一对多; LoanApplication与User: 一对一; PaymentSettlement与Account: 一对一; Report与RiskManagement: 可引用多个表但无直接外键关联; CustomerService与User: 一对一但可关联多个用例"
+}{
+    "用例图": "用例图展示了银行系统的功能及其与用户（参与者）的关系。参与者包括用户和管理员，用例有：用户开户、存款、取款、转账、贷款申请、还款、查询、投资理财、信用卡服务和风险控制。用户与所有用例直接相关，管理员与风险控制、信用卡服务及部分用例有直接关系。",
+    "活动图": "活动图描述了‘存款’用例的流程，包括：用户请求存款，验证用户输入，检查账户是否存在，更新账户余额，记录交易日志。根据输入和账户状态有不同的分支，最终结束存款操作。",
+    "时序图": "时序图展示了‘转账’用例中用户A、用户B与银行系统之间的交互顺序。包括用户A发起转账请求，银行系统验证账户信息、处理转账、记录日志，并通过消息传递完成交易确认。"
+}
