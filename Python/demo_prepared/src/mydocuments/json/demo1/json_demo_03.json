@@ -1,0 +1,314 @@
+{
+    "数据库表数量": "10",
+    "数据表名称": [
+        "UseCases",
+        "UseCaseDetails",
+        "UserAccounts",
+        "AccountDetails",
+        "LoanDetails",
+        "FinancialProducts",
+        "TransactionLogs",
+        "RiskControl",
+        "CustomerService",
+        "UseCaseAssociations"
+    ],
+    "数据库表属性": {
+        "UseCases": [
+            "use_case_id: INT, PRIMARY KEY",
+            "use_case_name: VARCHAR(255)"
+        ],
+        "UseCaseDetails": [
+            "detail_id: INT, PRIMARY KEY",
+            "use_case_id: INT, FOREIGN KEY",
+            "detail_name: VARCHAR(255)"
+        ],
+        "UserAccounts": [
+            "user_id: INT, PRIMARY KEY",
+            "username: VARCHAR(255)",
+            "password: VARCHAR(255)",
+            "personal_info: TEXT"
+        ],
+        "AccountDetails": [
+            "account_id: INT, PRIMARY KEY",
+            "user_id: INT, FOREIGN KEY",
+            "balance: DECIMAL(10, 2)",
+            "account_info: TEXT"
+        ],
+        "LoanDetails": [
+            "loan_id: INT, PRIMARY KEY",
+            "account_id: INT, FOREIGN KEY",
+            "loan_amount: DECIMAL(10, 2)",
+            "loan_status: ENUM('applied', 'approved', 'issued', 'repaid')"
+        ],
+        "FinancialProducts": [
+            "product_id: INT, PRIMARY KEY",
+            "product_type: ENUM('savings', 'insurance', 'fund')",
+            "purchase_info: TEXT"
+        ],
+        "TransactionLogs": [
+            "transaction_id: INT, PRIMARY KEY",
+            "account_id: INT, FOREIGN KEY",
+            "amount: DECIMAL(10, 2)",
+            "transaction_detail: TEXT"
+        ],
+        "RiskControl": [
+            "risk_id: INT, PRIMARY KEY",
+            "control_type: ENUM('anti_money Laundering', 'credit_risk', 'fraud_monitoring')",
+            "control_info: TEXT"
+        ],
+        "CustomerService": [
+            "service_id: INT, PRIMARY KEY",
+            "service_type: ENUM('online', 'phone', 'complaint', 'feedback')",
+            "service_details: TEXT"
+        ],
+        "UseCaseAssociations": [
+            "association_id: INT, PRIMARY KEY",
+            "use_case_1: INT, FOREIGN KEY",
+            "use_case_2: INT, FOREIGN KEY",
+            "association_description: TEXT"
+        ]
+    },
+    "数据库表关联": {
+        "UseCases": {
+            "associations": [
+                "UseCaseDetails",
+                "UseCaseAssociations"
+            ]
+        },
+        "UseCaseDetails": {
+            "associations": [
+                "UseCases"
+            ]
+        },
+        "UserAccounts": {
+            "associations": [
+                "AccountDetails",
+                "TransactionLogs",
+                "LoanDetails",
+                "CustomerService"
+            ]
+        },
+        "AccountDetails": {
+            "associations": [
+                "UserAccounts",
+                "LoanDetails",
+                "TransactionLogs"
+            ]
+        },
+        "LoanDetails": {
+            "associations": [
+                "AccountDetails"
+            ]
+        },
+        "FinancialProducts": {
+            "associations": []
+        },
+        "TransactionLogs": {
+            "associations": [
+                "AccountDetails"
+            ]
+        },
+        "RiskControl": {
+            "associations": []
+        },
+        "CustomerService": {
+            "associations": [
+                "UserAccounts"
+            ]
+        },
+        "UseCaseAssociations": {
+            "associations": [
+                "UseCases"
+            ]
+        }
+    }
+}{
+    "数据库表数量": "5",
+    "数据表名称": [
+        "User",
+        "Account",
+        "Transaction",
+        "Loan",
+        "LoanType"
+    ],
+    "数据库表属性": {
+        "User": [
+            "UserID",
+            "Username",
+            "Password",
+            "Email",
+            "PhoneNumber",
+            "CreateDate"
+        ],
+        "Account": [
+            "AccountID",
+            "UserID",
+            "AccountType",
+            "Balance",
+            "CreationDate"
+        ],
+        "Transaction": [
+            "TransactionID",
+            "FromAccountID",
+            "ToAccountID",
+            "Amount",
+            "TransactionType",
+            "TransactionDate"
+        ],
+        "Loan": [
+            "LoanID",
+            "UserID",
+            "LoanTypeID",
+            "Amount",
+            "Status",
+            "ApplyDate"
+        ],
+        "LoanType": [
+            "LoanTypeID",
+            "TypeName",
+            "Description"
+        ]
+    },
+    "数据库表关联": {
+        "账户开设": {
+            "表": [
+                "Account",
+                "User"
+            ],
+            "描述": "当用户开户时，在两张表中创建新记录"
+        },
+        "存款": {
+            "表": [
+                "Transaction"
+            ],
+            "描述": "用户存款时创建交易记录"
+        },
+        "取款": {
+            "表": [
+                "Transaction"
+            ],
+            "描述": "用户取款时创建交易记录"
+        },
+        "转账": {
+            "表": [
+                "Transaction"
+            ],
+            "描述": "涉及在交易表中为发送者和接收者创建两个条目"
+        },
+        "贷款申请": {
+            "表": [
+                "Loan",
+                "LoanType"
+            ],
+            "描述": "新的贷款申请在Loan表中创建记录，并引用LoanType表中的LoanTypeID"
+        },
+        "账户查询": {
+            "表": [
+                "Account",
+                "Transaction",
+                "Loan"
+            ],
+            "描述": "不创建新记录，而是查询账户余额、交易历史和贷款状态"
+        }
+    }
+}{
+    "数据库表数量": "8",
+    "数据表名称": [
+        "User Accounts",
+        "Transactions",
+        "Account Balances",
+        "Loans",
+        "Credit Cards",
+        "Risk Management",
+        "System Management",
+        "Generated Reports"
+    ],
+    "数据库表属性": [
+        {
+            "User Accounts": [
+                "user_id: Primary Key, unique identifier for each user.",
+                "username: User's chosen name.",
+                "password: Hashed password for security.",
+                "account_number: Unique account number for each user.",
+                "created_at: Timestamp of when the account was created."
+            ]
+        },
+        {
+            "Transactions": [
+                "transaction_id: Primary Key, unique identifier for each transaction.",
+                "user_id: Foreign Key from User Accounts table.",
+                "transaction_type: ENUM('deposit', 'withdrawal', 'transfer', 'loan', 'credit_card').",
+                "amount: Transaction amount.",
+                "timestamp: Time of the transaction."
+            ]
+        },
+        {
+            "Account Balances": [
+                "balance_id: Primary Key, unique identifier for balance records.",
+                "user_id: Foreign Key from User Accounts table.",
+                "current_balance: The current balance of the user's account.",
+                "last_updated: Timestamp of the last update to the balance."
+            ]
+        },
+        {
+            "Loans": [
+                "loan_id: Primary Key, unique identifier for each loan.",
+                "user_id: Foreign Key from User Accounts table.",
+                "amount: Loan amount.",
+                "status: ENUM('pending', 'approved', 'rejected', 'repaid').",
+                "application_date: Date when the loan was applied for."
+            ]
+        },
+        {
+            "Credit Cards": [
+                "card_id: Primary Key, unique identifier for each credit card.",
+                "user_id: Foreign Key from User Accounts table.",
+                "card_number: Masked credit card number.",
+                "credit_limit: Credit limit on the card.",
+                "last_statement_balance: Balance from the last statement."
+            ]
+        },
+        {
+            "Risk Management": [
+                "risk_id: Primary Key, unique identifier for each risk record.",
+                "transaction_id: Foreign Key from Transactions table.",
+                "risk_type: ENUM('fraud', 'overdraft', 'suspicious_activity').",
+                "risk_level: ENUM('low', 'medium', 'high').",
+                "mitigation_steps: Steps taken to mitigate the risk."
+            ]
+        },
+        {
+            "System Management": [
+                "system_event_id: Primary Key, unique identifier for each system event.",
+                "event_type: ENUM('maintenance', 'update', 'backup').",
+                "event_timestamp: Timestamp of when the event occurred.",
+                "event_description: Description of the system event."
+            ]
+        },
+        {
+            "Generated Reports": [
+                "report_id: Primary Key, unique identifier for each report.",
+                "report_type: ENUM('daily', 'monthly', 'annual', 'custom').",
+                "report_timestamp: Timestamp of report generation.",
+                "content: Content of the report, could be a BLOB storing PDFs or links to them."
+            ]
+        }
+    ],
+    "数据库表关联": {
+        "User Accounts": {
+            "Transactions": "One-to-Many",
+            "Loans": "One-to-Many",
+            "Credit Cards": "One-to-Many"
+        },
+        "Transactions": {
+            "Risk Management": "One-to-Many",
+            "Generated Reports": "One-to-Many"
+        },
+        "Loans": {
+            "Risk Management": "One-to-Many"
+        },
+        "Credit Cards": {
+            "Risk Management": "One-to-Many"
+        }
+    }
+}

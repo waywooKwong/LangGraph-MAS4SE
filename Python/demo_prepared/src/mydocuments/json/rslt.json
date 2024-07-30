@@ -1,0 +1,38 @@
+[
+  {
+    "score": 0.8673249764045181,
+    "page_content": "\u6536\u6b3e\u670d\u52a1",
+    "metadata": {
+      "label": "pm",
+      "_id": "ee55d8ac86874629a7df89c4af85149d",
+      "_collection_name": "Qdrant_vectorstore"
+    }
+  },
+  {
+    "score": 0.8451680288720749,
+    "page_content": "\u8f6c\u8d26\u670d\u52a1",
+    "metadata": {
+      "label": "pm",
+      "_id": "aff55bbfe60c4a399460eeb12a9ca3b5",
+      "_collection_name": "Qdrant_vectorstore"
+    }
+  },
+  {
+    "score": 0.722832639513346,
+    "page_content": "\u7528\u6237\u7aef",
+    "metadata": {
+      "label": "pm",
+      "_id": "52ae7a21c30543e58dec5836574f780e",
+      "_collection_name": "Qdrant_vectorstore"
+    }
+  },
+  {
+    "score": 0.7055805901701659,
+    "page_content": "\u9879\u76ee\u7528\u4f8b",
+    "metadata": {
+      "label": "pm",
+      "_id": "8f21f8fe03f84fec87c92dcd0d347eba",
+      "_collection_name": "Qdrant_vectorstore"
+    }
+  }
+]

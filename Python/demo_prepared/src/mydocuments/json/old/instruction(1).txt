@@ -1,0 +1,20 @@
+
+下面是针对银行管理项目项目的说明书，说明书分为五部分：
+1. 项目需求说明书，
+    用例数量：8
+    用例名称：用户开户, 存款和取款, 转账, 贷款申请, 信用卡服务, 投资服务, 查询服务, 理财规划
+    用例内容：新用户可以在银行系统中开设账户，包括储蓄账户和支票账户等。; 用户可以向自己的账户存入或取出现金。; 用户可以在不同的账户之间，或者不同的用户之间进行资金转账。; 用户可以申请各种类型的贷款，如个人贷款、房贷、车贷等。; 用户可以申请信用卡，并管理信用卡的支付和账单。; 用户可以通过银行系统购买投资产品，如基金、保险等。; 用户可以查询账户余额、交易记录、贷款状态等。; 银行系统可以根据用户的财务状况提供理财建议和规划。
+    用例之间的关联：这些用例之间存在直接或间接的关联。例如，'用户开户'是'存款和取款'、'转账'、'贷款申请'、'信用卡服务'、'投资服务'、'查询服务'及'理财规划'的前提条件。而'查询服务'与其他服务紧密相关，用户常常需要查询交易状态或账户余额以确认操作结果。此外，'理财规划'可能会基于用户在'存款和取款'、'投资服务'等用例中的活动数据来提供个性化的财务建议。
+2. 概要设计说明书，
+    用例图：用例图包括参与者用户（User）和管理员（Admin），用例包括用户开户（Open Account）、存款和取款（Deposit and Withdraw）、转账（Transfer Funds）、贷款申请（Loan Application）、信用卡服务（Credit Card Services）、投资服务（Investment Services）、查询服务（Query Services）和理财规划（Financial Planning）。每个用例都关联到至少一个参与者，包含验证用户身份的子用例，部分用例可能根据条件扩展。
+    活动图：活动图描述了用例的具体流程，如用户开户包括输入用户信息、验证信息、创建账户和确认开户步骤。存款和取款包括选择操作类型、输入金额、验证余额或现金、执行交易和更新账户信息等步骤。每个用例都有对应的活动图，展示从开始到结束的详细步骤。
+    时序图：时序图显示了如转账用例中用户与系统的交互序列，包括用户请求转账、系统验证账户和金额、执行转账操作以及确认交易完成等步骤。时序图考虑了操作的时间顺序、并发性、同步性和可能的异常流程，所有用例都需绘制类似的时序图。
+3. 数据库设计说明书，
+    数据库表的数量：7
+    数据库名称：user_info, account, transaction_log, loan_info, credit_card, investment, financial_planning
+    数据库表属性：[{'user_info': ['user_id (INT, PRIMARY KEY, AUTO_INCREMENT)', 'username (VARCHAR(255), UNIQUE)', 'password (VARCHAR(255))', 'account_type (VARCHAR(255))', 'created_at (DATETIME)']}, {'account': ['account_id (INT, PRIMARY KEY, AUTO_INCREMENT)', 'user_id (INT, FOREIGN KEY)', 'balance (DECIMAL(15, 2))', 'account_status (VARCHAR(255))']}, {'transaction_log': ['log_id (INT, PRIMARY KEY, AUTO_INCREMENT)', 'account_id (INT, FOREIGN KEY)', 'transaction_type (VARCHAR(255))', 'amount (DECIMAL(15, 2))', 'timestamp (DATETIME)', 'status (VARCHAR(255))']}, {'loan_info': ['loan_id (INT, PRIMARY KEY, AUTO_INCREMENT)', 'user_id (INT, FOREIGN KEY)', 'loan_type (VARCHAR(255))', 'amount (DECIMAL(15, 2))', 'status (VARCHAR(255))']}, {'credit_card': ['card_id (INT, PRIMARY KEY, AUTO_INCREMENT)', 'user_id (INT, FOREIGN KEY)', 'card_number (VARCHAR(255), UNIQUE)', 'limit (DECIMAL(15, 2))', 'balance (DECIMAL(15, 2))']}, {'investment': ['investment_id (INT, PRIMARY KEY, AUTO_INCREMENT)', 'user_id (INT, FOREIGN KEY)', 'product_type (VARCHAR(255))', 'amount (DECIMAL(15, 2))']}, {'financial_planning': ['plan_id (INT, PRIMARY KEY, AUTO_INCREMENT)', 'user_id (INT, FOREIGN KEY)', 'plan_details (TEXT)', 'recommended_products (TEXT)']}]
+    数据库表之间的关联：['user_info与account通过user_id关联', 'account与transaction_log通过account_id关联', 'user_info与loan_info通过user_id关联', 'user_info与credit_card通过user_id关联', 'user_info与investment通过user_id关联', 'user_info与financial_planning通过user_id关联']
+4. 详细设计说明书，
+    界面数量：10个
+    界面设计(BorderLayout)：{'登录界面': {'北部': '银行Logo和名称', '中部': '用户名和密码输入框，登录按钮', '南部': '忘记密码和注册新用户链接'}, '用户主界面': {'北部': '账户信息和注销按钮', '东部': '功能导航菜单', '中部': '根据选中导航菜单显示相应的内容', '西部': '快速链接和通知区域', '南部': '页脚信息'}, '用户开户界面': {'北部': '页面标题和返回按钮', '中部': '开户表单（包括个人信息、账户类型选择等）', '南部': '提交按钮和重置按钮'}, '存款和取款界面': {'北部': '页面标题和返回按钮', '中部': '存款和取款选项卡，金额输入框，确认按钮', '南部': '交易历史和账户余额显示'}, '转账界面': {'北部': '页面标题和返回按钮', '中部': '转入账户和转出账户选择，金额输入，备注信息，确认转账按钮', '南部': '最近转账记录'}, '贷款申请界面': {'北部': '页面标题和返回按钮', '中部': '贷款类型选择，申请表单，上传文件区域', '南部': '提交申请和申请状态查询'}, '信用卡服务界面': {'北部': '页面标题和返回按钮', '中部': '信用卡信息，账单查询，支付选项', '南部': '交易记录和账户管理'}, '投资服务界面': {'北部': '页面标题和返回按钮', '中部': '投资产品展示，购买和赎回选项', '南部': '投资组合和交易确认'}, '查询服务界面': {'北部': '页面标题和返回按钮', '中部': '查询选项（交易记录、账户余额等）', '南部': '查询结果展示'}, '理财规划界面': {'北部': '页面标题和返回按钮', '中部': '理财规划工具，财务分析报告', '南部': '理财建议和联系顾问'}}
+    界面跳转关联：未提供具体界面之间的跳转逻辑，建议根据用户流程和行为分析来定义
