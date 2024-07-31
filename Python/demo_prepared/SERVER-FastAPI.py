@@ -226,7 +226,9 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
             "progress": round_data["progress"],
             "message": recent_content,
         }
+
         print("serialized_round:", json.dumps(serialized_round,ensure_ascii=False))
+        # 874a0dc3fc98d72e36aad735a7334eb4d8cdbf23:Python/demo_prepared/SERVER-FastAPI.py
         print("----")
 
 

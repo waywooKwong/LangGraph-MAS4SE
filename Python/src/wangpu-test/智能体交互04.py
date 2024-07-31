@@ -94,7 +94,7 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     prompt = last_message.content
     response = chat_model.process(input=prompt)
     ai_message_content = response
-    print(node_name, "答案：", ai_message_content)
+    # print(node_name, "答案：", ai_message_content)
     result = AIMessage(name=node_name, content=ai_message_content)
     return {
         "sender": node_name,
@@ -169,9 +169,9 @@ for source_label, targets in link_edges.items():
         print("----")
         print("conditional_map:", conditional_map)
         print("----")
-        members = [value for value in conditional_map.values() if value != END]
-        for member in members:
-            workflow.add_edge(member, source_label)
+        # members = [value for value in conditional_map.values() if value != END]
+        # for member in members:
+        #     workflow.add_edge(member, source_label)
         # workflow.add_node(source_label, partial(process_technology, members=conditional_map))
         workflow.add_conditional_edges(source_label,
                                        lambda state: router_concurrent_choice(state, conditional_map),
@@ -208,86 +208,6 @@ def serialize_message(message: BaseMessage) -> Dict[str, str]:
         "sender": message.name,
         "content": message.content,
     }
-#
-#
-# @app.websocket("/ws")
-# async def websocket_endpoint(websocket: WebSocket):
-#     await websocket.accept()
-#     try:
-#         while True:
-#             data = await websocket.receive_text()
-#             await websocket.send_text(f"Message text was: {data}")
-#     except WebSocketDisconnect:
-#         print("Client disconnected")
-#
-#
-# async def run_workflow_and_send_updates(websocket: WebSocket):
-#     async def async_stream():
-#         for item in graph.stream(
-#                 {
-#                     "sender": "__start__",
-#                     "progress": "initial",
-#                     "messages": [initial_question],
-#                     "next": "need to check",
-#                 },
-#                 {"recursion_limit": 10},
-#         ):
-#             yield item
-#
-#     try:
-#         async for round in async_stream():
-#             print("Raw round data:", round)  # 调试输出
-#
-#             key = list(round.keys())
-#
-#             values = round.values()
-#             print("keys=", key)
-#             print("key=", key[0])
-#             print("values=", values)
-#             print("value=", round.get(key[0]))
-#             value=round.get(key[0])
-#             # serialized_round = {
-#             #     "sender": round.get("sender", ""),
-#             #     "progress": round.get("progress", ""),
-#             #     "messages": [serialize_message(msg) for msg in round.get("messages", [])],
-#             #     "next": round.get("next", ""),
-#             # }
-#             serialized_messages = [serialize_message(msg) for msg in value['messages']]
-#             value['messages'] = serialized_messages
-#             json_string = json.dumps(value, ensure_ascii=False, indent=2)
-#             await websocket.send_text(json_string)
-#     except WebSocketDisconnect:
-#         print("Client disconnected")
-#     except Exception as e:
-#         print(f"Error: {e}")
-#         await websocket.send_text(json.dumps({"error": str(e)}))
-#
-#
-# @app.websocket("/ws/run_workflow")
-# async def websocket_run_workflow(websocket: WebSocket):
-#     await websocket.accept()
-#     await run_workflow_and_send_updates(websocket)
-
-
-#
-#
-# # 代码运行部分
-# events = graph.stream(
-#     {
-#         "sender": "__start__",
-#         "progress": "initial",
-#         "messages": [initial_question],
-#         "next": "need to check",
-#     },
-#     {"recursion_limit": 10},
-# )
-#
-# for round in events:
-#     print("----")
-#     print(round)
-#     print(round.keys())
-#     print(round.values())
-#     print("----")
 
 import datetime
 
@@ -321,12 +241,17 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
         keys = list(round.keys())
         first_key = keys[0]
         round_data = round[first_key]
+        round_data_message = round_data["messages"]
+        recent_message = round_data_message[-1]
+        recent_content = recent_message.content
+        print("content to front end:", recent_message.content)
         serialized_round = {
-            "sender": round_data['sender'],
-            "progress": round_data['progress']
+            "sender": round_data["sender"],
+            "progress": round_data["progress"],
+            "message": recent_content,
         }
-        print('serialized_round:', serialized_round)
-        await websocket.send_text(json.dumps(serialized_round))
+        print("serialized_round:", json.dumps(serialized_round))
+        await websocket.send_text(json.dumps(serialized_round,ensure_ascii=False))
         print("----")
 
 # WebSocket endpoint for running the workflow
