@@ -19,6 +19,20 @@
             历史记录
           </el-button>
         </el-tooltip>
+        <!--  下拉选择模型菜单 -->
+        <el-dropdown @command="handleCommand" class="model-select-bottom-dropdown" >
+          <el-button type="primary" class="model-select-bottom">
+            选择模型：{{ ModelSelectText }}<i class="model-select"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="aqwen2">qwen2 </el-dropdown-item>
+            <el-dropdown-item command="llama3">llama3</el-dropdown-item>
+            <el-dropdown-item command="gemma2">gemma2</el-dropdown-item>
+            <el-dropdown-item command="glm4(zhipu)">glm4(zhipu)</el-dropdown-item>
+            <el-dropdown-item command="sparkv3.0">sparkv3.0</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+
         <!-- "关于"按钮，点击后跳转到GitHub -->
         <el-tooltip effect="dark" content="跳转到 GitHub 页面" placement="bottom">
           <el-button :disabled="isSending" class="about-button" type="text" @click="goToGithub">
@@ -42,7 +56,7 @@
           <!-- 自定义上传按钮 -->
           <template v-slot:trigger>
             <el-tooltip effect="dark" content="选择文件" placement="top">
-              <el-button :disabled="isSending">
+              <el-button :disabled="isSending" class="selectFilesButton">
                 <i class="el-icon-paperclip" size: small></i>
               </el-button>
             </el-tooltip>
@@ -59,10 +73,10 @@
         <el-input v-model="query" placeholder="Type a message" @keyup.enter="sendQuery"
           :disabled="isSending"></el-input>
         <!-- 发送按钮 -->
-        <el-button type="primary" @click="sendQuery" :disabled="isSending">发送</el-button>
+        <el-button  @click="sendQuery" :disabled="isSending" class="sendQueryButton">发送</el-button>
         <!-- 上传文件按钮 -->
-        <el-button type="success" @click="uploadFiles" :disabled="isSending || files.length === 0">上传文件</el-button>
-        <el-button type="primary" @click="wstest" :disabled="isSending">MAS-WebSocket</el-button>
+        <el-button  @click="uploadFiles" :disabled="isSending || files.length === 0" class="uploadFilesButton">上传文件</el-button>
+        <el-button  @click="wstest" :disabled="isSending" class="wstestButton">MAS-WebSocket</el-button>
 
       </el-footer>
     </div>
@@ -111,7 +125,8 @@ export default {
       files: [], // 待上传的文件列表
       chatHistory: [], // 聊天历史记录
       drawerVisible: false, // 抽屉是否可见
-      client: null // WebSocket 客户端实例
+      client: null, // WebSocket 客户端实例
+      ModelSelectText: 'qwen2'
     };
   },
   mounted() {
@@ -282,6 +297,15 @@ export default {
     },
     goToGithub() {
       window.open('https://github.com/waywooKwong/CSI-LangChain-LLM-Chatbot', '_blank');
+    },
+    async handleCommand(command) {
+      try {
+        const res = await apiClient.post('/model', { model: command });
+        this.$message('已选择 ' + command);
+        this.ModelSelectText = command;
+      } catch (error) {
+        this.$message.error('请求失败: ' + error.message);
+      }
     }
   },
 };
@@ -304,7 +328,7 @@ export default {
 .chat-header {
   height: 60px;
   padding: 0 10px;
-  background-color: rgb(126,18,110);
+  background-color: #7853B2;
   border-bottom: 1px solid #f4f4f4;
   display: flex;
   align-items: center;
@@ -318,17 +342,45 @@ export default {
     text-align: center;
   }
 
+  .model-select-bottom-dropdown {
+    position: absolute;
+    left: 90px;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    .model-select-bottom {
+      font-size: 14px;
+      width: auto;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+      color: #394398;
+      // background-color: #222222;
+      border: rgb(251, 248, 248);
+      background-color: #DCE2FA;
+    }
+
+    .model-select {
+      font-size: 12px;
+    }
+  }
+  
+  
+  
+
   .drawer-button {
     position: absolute;
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: auto; /* 自动宽度适应文字 */
+    width: 70px; /* 自动宽度适应文字 */
     height: 30px; /* 自动高度适应文字 */
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: white; /* 修改背景颜色为白色 */
+    background-color: #DCE2FA; 
+    color: #394398;
     padding: 0;
   }
 
@@ -337,12 +389,13 @@ export default {
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: auto; /* 自动宽度适应文字 */
+    width: 60px; /* 自动宽度适应文字 */
     height: 30px; /* 自动高度适应文字 */
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: white; /* 修改背景颜色为白色 */
+    background-color: #DCE2FA; 
+    color: #394398;
     padding: 0;
   }
 }
@@ -362,15 +415,42 @@ export default {
 
 .footer {
   display: flex;
-  padding: 10px;
-  background-color: #fff;
+  // padding: 10px;
+  background-color: #DCE2FA;
   align-items: center; /* 底部水平对齐 */
-}
 
-.footer .el-input {
+  .selectFilesButton{
+    height: 30px;
+    width: 30px;
+    align-items: center;
+    justify-content: center; 
+    display: flex;
+  }
+  .el-input {
   flex: 1;
   margin-right: 10px;
+  display: flex;
+  align-items: center;
+  top:10%;
+  }
+  .sendQueryButton {
+    background-color: #dbd3e4;
+    color: #000;
+    font-weight: bold;
+  }
+  .uploadFilesButton{
+    background-color: #dbd3e4;
+    color: #000;
+    font-weight: bold;
+  }
+  .wstestButton{
+    background-color: #dbd3e4;
+    color: #000;
+    font-weight: bold;
+  }
 }
+ 
+
 
 .upload-demo {
   margin-right: 10px;
