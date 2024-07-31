@@ -52,7 +52,8 @@ def extract_data_to_simplified_json(input_data):
             )
     simplified_data = result
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file_path = f"frontend_json_process/json_simplified/json_simplified_{timestamp}.json"
+    # output_file_path = f"frontend_json_process/json_simplified/json_simplified_{timestamp}.json"
+    output_file_path = f"D:/WorkSpace/Pycharm/Langchain_Final/Python/demo_prepared/frontend_json_process/json_simplified/json_simplified_{timestamp}.json"
     with open(output_file_path, "w", encoding="utf-8") as file:
         json.dump(simplified_data, file, indent=4, ensure_ascii=False)
     print("简化处理后的json已经保存到:", output_file_path)
