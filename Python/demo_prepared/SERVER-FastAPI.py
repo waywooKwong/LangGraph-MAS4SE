@@ -11,12 +11,38 @@ from langchain_core.prompts import PromptTemplate
 from ModelChoise import modelchoise
 from Class_02_BuildChainAgent import BuildChainAgent
 
-chat_model = modelchoise.get_zhipuai_chat_model()
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_PROJECT"] = "wangpu_test"
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
-os.environ["LANGCHAIN_API_KEY"] = "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"
+
+class default_config:
+    """
+    函数运行的默认参数类
+    在类中设定，然后根据实例化调用，
+    解决了一些参数在函数中得到，但没法应用在类外的尴尬
+    """
+
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    os.environ["LANGCHAIN_PROJECT"] = "wangpu_test"
+    os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+    os.environ["LANGCHAIN_API_KEY"] = (
+        "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"
+    )
+
+    def __init__(self):
+        self.json_file_path = (
+            "frontend_json_process/json_simplified/frontend-0729_simpified.json"
+        )
+        self.chat_model = modelchoise.get_zhipuai_chat_model()
+
+    def set_path(self, new_path):
+        self.path = new_path
+
+    def get_path(self):
+        return self.path
+
+
+default_config = default_config()
+chat_model = default_config.chat_model
+
 
 from pydantic import BaseModel
 from fastapi import (
@@ -44,17 +70,6 @@ app.add_middleware(
 
 class QueryRequest(BaseModel):
     query: str
-
-# 初始化角色
-# role1 = "项目经理"
-# role2 = "开发工程师1"
-# role3 = "开发工程师2"
-# duty1 = f"分析用户需求，向{role2}和{role3}分配任务"
-# duty2 = f"完成{role1}分配的任务中属于自己的那一部分,生成详细的前后端架构图，前端采用vue架构"
-# duty3 = f"完成{role1}分配的任务中属于自己的那一部分,生成数据库的设计，与sql代码"
-# model_role1 = BuildChainAgent(role=role1, duty=duty1)
-# model_role2 = BuildChainAgent(role=role2, duty=duty2)
-# model_role3 = BuildChainAgent(role=role3, duty=duty3)
 
 
 class AgentState(TypedDict):
@@ -94,66 +109,37 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
 
 
 def router_concurrent_choice(state: AgentState, members: Dict[str, Any]) -> str:
-    # 获取已有的消息中已出现的成员名称
-    visited_members = {message.name for message in state["messages"]}
-
-    # 按照角色顺序定义角色列表
-    member_order = list(members.keys())
-
-    # 查找下一个未处理的成员
-    for member in member_order:
+    visited_members = {
+        message.name for message in state["messages"]
+    }  # 获取已有的消息中已出现的成员名称
+    member_order = list(members.keys())  # 按照角色顺序定义角色列表
+    for member in member_order:  # 查找下一个未处理的成员
         if member not in visited_members:
             return member  # 返回下一个未处理的成员
-
-    # 如果所有成员都已访问过，则跳转到 'Finish'
-    return "Finish"
+    return "Finish"  # 如果所有成员都已访问过，则跳转到 'Finish'
 
 
-#
-# workflow = StateGraph(AgentState)
-# conditional_map = {role2: role2, role3: role3, "Finish": END}
-# members = [value for value in conditional_map.values() if value != END]
-# print("members:", members)
-# options = ["END"] + members
-# print("options:", options)
-#
-# # 只允许从项目经理到开发工程师的单向边
-# workflow.add_edge(START, role1)
-# workflow.add_edge(role1, role2)  # 项目经理 -> 开发工程师1
-# workflow.add_edge(role1, role3)  # 项目经理 -> 开发工程师2
-#
-# # 不允许开发工程师返回到项目经理
-# # workflow.add_edge(role2, role1)  # 这行代码应被删除
-# # workflow.add_edge(role3, role1)  # 这行代码应被删除
-#
-# # 设置节点及条件边
-# workflow.add_node(role1, partial(func_node, node_name=role1, chat_model=model_role1))
-# workflow.add_node(role2, partial(func_node, node_name=role2, chat_model=model_role2))
-# workflow.add_node(role3, partial(func_node, node_name=role3, chat_model=model_role3))
-# workflow.add_conditional_edges(role1, supervisor_chain, conditional_map)
-#
-# # 代码运行部分
-# graph = workflow.compile()
-# timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-# file_path = f"workflow_graph_{timestamp}.png"
-# save_graph_image(graph, file_path)
-#
-# events = graph.stream(
-#     {
-#         "sender": "__start__",
-#         "progress": "initial",
-#         "messages": [initial_question],
-#         "next": "need to check",
-#     },
-#     {"recursion_limit": 10},
-# )
-#
-# for round in events:
-#     print("----")
-#     print(round)
-#     print("----")
-#
-json_file_path = "frontend_json_process/frontend-0729_simpified.json"
+##### 0 - 前端响应传送 json 字符串，保存到文件夹中
+from frontend_json_process import CLASS_JointPlus_jsonprocess
+
+
+@app.post("/upload-agent")
+async def upload_agent(file: UploadFile = File(...)):
+    try:
+        file_content = await file.read()
+        data = json.loads(file_content)
+        print("Received JSON data:", data)
+        simplified_json_path = CLASS_JointPlus_jsonprocess.extract_data_to_simplified_json(data)
+        # 在这里把 default_config 类的参数改变，之后加载 json 时调用类的参数
+        default_config.set_path(simplified_json_path)
+        print("成功解析为json:",simplified_json_path)
+        return JSONResponse(content={"message": "JSON received successfully"})
+    except Exception as e:
+        print("Error:", e)
+        return JSONResponse(content={"error": "An error occurred"}, status_code=500)
+
+
+json_file_path = default_config.json_file_path
 with open(json_file_path, "r", encoding="utf-8") as file:
     data = json.load(file)
 
@@ -184,7 +170,6 @@ for link in data["Link"]:
     link_edges[source_label].append(target_label)
 
 # 添加边
-
 for source_label, targets in link_edges.items():
 
     if source_label.lower() == "start":
@@ -192,7 +177,6 @@ for source_label, targets in link_edges.items():
 
     elif len(targets) > 1:
         conditional_map = {target: target for target in targets}
-        # conditional_map["Finish"] = END
         print("----")
         print("conditional_map:", conditional_map)
         print("----")
@@ -212,8 +196,6 @@ for source_label, targets in link_edges.items():
             workflow.add_edge(source_label, END)
         else:
             workflow.add_edge(source_label, target_label)
-
-import datetime
 
 
 async def run_workflow_and_send_updates(websocket: WebSocket):
@@ -244,11 +226,12 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
             "progress": round_data["progress"],
             "message": recent_content,
         }
-        print("serialized_round:", json.dumps(serialized_round))
-        await websocket.send_text(json.dumps(serialized_round))
+
+        print("serialized_round:", json.dumps(serialized_round,ensure_ascii=False))
+        # 874a0dc3fc98d72e36aad735a7334eb4d8cdbf23:Python/demo_prepared/SERVER-FastAPI.py
         print("----")
 
-# WebSocket endpoint for running the workflow
+
 @app.websocket("/ws/run_workflow")
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
@@ -260,13 +243,13 @@ async def websocket_run_workflow(websocket: WebSocket):
         print(f"Error: {e}")
         await websocket.send_text(json.dumps({"error": str(e)}))
 
-# WebSocket endpoint
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
-            data = await websocket.receive_text()
+            data = await websocket.receive_text()  # 获取前端文本
             await websocket.send_text(f"Message text was: {data}")
     except WebSocketDisconnect:
         print("Client disconnected")
@@ -274,4 +257,5 @@ async def websocket_endpoint(websocket: WebSocket):
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
