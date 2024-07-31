@@ -9,9 +9,12 @@
   "dependencies": {
     "@joint/plus": "file:../../../build/package/joint-plus.tgz",
     "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
     "core-js": "^3.6.4",
     "echarts": "^5.5.1",
     "element-ui": "^2.15.14",
+    "express": "^4.19.2",
+    "redis": "^4.7.0",
     "rxjs": "^6.5.5",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
