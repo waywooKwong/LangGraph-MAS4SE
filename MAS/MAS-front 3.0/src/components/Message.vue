@@ -74,8 +74,8 @@ export default {
 
 .message.bot .message-bubble {
   
-  background-color: #dbd3e4;
-  color: #000;
+  background-color: #f6da87;
+  color: #7853B2;
   border-bottom-left-radius: 0;
 }
 </style>

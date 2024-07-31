@@ -434,18 +434,18 @@ export default {
   top:10%;
   }
   .sendQueryButton {
-    background-color: #FFC208;
-    color: #7853B2;
+    background-color: #dbd3e4;
+    color: #000;
     font-weight: bold;
   }
   .uploadFilesButton{
-    background-color: #f9d056;
-    color: #7853B2;
+    background-color: #dbd3e4;
+    color: #000;
     font-weight: bold;
   }
   .wstestButton{
-    background-color: #f6da87;
-    color: #7853B2;
+    background-color: #dbd3e4;
+    color: #000;
     font-weight: bold;
   }
 }
