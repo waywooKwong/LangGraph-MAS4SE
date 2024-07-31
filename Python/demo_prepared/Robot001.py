@@ -42,8 +42,8 @@ from langchain_community.agent_toolkits.load_tools import load_tools
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-from demo_prepared.ModelChoise import Model
-from demo_prepared.ModelChoise.modelchoise import get_tongyi_chat_model
+from ModelChoise import Model
+from ModelChoise.modelchoise import get_tongyi_chat_model
 from Class_01_PromptGenerator import PromptGenerator
 from langchain_core.prompts import PromptTemplate
 from typing import Dict, Any

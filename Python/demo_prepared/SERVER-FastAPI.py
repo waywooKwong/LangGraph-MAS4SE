@@ -8,7 +8,7 @@ from langgraph.graph import END, StateGraph, START
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain_core.prompts import PromptTemplate
-from demo_prepared.ModelChoise import modelchoise
+from ModelChoise import modelchoise
 from Class_02_BuildChainAgent import BuildChainAgent
 from Robot001 import RobotAgent
 
@@ -159,7 +159,7 @@ async def receive_model(request: ModelRequest):
 
 
 ##### 0 - 前端响应传送 json 字符串，保存到文件夹中
-from demo_prepared.frontend_json_process import CLASS_JointPlus_jsonprocess
+from frontend_json_process import CLASS_JointPlus_jsonprocess
 
 # Global variable to track if the file has been uploaded
 file_uploaded = False
