@@ -65,7 +65,7 @@ class BuildChainAgent:
         os.environ["USER_AGENT"] = (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
         )
-        self.base_dir = "src/mydocuments/role_txt"
+        self.base_dir = "src/role_txt"
         self.embedding_dir = "src/embedding_models/m3e-base"
 
         self.role = role
