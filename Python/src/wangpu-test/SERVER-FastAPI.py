@@ -8,8 +8,8 @@ from langgraph.graph import END, StateGraph, START
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain_core.prompts import PromptTemplate
-from ModelChoise import modelchoise
-from Class_02_BuildChainAgent import BuildChainAgent
+from demo_prepared.ModelChoise import modelchoise
+from 用户定制001 import BuildChainAgent
 
 
 class default_config:
@@ -28,6 +28,7 @@ class default_config:
     )
 
     def __init__(self):
+        self.path = None
         self.json_file_path = (
             "frontend_json_process/json_simplified/frontend-0729_simpified.json"
         )
@@ -42,7 +43,6 @@ class default_config:
 
 default_config = default_config()
 chat_model = default_config.chat_model
-
 
 from pydantic import BaseModel
 from fastapi import (
@@ -94,6 +94,7 @@ def save_graph_image(graph, file_path):
         print(f"保存图像失败: {e}")
 
 
+# 节点内部函数
 def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     last_message = state["messages"][-1]
     prompt = last_message.content
@@ -120,89 +121,106 @@ def router_concurrent_choice(state: AgentState, members: Dict[str, Any]) -> str:
 
 
 ##### 0 - 前端响应传送 json 字符串，保存到文件夹中
-from frontend_json_process import CLASS_JointPlus_jsonprocess
+from demo_prepared.frontend_json_process import CLASS_JointPlus_jsonprocess
+
+# Global variable to track if the file has been uploaded
+file_uploaded = False
+
+
+
 
 
 @app.post("/upload-agent")
 async def upload_agent(file: UploadFile = File(...)):
+    global file_uploaded
     try:
         file_content = await file.read()
         data = json.loads(file_content)
         print("Received JSON data:", data)
         simplified_json_path = CLASS_JointPlus_jsonprocess.extract_data_to_simplified_json(data)
-        # 在这里把 default_config 类的参数改变，之后加载 json 时调用类的参数
         default_config.set_path(simplified_json_path)
-        print("成功解析为json:",simplified_json_path)
+        file_uploaded = True
+        print("成功解析为json:", default_config.get_path())
+        # Initialize the workflow and run it
+
         return JSONResponse(content={"message": "JSON received successfully"})
     except Exception as e:
         print("Error:", e)
         return JSONResponse(content={"error": "An error occurred"}, status_code=500)
 
 
-json_file_path = default_config.json_file_path
-with open(json_file_path, "r", encoding="utf-8") as file:
-    data = json.load(file)
+def initialize_workflow():
+    if not file_uploaded:
+        print("No file uploaded yet.")
+        return
 
-workflow = StateGraph(AgentState)
+    json_file_path = default_config.get_path()
+    print("jason路径:",json_file_path)
+    with open(json_file_path, "r", encoding="utf-8") as file:
+        data = json.load(file)
 
-# 提取 message 部分信息并添加结点
-for message in data["Message"]:
-    label_text = message["label_text"]
-    description_text = message["description_text"]
-    # "start" "end" 特殊处理
-    if label_text.lower() != "start" and label_text.lower() != "end":
-        role = label_text
-        duty = description_text
-        model_role = BuildChainAgent(role=role, duty=duty)
-        workflow.add_node(
-            label_text, partial(func_node, node_name=label_text, chat_model=model_role)
-        )
+    global workflow
+    workflow = StateGraph(AgentState)
 
-# 处理 link 部分信息并添加边
-link_edges = {}
-for link in data["Link"]:
-    source_label = link["source_label"]
-    target_label = link["target_label"]
+    # 提取 message 部分信息并添加结点
+    for message in data["Message"]:
+        label_text = message["label_text"]
+        description_text = message["description_text"]
+        # "start" "end" 特殊处理
+        if label_text.lower() != "start" and label_text.lower() != "end":
+            role = label_text
+            duty = description_text
+            model_role = BuildChainAgent(role=role, duty=duty)
+            workflow.add_node(
+                label_text, partial(func_node, node_name=label_text, chat_model=model_role)
+            )
 
-    # 统计每个 source_label 对应的 target_label 的数量
-    if source_label not in link_edges:
-        link_edges[source_label] = []
-    link_edges[source_label].append(target_label)
+    # 处理 link 部分信息并添加边
+    link_edges = {}
+    for link in data["Link"]:
+        source_label = link["source_label"]
+        target_label = link["target_label"]
 
-# 添加边
-for source_label, targets in link_edges.items():
+        # 统计每个 source_label 对应的 target_label 的数量
+        if source_label not in link_edges:
+            link_edges[source_label] = []
+        link_edges[source_label].append(target_label)
 
-    if source_label.lower() == "start":
-        workflow.add_edge(START, targets[0])
+    # 添加边
+    for source_label, targets in link_edges.items():
 
-    elif len(targets) > 1:
-        conditional_map = {target: target for target in targets}
-        conditional_map["Finish"] = END
-        print("----")
-        print("conditional_map:", conditional_map)
-        print("----")
-        members = [value for value in conditional_map.values() if value != END]
-        for member in members:
-            workflow.add_edge(member, source_label)
+        if source_label.lower() == "start":
+            workflow.add_edge(START, targets[0])
 
-        workflow.add_conditional_edges(
-            source_label,
-            lambda state: router_concurrent_choice(state, conditional_map),
-            conditional_map,
-        )
+        elif len(targets) > 1:
+            conditional_map = {target: target for target in targets}
+            conditional_map["Finish"] = END
+            print("----")
+            print("conditional_map:", conditional_map)
+            print("----")
+            members = [value for value in conditional_map.values() if value != END]
+            for member in members:
+                workflow.add_edge(member, source_label)
 
-    else:
-        target_label = targets[0]
-        if target_label.lower() == "end":
-            workflow.add_edge(source_label, END)
+            workflow.add_conditional_edges(
+                source_label,
+                lambda state: router_concurrent_choice(state, conditional_map),
+                conditional_map,
+            )
+
         else:
-            workflow.add_edge(source_label, target_label)
+            target_label = targets[0]
+            if target_label.lower() == "end":
+                workflow.add_edge(source_label, END)
+            else:
+                workflow.add_edge(source_label, target_label)
 
 
 async def run_workflow_and_send_updates(websocket: WebSocket):
+    initialize_workflow()
     graph = workflow.compile()
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    file_path = f"src/workflow_graph/workflow_graph_{timestamp}.png"
+    file_path = f"workflow_graph_{timestamp}.png"
     save_graph_image(graph, file_path)
     events = graph.stream(
         {
@@ -236,6 +254,9 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
     try:
+        if not file_uploaded:
+            await websocket.send_text(json.dumps({"error": "No file uploaded yet"}))
+            return
         await run_workflow_and_send_updates(websocket)
     except WebSocketDisconnect:
         print("Client disconnected")

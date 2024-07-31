@@ -12,22 +12,22 @@
         },
         {
             "label_text": "Label: Project Manager",
-            "description_text": "Description：Project Manager",
+            "description_text": "Description：生成需求分析说明书，向技术经理分配任务",
             "id": "507d45de-36d7-42b2-847e-900c70b26517"
         },
         {
             "label_text": "Label: Technology",
-            "description_text": "Description: Technology",
+            "description_text": "Description: 完成项目经理布置的任务，同时生成概要设计说明书，最后向下属分配任务",
             "id": "297a5a49-2426-492b-ae1e-a82a43e1891c"
         },
         {
             "label_text": "Label: QA1",
-            "description_text": "Description:QA1",
+            "description_text": "完成技术经理分配的任务，同时生成前端vue的项目架构",
             "id": "9c29341a-8de1-4368-9c22-047605b94ebd"
         },
         {
             "label_text": "Label:QA2",
-            "description_text": "Description:QA2",
+            "description_text": "完成技术经理分配的任务，同时生成数据库的sql代码设计",
             "id": "8206ecf2-0751-4363-a97e-6048a29cd82a"
         }
     ],

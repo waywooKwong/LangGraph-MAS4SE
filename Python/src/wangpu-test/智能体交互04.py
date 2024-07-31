@@ -169,10 +169,10 @@ for source_label, targets in link_edges.items():
         print("----")
         print("conditional_map:", conditional_map)
         print("----")
-        # members = [value for value in conditional_map.values() if value != END]
-        # for member in members:
-        #     workflow.add_edge(member, source_label)
-        # workflow.add_node(source_label, partial(process_technology, members=conditional_map))
+        members = [value for value in conditional_map.values() if value != END]
+        for member in members:
+            workflow.add_edge(member, source_label)
+
         workflow.add_conditional_edges(source_label,
                                        lambda state: router_concurrent_choice(state, conditional_map),
                                        conditional_map)
