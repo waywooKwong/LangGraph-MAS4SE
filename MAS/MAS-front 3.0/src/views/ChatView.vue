@@ -45,7 +45,7 @@
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息 -->
-          <Message v-for="(message, index) in messages" :key="index" :text="message.text.message" :sender="message.sender" />
+          <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" />
         </div>
       </div>
 
@@ -56,7 +56,7 @@
           <!-- 自定义上传按钮 -->
           <template v-slot:trigger>
             <el-tooltip effect="dark" content="选择文件" placement="top">
-              <el-button :disabled="isSending">
+              <el-button :disabled="isSending" class="selectFilesButton">
                 <i class="el-icon-paperclip" size: small></i>
               </el-button>
             </el-tooltip>
@@ -73,10 +73,10 @@
         <el-input v-model="query" placeholder="Type a message" @keyup.enter="sendQuery"
           :disabled="isSending"></el-input>
         <!-- 发送按钮 -->
-        <el-button type="primary" @click="sendQuery" :disabled="isSending">发送</el-button>
+        <el-button  @click="sendQuery" :disabled="isSending" class="sendQueryButton">发送</el-button>
         <!-- 上传文件按钮 -->
-        <el-button type="success" @click="uploadFiles" :disabled="isSending || files.length === 0">上传文件</el-button>
-        <el-button type="primary" @click="wstest" :disabled="isSending">MAS-WebSocket</el-button>
+        <el-button  @click="uploadFiles" :disabled="isSending || files.length === 0" class="uploadFilesButton">上传文件</el-button>
+        <el-button  @click="wstest" :disabled="isSending" class="wstestButton">MAS-WebSocket</el-button>
 
       </el-footer>
     </div>
@@ -328,7 +328,7 @@ export default {
 .chat-header {
   height: 60px;
   padding: 0 10px;
-  background-color: rgb(126,18,110);
+  background-color: #7853B2;
   border-bottom: 1px solid #f4f4f4;
   display: flex;
   align-items: center;
@@ -349,15 +349,16 @@ export default {
     transform: translateY(-50%);
     
     .model-select-bottom {
-      font-size: 12px;
+      font-size: 14px;
       width: auto;
       height: 30px;
       display: flex;
       align-items: center;
       justify-content: center; 
-      color: yellow;
+      color: #394398;
       // background-color: #222222;
-      border: red;
+      border: rgb(251, 248, 248);
+      background-color: #DCE2FA;
     }
 
     .model-select {
@@ -373,12 +374,13 @@ export default {
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: auto; /* 自动宽度适应文字 */
+    width: 70px; /* 自动宽度适应文字 */
     height: 30px; /* 自动高度适应文字 */
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: white; /* 修改背景颜色为白色 */
+    background-color: #DCE2FA; 
+    color: #394398;
     padding: 0;
   }
 
@@ -387,12 +389,13 @@ export default {
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: auto; /* 自动宽度适应文字 */
+    width: 60px; /* 自动宽度适应文字 */
     height: 30px; /* 自动高度适应文字 */
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: white; /* 修改背景颜色为白色 */
+    background-color: #DCE2FA; 
+    color: #394398;
     padding: 0;
   }
 }
@@ -412,15 +415,42 @@ export default {
 
 .footer {
   display: flex;
-  padding: 10px;
-  background-color: #fff;
+  // padding: 10px;
+  background-color: #DCE2FA;
   align-items: center; /* 底部水平对齐 */
-}
 
-.footer .el-input {
+  .selectFilesButton{
+    height: 30px;
+    width: 30px;
+    align-items: center;
+    justify-content: center; 
+    display: flex;
+  }
+  .el-input {
   flex: 1;
   margin-right: 10px;
+  display: flex;
+  align-items: center;
+  top:10%;
+  }
+  .sendQueryButton {
+    background-color: #FFC208;
+    color: #7853B2;
+    font-weight: bold;
+  }
+  .uploadFilesButton{
+    background-color: #f9d056;
+    color: #7853B2;
+    font-weight: bold;
+  }
+  .wstestButton{
+    background-color: #f6da87;
+    color: #7853B2;
+    font-weight: bold;
+  }
 }
+ 
+
 
 .upload-demo {
   margin-right: 10px;
