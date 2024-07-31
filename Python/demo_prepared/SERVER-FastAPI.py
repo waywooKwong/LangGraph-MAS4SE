@@ -119,6 +119,27 @@ def router_concurrent_choice(state: AgentState, members: Dict[str, Any]) -> str:
     return "Finish"  # 如果所有成员都已访问过，则跳转到 'Finish'
 
 
+# 定义请求体模型
+class ModelRequest(BaseModel):
+    model: str
+# 定义 POST 路由来接收 /model 请求，实现选择模型
+@app.post("/model")
+async def receive_model(request: ModelRequest):
+    try:
+        # 从请求体中提取 model 数据
+        model_data = request.model
+        print("Received model:", model_data)
+
+        # 处理 model 数据（这里可以根据需要进行处理）
+        # ...
+
+        # 返回响应给前端
+        return JSONResponse(content={"message": "Model received successfully", "model": model_data})
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail="An error occurred")
+
+
 ##### 0 - 前端响应传送 json 字符串，保存到文件夹中
 from frontend_json_process import CLASS_JointPlus_jsonprocess
 

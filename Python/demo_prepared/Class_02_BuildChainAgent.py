@@ -65,7 +65,11 @@ class BuildChainAgent:
         os.environ["USER_AGENT"] = (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
         )
+<<<<<<< HEAD
         self.base_dir = "D:/WorkSpace/Pycharm/Langchain_Final/Python/demo_prepared/src/mydocuments"
+=======
+        self.base_dir = "src/role_txt"
+>>>>>>> 346caec9d158b794f1aa0b030c392b2e49ff8f32
         self.embedding_dir = "src/embedding_models/m3e-base"
 
         self.role = role
@@ -107,16 +111,25 @@ class BuildChainAgent:
             partial_variables={"format_instructions": self.format_instructions},
         )
 
+    def detect_encoding(self, file_path):
+        import chardet
+        with open(file_path, 'rb') as f:
+            raw_data = f.read(10000)  # 读取文件的一部分来检测编码
+        result = chardet.detect(raw_data)
+        return result['encoding']
+    
     def load_documents(self):
         docs = []
         for filename in os.listdir(self.base_dir):
-            file_path = os.path.join(self.base_dir, filename)
+            file_path = f"{self.base_dir}/{filename}"
+            print("file_path:",file_path)
+            encoding = self.detect_encoding(file_path)
             if filename.endswith(".pdf"):
-                loader = PyPDFLoader(file_path)
+                loader = PyPDFLoader(file_path,encoding=encoding)
             elif filename.endswith(".docx"):
-                loader = Docx2txtLoader(file_path)
+                loader = Docx2txtLoader(file_path,encoding=encoding)
             elif filename.endswith(".txt"):
-                loader = TextLoader(file_path)
+                loader = TextLoader(file_path,encoding=encoding)
             else:
                 continue
             docs.extend(loader.load())
