@@ -1,4 +1,5 @@
 <template>
+ 
   <div class="chat-main">
     <!-- 侧边栏 -->
     <div class="side-bar">
@@ -30,7 +31,7 @@
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息 -->
-          <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" />
+          <Message v-for="(message, index) in messages" :key="index" :text="message.text.message" :sender="message.sender" />
         </div>
       </div>
 
@@ -126,10 +127,13 @@ export default {
       console.log('WebSocket Client Connected');
     };
 
-    this.client.onmessage = (message) => {
-      this.messages.push({ text: message.data, sender: 'bot' });
+    this.client.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      
+      this.messages.push({ text: message, sender: 'bot' });
       this.saveMessages();
       this.scrollToBottom();
+      console.log("获取信息：",this.messages)
     };
 
     this.client.onclose = () => {

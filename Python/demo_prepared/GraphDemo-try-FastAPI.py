@@ -245,6 +245,7 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
             "message": recent_content,
         }
         print("serialized_round:", json.dumps(serialized_round))
+        await websocket.send_text(json.dumps(serialized_round))
         print("----")
 
 # WebSocket endpoint for running the workflow
