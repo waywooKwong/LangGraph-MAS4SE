@@ -1,0 +1,72 @@
+{
+    "searchParameters": {
+        "q": "TechnologyLeader",
+        "gl": "us",
+        "hl": "en",
+        "type": "search",
+        "num": 3,
+        "engine": "google"
+    },
+    "organic": [
+        {
+            "title": "What is a Technology Leader? - LinkedIn",
+            "link": "https://www.linkedin.com/pulse/what-technology-leader-riaan-gouws",
+            "snippet": "By being responsive to both users and colleagues, you will create a culture that lets others know that they can count on you for timely help and ...",
+            "date": "Oct 3, 2022",
+            "position": 1
+        },
+        {
+            "title": "Top 10: Technology leaders",
+            "link": "https://technologymagazine.com/articles/top-10-technology-leaders",
+            "snippet": "Top 10: Technology leaders \u00b7 Sukanya S \u00b7 Nagesh Saldi \u00b7 John Powers \u00b7 Michael Wintergerst \u00b7 Stefan Palzer \u00b7 Sam Kini \u00b7 Timothy Campos \u00b7 Satya ...",
+            "date": "Dec 6, 2023",
+            "position": 2
+        },
+        {
+            "title": "Seven Tips On Being A Technology Leader - Oliver Wyman",
+            "link": "https://www.oliverwyman.com/our-expertise/insights/2020/mar/needed-more-women-with-power/collection-of-articles/seven-tips-on-being-a-technology-leader.html",
+            "snippet": "TIP #5: MAKE MENTORING A KEY ELEMENT OF YOUR ROLE. Consider helping to set up mentoring relationships, making yourself available as a mentor, and showcasing ...",
+            "sitelinks": [
+                {
+                    "title": "Tip #1: Don't Think You Have...",
+                    "link": "https://www.oliverwyman.com/our-expertise/insights/2020/mar/needed-more-women-with-power/collection-of-articles/seven-tips-on-being-a-technology-leader.html#:~:text=TIP%20%231%3A%20DON%27T%20THINK%20YOU%20HAVE%20TO%20HAVE%20A%20BACKGROUND%20IN%20TECHNOLOGY"
+                },
+                {
+                    "title": "Tip #2: Use A Broad Range Of...",
+                    "link": "https://www.oliverwyman.com/our-expertise/insights/2020/mar/needed-more-women-with-power/collection-of-articles/seven-tips-on-being-a-technology-leader.html#:~:text=TIP%20%232%3A%20USE%20A%20BROAD%20RANGE%20OF%20RECRUITMENT%20CRITERIA"
+                },
+                {
+                    "title": "Tip #6: Create A Workplace...",
+                    "link": "https://www.oliverwyman.com/our-expertise/insights/2020/mar/needed-more-women-with-power/collection-of-articles/seven-tips-on-being-a-technology-leader.html#:~:text=TIP%20%236%3A%20CREATE%20A%20WORKPLACE%20WHERE%20TALENTED%20TECHIES%20WANT%20TO%20WORK"
+                }
+            ],
+            "position": 3
+        }
+    ],
+    "relatedSearches": [
+        {
+            "query": "Technology leader company"
+        },
+        {
+            "query": "Technology leader company crossword clue"
+        },
+        {
+            "query": "Famous technology leaders"
+        },
+        {
+            "query": "Technology leaders today"
+        },
+        {
+            "query": "Technology leaders in the world"
+        },
+        {
+            "query": "Technology Leader salary"
+        },
+        {
+            "query": "Top 10 tech leaders"
+        },
+        {
+            "query": "Leaders in technology innovation"
+        }
+    ]
+}
