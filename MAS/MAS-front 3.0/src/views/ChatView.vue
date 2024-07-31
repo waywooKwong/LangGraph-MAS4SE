@@ -70,8 +70,15 @@
           </li>
         </ul>
         <!-- 消息输入框 -->
-        <el-input v-model="query" placeholder="Type a message" @keyup.enter="sendQuery"
-          :disabled="isSending"></el-input>
+        <el-input
+          v-model="query"
+          placeholder="Type a message"
+          @keyup.enter.native="sendQuery"
+          :disabled="isSending"
+          type="textarea"
+          :rows="1"
+          :autosize="{ minRows: 1, maxRows: 2 }"
+        ></el-input>
         <!-- 发送按钮 -->
         <el-button  @click="sendQuery" :disabled="isSending" class="sendQueryButton">发送</el-button>
         <!-- 上传文件按钮 -->
@@ -323,6 +330,7 @@ export default {
   display: flex;
   flex: 1;
   flex-direction: column;
+  // margin-bottom: 40px; /* 预留空间给 footer */
 }
 
 .chat-header {
@@ -401,19 +409,43 @@ export default {
 }
 
 .main-window {
+  
   display: flex;
   flex: 1;
   overflow: hidden; /* 避免整个窗口的滚动条 */
+  justify-content: center;
+  background: linear-gradient(to right, #7853B2, #ddc0f8, #f8eed2, #f6da87);
 }
 
 .chat-window {
-  flex: 1;
+  width: 63%;
+  // flex: 1;
   overflow-y: auto; /* 仅对话信息框可以滚动 */
   padding: 10px;
   border-bottom: 1px solid #dcdfe6;
+/* 自定义滚动条样式 */
+&::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent; /* 滚动条轨道背景透明 */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); /* 滚动条颜色 */
+    border-radius: 10px;
+    border: 3px solid transparent; /* 为滚动条添加间距 */
+    background-clip: content-box;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4); /* 悬停时滚动条颜色 */
+  }
 }
 
 .footer {
+  height: 80px;
   display: flex;
   // padding: 10px;
   background-color: #DCE2FA;
@@ -432,8 +464,10 @@ export default {
   display: flex;
   align-items: center;
   top:10%;
+  
   }
   .sendQueryButton {
+    margin-left: 10px;
     background-color: #dbd3e4;
     color: #000;
     font-weight: bold;
