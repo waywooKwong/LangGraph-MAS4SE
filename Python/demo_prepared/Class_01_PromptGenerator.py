@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from ModelChoise import modelchoise
+from ModelChoise import Model
 from langchain_core.prompts import PromptTemplate
-
+Model.os_setenv()
 class PromptGenerator:
     def __init__(self):
         # Model.os_setenv()
-        self.chat_model = modelchoise.get_zhipuai_chat_model()
+        self.chat_model = Model.get_zhupuai_model()
         self.prompt_template_str = ("""
             您是一个专业的提示词模板生成器。\n
             您可以生成非常专业的提示词模板用于构建栩栩如生的角色\n

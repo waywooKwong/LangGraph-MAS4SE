@@ -65,11 +65,7 @@ class BuildChainAgent:
         os.environ["USER_AGENT"] = (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
         )
-<<<<<<< HEAD
-        self.base_dir = "D:/WorkSpace/Pycharm/Langchain_Final/Python/demo_prepared/src/mydocuments"
-=======
         self.base_dir = "src/role_txt"
->>>>>>> 346caec9d158b794f1aa0b030c392b2e49ff8f32
         self.embedding_dir = "src/embedding_models/m3e-base"
 
         self.role = role
