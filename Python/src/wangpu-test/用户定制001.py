@@ -34,13 +34,14 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from demo_prepared.ModelChoise.modelchoise import get_zhipuai_chat_model
+from demo_prepared.ModelChoise import Model
 from 提示词模板生成器01 import PromptGenerator
 from langchain_core.prompts import PromptTemplate
 from typing import Dict, Any
 
 # 禁用并行处理
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
+Model.os_setenv()
 
 def generate_prompt(role: str, duty: str) -> str:
     generator = PromptGenerator()
@@ -75,7 +76,7 @@ class BuildChainAgent:
         self.role = role
         self.duty = duty
         self.object = ""
-        self.chat_model = chat_model = get_zhipuai_chat_model()
+        self.chat_model = Model.get_zhupuai_model()
         self.docs = self.load_documents()
         self.embeddings = self.load_embeddings()
         self.vector_retriever = self.create_vector_retriever()

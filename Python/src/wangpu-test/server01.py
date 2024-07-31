@@ -196,24 +196,24 @@ chat_history = [
 ]
 
 # Select the main tool as Tavily - a search engine.
-from langchain_community.tools.tavily_search import TavilySearchResults
-
-search = TavilySearchResults(
-    max_results=5,
-    search_depth="advanced",
-    # include_domains = []
-    # exclude_domains = []
-    # include_answer = False
-    # include_raw_content = False
-    # include_images = True
-)
+# from langchain_community.tools.tavily_search import TavilySearchResults
+#
+# search = TavilySearchResults(
+#     max_results=5,
+#     search_depth="advanced",
+#     # include_domains = []
+#     # exclude_domains = []
+#     # include_answer = False
+#     # include_raw_content = False
+#     # include_images = True
+# )
 tool = load_tools(tool_names=["llm-math"], llm=chat_model)
 
 # If we want, we can create other tools.
 # Once we have all the tools we want, we can put them in a list that we will reference later.
 
 # Initialize Agent
-tools = [retriever_tool, search] + tool
+tools = [retriever_tool] + tool
 agent = initialize_agent(
     tools=tools,
     llm=chat_model,

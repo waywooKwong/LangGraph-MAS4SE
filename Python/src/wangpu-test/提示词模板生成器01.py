@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import getpass
 from demo_prepared.ModelChoise.modelchoise import get_zhipuai_chat_model
+from demo_prepared.ModelChoise import Model
 import json
 import os
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -16,11 +17,11 @@ from langchain.chains import create_history_aware_retriever
 from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate, PromptTemplate
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
-
+Model.os_setenv()
 class PromptGenerator:
     def __init__(self):
         # Model.os_setenv()
-        self.chat_model = get_zhipuai_chat_model()
+        self.chat_model = Model.get_zhupuai_model()
         self.prompt_template_str = ("""
             您是一个专业的提示词模板生成器。\n
             您可以生成非常专业的提示词模板用于构建栩栩如生的角色\n
