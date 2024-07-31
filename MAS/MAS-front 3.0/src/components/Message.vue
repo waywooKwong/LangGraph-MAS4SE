@@ -67,15 +67,15 @@ export default {
 
 .message.user .message-bubble {
  
-  background-color: #006bde;
+  background-color: #75afec;
   color: #fff4f4;
   border-bottom-right-radius: 0;
 }
 
 .message.bot .message-bubble {
   
-  background-color: #e5e5ea;
-  color: #000;
+  background-color: #f6da87;
+  color: #7853B2;
   border-bottom-left-radius: 0;
 }
 </style>

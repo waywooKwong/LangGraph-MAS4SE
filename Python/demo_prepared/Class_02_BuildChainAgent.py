@@ -107,16 +107,25 @@ class BuildChainAgent:
             partial_variables={"format_instructions": self.format_instructions},
         )
 
+    def detect_encoding(self, file_path):
+        import chardet
+        with open(file_path, 'rb') as f:
+            raw_data = f.read(10000)  # 读取文件的一部分来检测编码
+        result = chardet.detect(raw_data)
+        return result['encoding']
+    
     def load_documents(self):
         docs = []
         for filename in os.listdir(self.base_dir):
-            file_path = os.path.join(self.base_dir, filename)
+            file_path = f"{self.base_dir}/{filename}"
+            print("file_path:",file_path)
+            encoding = self.detect_encoding(file_path)
             if filename.endswith(".pdf"):
-                loader = PyPDFLoader(file_path)
+                loader = PyPDFLoader(file_path,encoding=encoding)
             elif filename.endswith(".docx"):
-                loader = Docx2txtLoader(file_path)
+                loader = Docx2txtLoader(file_path,encoding=encoding)
             elif filename.endswith(".txt"):
-                loader = TextLoader(file_path)
+                loader = TextLoader(file_path,encoding=encoding)
             else:
                 continue
             docs.extend(loader.load())
