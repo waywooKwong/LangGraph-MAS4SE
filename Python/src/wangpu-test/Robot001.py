@@ -51,6 +51,7 @@ from typing import Dict, Any
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 Model.os_setenv()
 
+
 def generate_prompt(role: str, duty: str) -> str:
     generator = PromptGenerator()
     description = ""
@@ -60,7 +61,7 @@ def generate_prompt(role: str, duty: str) -> str:
     return description
 
 
-class BuildChainAgent:
+class RobotAgent:
     """
     注意 chat_model 模型的加载，
     默认使用的是 Ollama 加载方式
@@ -255,16 +256,3 @@ class BuildChainAgent:
         return response["output"]
 
 
-
-# agent = BuildChainAgent()
-#
-# while True:
-#     human_message = input("请输入问题（输入 'end' 结束）：")
-#     if human_message == "end":
-#         break
-#     # 使用 agent 获取回答
-#     response = agent.invoke(input=human_message)
-#     # 输出回答
-#     print("根据 agent 回答：", response)
-#
-# print("END....")
