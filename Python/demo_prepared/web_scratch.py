@@ -146,7 +146,6 @@ main_txt_path = file_paths["main_txt"]
 # !!! 这个也有 URL 的爬取，可以结合 EXA 得到的 URL？
 def GoogleSerper_search(input_keyword):
     from langchain_community.utilities import GoogleSerperAPIWrapper
-
     # 进 GoogleSerperAPIWrapper 中，有直接拼接 Snippet 的函数
     os.environ["SERPER_API_KEY"] = "0b33d1ee4053a32b93f6d029f66aa149599d7c91"
     GoogleSerper_search = GoogleSerperAPIWrapper(k=10, type="search")
