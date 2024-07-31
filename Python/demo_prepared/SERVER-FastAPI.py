@@ -28,9 +28,7 @@ class default_config:
     )
 
     def __init__(self):
-        self.json_file_path = (
-            "frontend_json_process/json_simplified/frontend-0729_simpified.json"
-        )
+        self.json_file_path = "frontend_json_process/json_simplified_format.json"
         self.chat_model = modelchoise.get_zhipuai_chat_model()
 
     def set_path(self, new_path):
@@ -122,6 +120,8 @@ def router_concurrent_choice(state: AgentState, members: Dict[str, Any]) -> str:
 # 定义请求体模型
 class ModelRequest(BaseModel):
     model: str
+
+
 # 定义 POST 路由来接收 /model 请求，实现选择模型
 @app.post("/model")
 async def receive_model(request: ModelRequest):
@@ -134,7 +134,9 @@ async def receive_model(request: ModelRequest):
         # ...
 
         # 返回响应给前端
-        return JSONResponse(content={"message": "Model received successfully", "model": model_data})
+        return JSONResponse(
+            content={"message": "Model received successfully", "model": model_data}
+        )
     except Exception as e:
         print("Error:", e)
         raise HTTPException(status_code=500, detail="An error occurred")
@@ -150,10 +152,12 @@ async def upload_agent(file: UploadFile = File(...)):
         file_content = await file.read()
         data = json.loads(file_content)
         print("Received JSON data:", data)
-        simplified_json_path = CLASS_JointPlus_jsonprocess.extract_data_to_simplified_json(data)
+        simplified_json_path = (
+            CLASS_JointPlus_jsonprocess.extract_data_to_simplified_json(data)
+        )
         # 在这里把 default_config 类的参数改变，之后加载 json 时调用类的参数
         default_config.set_path(simplified_json_path)
-        print("成功解析为json:",simplified_json_path)
+        print("成功解析为json:", simplified_json_path)
         return JSONResponse(content={"message": "JSON received successfully"})
     except Exception as e:
         print("Error:", e)
@@ -174,6 +178,9 @@ for message in data["Message"]:
     if label_text.lower() != "start" and label_text.lower() != "end":
         role = label_text
         duty = description_text
+        print("\nthis role:", role)
+        # model_role 的 role_txt 在这里默认关闭，
+        # 请调整 Class_02_BuildChainAgent.py 中 load_document() 函数
         model_role = BuildChainAgent(role=role, duty=duty)
         workflow.add_node(
             label_text, partial(func_node, node_name=label_text, chat_model=model_role)
@@ -248,8 +255,7 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
             "message": recent_content,
         }
 
-        print("serialized_round:", json.dumps(serialized_round,ensure_ascii=False))
-        # 874a0dc3fc98d72e36aad735a7334eb4d8cdbf23:Python/demo_prepared/SERVER-FastAPI.py
+        print("serialized_round:", json.dumps(serialized_round, ensure_ascii=False))
         print("----")
 
 

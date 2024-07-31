@@ -1,0 +1,74 @@
+{
+    "searchParameters": {
+        "q": "Label_Technology",
+        "gl": "us",
+        "hl": "en",
+        "type": "search",
+        "num": 3,
+        "engine": "google"
+    },
+    "knowledgeGraph": {
+        "title": "Label Technology Inc.",
+        "type": "Company",
+        "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqeYQcWz44O3Is_YugdyxqL9cKcNaQi4E3BbZOGISaxu6ydyJK32ZuVg&s=0",
+        "attributes": {
+            "Parent organization": "Fortis Solutions Group, LLC",
+            "Founded": "1986"
+        }
+    },
+    "organic": [
+        {
+            "title": "Label Technology | LinkedIn",
+            "link": "https://www.linkedin.com/company/label-technology",
+            "snippet": "Label Technology develops and manufactures flexible packaging for the food & beverage, nutritional supplement, cosmetic & beauty aid, medical & health care, ...",
+            "position": 1
+        },
+        {
+            "title": "Label Tech, Inc.",
+            "link": "https://labeltechin.com/",
+            "snippet": "Label Tech is a manufacturer of adhesive back labels. We specialize in flexographic printing, but we don't stop there!",
+            "sitelinks": [
+                {
+                    "title": "Contact Us",
+                    "link": "https://labeltechin.com/contact-us"
+                },
+                {
+                    "title": "Products",
+                    "link": "https://labeltechin.com/products"
+                },
+                {
+                    "title": "The Process",
+                    "link": "https://labeltechin.com/the-process"
+                },
+                {
+                    "title": "About Us",
+                    "link": "https://labeltechin.com/about-us"
+                }
+            ],
+            "position": 2
+        },
+        {
+            "title": "Label Technology Inc - Company Profile, Product Range, Locations ...",
+            "link": "https://www.packaging-labelling.com/suppliers/label-technology-inc",
+            "snippet": "We are committed to providing our customers with graphics excellence and flexible packaging and pressure sensitive labels solutions that compel consumers to ...",
+            "position": 3
+        }
+    ],
+    "relatedSearches": [
+        {
+            "query": "Label technology salary"
+        },
+        {
+            "query": "Label technology jobs"
+        },
+        {
+            "query": "Label technology companies"
+        },
+        {
+            "query": "Label Technology Merced"
+        },
+        {
+            "query": "LabelTac"
+        }
+    ]
+}

@@ -1,0 +1,71 @@
+{
+    "searchParameters": {
+        "q": "AlgorithmEngineer",
+        "gl": "us",
+        "hl": "en",
+        "type": "search",
+        "num": 3,
+        "engine": "google"
+    },
+    "organic": [
+        {
+            "title": "How to Become an Algorithm Engineer",
+            "link": "https://www.wgu.edu/career-guide/information-technology/algorithm-engineer-career.html",
+            "snippet": "Students pursuing a career as an algorithm engineer should first earn a bachelor's degree in software engineering, computer science, or a related degree. Any ...",
+            "position": 1
+        },
+        {
+            "title": "What Is A Algorithm Engineer? Required Skills, Salary, & More!",
+            "link": "https://skillcrush.com/tech-jobs/algorithm-engineer/",
+            "snippet": "Algorithm engineers are specialized type of software engineers who design, analyze, and implement algorithms to solve specific problems.",
+            "position": 2
+        },
+        {
+            "title": "What Does an Algorithm Engineer Do? - Coursera",
+            "link": "https://www.coursera.org/articles/algorithm-engineer",
+            "snippet": "As an algorithm engineer, companies may consider you a specialist software developer who creates, installs, maintains, and analyzes algorithms.",
+            "date": "Jul 1, 2024",
+            "sitelinks": [
+                {
+                    "title": "Skills",
+                    "link": "https://www.coursera.org/articles/algorithm-engineer#:~:text=Skills,-Algorithm%20engineering%20is%20highly%20technical"
+                },
+                {
+                    "title": "Education And Training",
+                    "link": "https://www.coursera.org/articles/algorithm-engineer#:~:text=Education%20and%20training"
+                },
+                {
+                    "title": "Get Started On Coursera",
+                    "link": "https://www.coursera.org/articles/algorithm-engineer#:~:text=Get%20started%20on%20Coursera."
+                }
+            ],
+            "position": 3
+        }
+    ],
+    "relatedSearches": [
+        {
+            "query": "Algorithm engineer salary"
+        },
+        {
+            "query": "Algorithm engineer jobs"
+        },
+        {
+            "query": "Algorithm engineer skills"
+        },
+        {
+            "query": "Algorithm engineer job description"
+        },
+        {
+            "query": "Algorithm engineer degree"
+        },
+        {
+            "query": "Algorithm engineer vs software engineer"
+        },
+        {
+            "query": "Algorithm engineer course"
+        },
+        {
+            "query": "Algorithm engineer vs data scientist"
+        }
+    ]
+}

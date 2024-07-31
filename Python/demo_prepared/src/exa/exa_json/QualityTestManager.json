@@ -1,0 +1,75 @@
+{
+    "searchParameters": {
+        "q": "QualityTestManager",
+        "gl": "us",
+        "hl": "en",
+        "type": "search",
+        "num": 3,
+        "engine": "google"
+    },
+    "organic": [
+        {
+            "title": "What makes a good QA/test manager? : r/QualityAssurance - Reddit",
+            "link": "https://www.reddit.com/r/QualityAssurance/comments/1c7v22i/what_makes_a_good_qatest_manager/",
+            "snippet": "A good QA/test manager communicates clear expectations, delegates tasks efficiently, and empowers team members to take ownership of their work.",
+            "date": "Apr 19, 2024",
+            "sitelinks": [
+                {
+                    "title": "Is there a difference to you between \"Lead QA\" and \"QA Manager\"?",
+                    "link": "https://www.reddit.com/r/QualityAssurance/comments/z1oopa/is_there_a_difference_to_you_between_lead_qa_and/"
+                },
+                {
+                    "title": "How to become QA Manager? : r/softwaretesting - Reddit",
+                    "link": "https://www.reddit.com/r/softwaretesting/comments/1bq8nxr/how_to_become_qa_manager/"
+                },
+                {
+                    "title": "How to become a QA lead/ Test manager? - Reddit",
+                    "link": "https://www.reddit.com/r/QualityAssurance/comments/wrmhn7/how_to_become_a_qa_lead_test_manager/"
+                },
+                {
+                    "title": "What would you expect from a Software QA Manager? - Reddit",
+                    "link": "https://www.reddit.com/r/QualityAssurance/comments/2fty5w/what_would_you_expect_from_a_software_qa_manager/"
+                }
+            ],
+            "position": 1
+        },
+        {
+            "title": "QA Manager: what is it? - Blue Soft Group",
+            "link": "https://www.bluesoft-group.com/en/what-is-a-qa-quality-assurance-manager-/",
+            "snippet": "The QA manager intervenes within a development team. He tests the achievements of his colleagues and improves the finished product. To do this, he/she will have ...",
+            "position": 2
+        },
+        {
+            "title": "QA Test Manager jobs - Indeed",
+            "link": "https://www.indeed.com/q-qa-test-manager-jobs.html",
+            "snippet": "1652 QA Test Manager jobs available on Indeed.com. Apply to Quality Assurance Manager, Software Test Engineer, Test Manager and more!",
+            "position": 3
+        }
+    ],
+    "relatedSearches": [
+        {
+            "query": "Quality test manager salary"
+        },
+        {
+            "query": "Quality test manager job description"
+        },
+        {
+            "query": "Quality test manager jobs"
+        },
+        {
+            "query": "QA Manager salary"
+        },
+        {
+            "query": "Quality test manager responsibilities"
+        },
+        {
+            "query": "Quality test manager roles and responsibilities"
+        },
+        {
+            "query": "QA Manager meaning"
+        },
+        {
+            "query": "QA manager roles and responsibilities"
+        }
+    ]
+}
