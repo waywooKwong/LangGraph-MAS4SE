@@ -1,0 +1,72 @@
+{
+    "Message": [
+        {
+            "label_text": "Start",
+            "description_text": "FlowchartStart",
+            "id": "7c07484e-e5e3-4257-b036-b2f4cd0e2a6a"
+        },
+        {
+            "label_text": "End",
+            "description_text": "FlowchartEnd",
+            "id": "fec73d70-1bdf-4f32-a37f-6c312d0fa9e2"
+        },
+        {
+            "label_text": "Label: Project Manager",
+            "description_text": "Description：生成需求分析说明书，向技术经理分配任务",
+            "id": "507d45de-36d7-42b2-847e-900c70b26517"
+        },
+        {
+            "label_text": "Label: Technology",
+            "description_text": "Description: 完成项目经理布置的任务，同时生成概要设计说明书，最后向下属分配任务",
+            "id": "297a5a49-2426-492b-ae1e-a82a43e1891c"
+        },
+        {
+            "label_text": "Label: QA1",
+            "description_text": "完成技术经理分配的任务，同时生成前端vue的项目架构",
+            "id": "9c29341a-8de1-4368-9c22-047605b94ebd"
+        },
+        {
+            "label_text": "Label:QA2",
+            "description_text": "完成技术经理分配的任务，同时生成数据库的sql代码设计",
+            "id": "8206ecf2-0751-4363-a97e-6048a29cd82a"
+        }
+    ],
+    "Link": [
+        {
+            "source_label": "Start",
+            "target_label": "Label: Project Manager",
+            "source_id": "7c07484e-e5e3-4257-b036-b2f4cd0e2a6a",
+            "target_id": "507d45de-36d7-42b2-847e-900c70b26517"
+        },
+        {
+            "source_label": "Label: Project Manager",
+            "target_label": "Label: Technology",
+            "source_id": "507d45de-36d7-42b2-847e-900c70b26517",
+            "target_id": "297a5a49-2426-492b-ae1e-a82a43e1891c"
+        },
+        {
+            "source_label": "Label: Technology",
+            "target_label": "Label: QA1",
+            "source_id": "297a5a49-2426-492b-ae1e-a82a43e1891c",
+            "target_id": "9c29341a-8de1-4368-9c22-047605b94ebd"
+        },
+        {
+            "source_label": "Label: Technology",
+            "target_label": "Label:QA2",
+            "source_id": "297a5a49-2426-492b-ae1e-a82a43e1891c",
+            "target_id": "8206ecf2-0751-4363-a97e-6048a29cd82a"
+        },
+        {
+            "source_label": "Label: QA1",
+            "target_label": "End",
+            "source_id": "9c29341a-8de1-4368-9c22-047605b94ebd",
+            "target_id": "fec73d70-1bdf-4f32-a37f-6c312d0fa9e2"
+        },
+        {
+            "source_label": "Label:QA2",
+            "target_label": "End",
+            "source_id": "8206ecf2-0751-4363-a97e-6048a29cd82a",
+            "target_id": "fec73d70-1bdf-4f32-a37f-6c312d0fa9e2"
+        }
+    ]
+}
