@@ -31,7 +31,7 @@
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息 -->
-          <Message v-for="(message, index) in messages" :key="index" :text="message.text.message" :sender="message.sender" />
+          <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" />
         </div>
       </div>
 

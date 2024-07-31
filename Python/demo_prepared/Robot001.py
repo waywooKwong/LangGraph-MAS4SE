@@ -22,12 +22,6 @@ chat_model = get_zhipuai_chat_model()
 
 
 
-duty_classifier = {
-    "Project Manager(PM)",
-    "Technology Leader(TTL)",
-    "Schedule Planning(QA1)",
-    "Coding Standard(QA2)",
-}
 
 # 定义提示模板
 classifier_prompt_template = """
@@ -47,7 +41,7 @@ classifier_response_schema = [
         name="classifier",
         description="Classifier request into a specific type of duty_classifier",
     ),
-    ResponseSchema(name="reason", description="Reason for the classifier judgement"),
+
 ]
 
 classifier_output_parser = StructuredOutputParser.from_response_schemas(
@@ -61,30 +55,3 @@ prompt_template_01 = PromptTemplate.from_template(
     partial_variables={"format_instruction": format_instruction},
 )
 
-
-def create_messages(input_text):
-    duty_descriptions = ",".join(duty_classifier)
-    prompt = prompt_template_01.format(
-        duty_classifier=duty_descriptions,
-        request=input_text,
-        format_instruction=format_instruction,
-    )
-    return [{"role": "user", "content": prompt}]
-
-
-@traceable(
-    run_type="llm",
-    name="classifier",
-)
-def topic_classifier(input_text):
-    messages = create_messages(input_text)
-    response = chat_model.invoke(input=messages)
-    return classifier_output_parser.parse(response.content)
-
-
-run_id = str(uuid.uuid4())
-user_request = "写一个飞机大战的游戏"
-classifier_result = topic_classifier(user_request, langsmith_extra={"run_id": run_id})
-
-print("\nclassifier result:", classifier_result["classifier"])
-print("reason:", classifier_result["reason"], end="\n\n")
