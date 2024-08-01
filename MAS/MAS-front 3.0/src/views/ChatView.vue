@@ -13,7 +13,7 @@
       <!-- 聊天窗口头部 -->
       <div class="chat-header">
         <h2>智能对话客服</h2>
-        <button @click="saveDialog">Save Dialog</button>
+        
         <!-- 打开抽屉按钮 -->
         <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
           <el-button :disabled="isSending" class="drawer-button" type="text" @click="toggleDrawer">
@@ -97,6 +97,8 @@
       size="20%">
       <div class="history-contain">
         <div class="history-header">
+          <!-- 新建聊天按钮 -->
+          <button @click="saveDialog">上传数据库</button>
           <!-- 新建聊天按钮 -->
           <button class="new-chat-button" @click="createNewChat">新建对话</button>
           <!-- 手动保存历史记录按钮 -->
@@ -630,9 +632,12 @@ export default {
     background-color: #fff;
     padding: 5px;
     border-radius: 5px; /* 圆角边框 */
+
     cursor: pointer;
     transition: background-color 0.3s;
-
+    white-space: nowrap; /* 防止换行 */
+  overflow: hidden; /* 隐藏溢出内容 */
+  text-overflow: ellipsis; /* 使用省略号表示溢出的文本 */
     &:hover {
       background-color: #f5f5f5;
     }
