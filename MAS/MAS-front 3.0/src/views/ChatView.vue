@@ -133,7 +133,7 @@ export default {
       chatHistory: [], // 聊天历史记录
       drawerVisible: false, // 抽屉是否可见
       client: null, // WebSocket 客户端实例
-      ModelSelectText: 'qwen2'
+      ModelSelectText: 'glm4(zhipu)'
     };
   },
   mounted() {
@@ -152,7 +152,12 @@ export default {
     this.client.onmessage = (event) => {
       const message = JSON.parse(event.data);
       
-      this.messages.push({ text: message, sender: 'bot' });
+      if (message.message) {
+        this.messages.push({ text: message.message, sender: message.sender });
+      } else {
+        console.log("Received JSON without message field:", message);
+        this.messages.push({ text: JSON.stringify(message, null, 2), sender: 'bot' });
+      }
       this.saveMessages();
       this.scrollToBottom();
       console.log("获取信息：",this.messages)
@@ -190,12 +195,12 @@ export default {
       this.scrollToBottom();
     }
   },
-    handleIncomingMessage(message) {
-      // 将接收到的消息添加到消息列表中
-      this.messages.push({ text: message, sender: 'backend' });
-      this.saveMessages();
-      this.scrollToBottom();
-    },
+    // handleIncomingMessage(message) {
+    //   // 将接收到的消息添加到消息列表中
+    //   this.messages.push({ text: message.message, sender: 'backend' });
+    //   this.saveMessages();
+    //   this.scrollToBottom();
+    // },
     toggleDrawer() {
       this.drawerVisible = !this.drawerVisible;
     },
@@ -218,8 +223,13 @@ export default {
         const res = await apiClient.post('/ask', {
           query: this.query,
         });
-        this.messages.push({ text: res.data.response, sender: 'bot' });
-        // ????可能是在这里接收
+        const response = res.data;
+        if(response.message){
+          this.messages.push({ text: response.message, sender: response.sender });}
+        else{
+          this.messages.push({ text: JSON.stringify(response, null, 2), sender: 'bot' });
+        }
+        // this.messages.push({ text: response, sender: response.sender });
       } catch (error) {
         console.error(error);
         this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
