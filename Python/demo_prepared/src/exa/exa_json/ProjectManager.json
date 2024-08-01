@@ -4,7 +4,11 @@
         "gl": "us",
         "hl": "en",
         "type": "search",
+<<<<<<< HEAD
+        "num": 10,
+=======
         "num": 3,
+>>>>>>> 25cd63bfc240893a32a2924e0e16967966cab427
         "engine": "google"
     },
     "organic": [
@@ -12,6 +16,31 @@
             "title": "ProjectManager: Project & Work Management Software",
             "link": "https://www.projectmanager.com/",
             "snippet": "Award-winning project & work management software designed for teams to plan, track & collaborate online. Get started for free.",
+<<<<<<< HEAD
+            "sitelinks": [
+                {
+                    "title": "Templates",
+                    "link": "https://www.projectmanager.com/pm-templates"
+                },
+                {
+                    "title": "Pricing",
+                    "link": "https://www.projectmanager.com/pricing"
+                },
+                {
+                    "title": "Management Tools",
+                    "link": "https://www.projectmanager.com/software"
+                },
+                {
+                    "title": "Helps project managers",
+                    "link": "https://www.projectmanager.com/guides/project-management"
+                },
+                {
+                    "title": "Get started for free",
+                    "link": "https://www.projectmanager.com/freetrial"
+                }
+            ],
+=======
+>>>>>>> 25cd63bfc240893a32a2924e0e16967966cab427
             "position": 1
         },
         {
@@ -22,10 +51,85 @@
             "position": 2
         },
         {
+<<<<<<< HEAD
+            "title": "What is a Project Manager & What Do They Do? - PMI",
+            "link": "https://www.pmi.org/about/learn-about-pmi/who-are-project-managers",
+            "snippet": "Project managers are organized, goal-oriented professionals who use innovation, creativity, and collaboration to lead projects that make an impact.",
+            "position": 3
+        },
+        {
+            "title": "Project manager - Wikipedia",
+            "link": "https://en.wikipedia.org/wiki/Project_manager",
+            "snippet": "A project manager is a professional in the field of project management. Project managers have the responsibility of the planning, procurement and execution ...",
+            "position": 4
+        },
+        {
+            "title": "ProjectManager - YouTube",
+            "link": "https://www.youtube.com/c/projectmanager",
+            "snippet": "ProjectManager is an award-winning software company that is transforming how businesses get work done. Our cloud-based work management products enable ...",
+            "position": 5
+        },
+        {
+            "title": "ProjectManagement.com - Home",
+            "link": "https://www.projectmanagement.com/",
+            "snippet": "Huge online community of Project Managers offering over 12000 how-to articles, templates, project plans, and checklists to help you do your job.",
+            "sitelinks": [
+                {
+                    "title": "On-Demand Webinars",
+                    "link": "https://www.projectmanagement.com/webinars/webinarmainondemand.cfm"
+                },
+                {
+                    "title": "Templates",
+                    "link": "https://www.projectmanagement.com/templates/"
+                },
+                {
+                    "title": "Earning PDUs",
+                    "link": "https://www.projectmanagement.com/pages/246882/PDUs-on-ProjectManagement-com"
+                },
+                {
+                    "title": "Upcoming Events",
+                    "link": "https://www.projectmanagement.com/events/"
+                }
+            ],
+            "position": 6
+        },
+        {
+            "title": "ProjectManager | LinkedIn",
+            "link": "https://www.linkedin.com/company/projectmanager-com",
+            "snippet": "ProjectManager delivers the most comprehensive dashboard and reporting tools in the industry. Create and share detailed plans, tasks, expenses and more with ...",
+            "position": 7
+        }
+    ],
+    "peopleAlsoAsk": [
+        {
+            "question": "What is the role of a project manager?",
+            "snippet": "A project manager is vital because they act as the bridge between a project's plan and its execution. A PM's core role is to ensure that projects meet deadlines, stay within budget, and adhere to quality standards. Their expertise in managing timelines and resources prevents miscommunication and scope creep.",
+            "title": "What is a project manager? Responsibilities and ... - Atlassian",
+            "link": "https://www.atlassian.com/work-management/project-management/project-manager"
+        },
+        {
+            "question": "Is a project manager a boss?",
+            "snippet": "They're responsible for seeing a project through to its successful completion, managing costs, materials and a host of logistical issues. But they also have to manage teams of people, over whom (most of the time) they have little or no executive authority.",
+            "title": "Project Managers: How to Manage People When You're Not the Boss",
+            "link": "https://kevineikenberry.com/communication-interpersonal-skills/project-managers-manage-people-not-boss/"
+        },
+        {
+            "question": "Is a project manager really a manager?",
+            "snippet": "Project managers are mid-level and senior-level staff responsible for the execution of one or more projects. A project manager oversees staff working on a project, assigning duties and tracking progress to deliver the project as ordered.",
+            "title": "The 7 Levels of Project Manager Roles | Indeed.com",
+            "link": "https://www.indeed.com/career-advice/finding-a-job/levels-of-project-managers"
+        },
+        {
+            "question": "Do you need your PMP to be a project manager?",
+            "snippet": "A Project Management Professional (PMP) certification is something many project managers aspire for, but you dont need it to do your job. On the contrary, many of the best project managers in the business don't have that kind of certification, or even any kind of Project Management-related degree at all!",
+            "title": "You Don't Need a PMP Certification to Be an Effective Project Manager",
+            "link": "https://explore.easyprojects.net/blog/you-dont-need-a-pmp-certification-to-be-an-effective-project-manager"
+=======
             "title": "ProjectManager - YouTube",
             "link": "https://www.youtube.com/c/projectmanager",
             "snippet": "ProjectManager is an award-winning software company that is transforming how businesses get work done. Our cloud-based work management products enable ...",
             "position": 3
+>>>>>>> 25cd63bfc240893a32a2924e0e16967966cab427
         }
     ],
     "relatedSearches": [

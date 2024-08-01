@@ -1,6 +1,7 @@
 const express = require('express');
 const { createClient } = require('redis');
 const bodyParser = require('body-parser');
+const cors = require('cors'); // 引入 cors 中间件
 
 const app = express();
 const port = 3000; // Express 服务器的端口
@@ -17,6 +18,7 @@ client.on('error', (err) => console.error('Redis Client Error', err));
 
 // 中间件
 app.use(bodyParser.json());
+app.use(cors()); // 使用 cors 中间件
 
 // 存储对话记录的接口
 app.post('/save-dialog', async (req, res) => {
@@ -24,7 +26,7 @@ app.post('/save-dialog', async (req, res) => {
     const { user, message } = req.body;
     const dialog = { user, message, timestamp: new Date().toISOString() };
 
-    await client.rPush('dialogs', JSON.stringify(dialog));
+    await client.rPush('chat dialog', JSON.stringify(dialog));
     res.status(200).send('Dialog saved');
   } catch (err) {
     res.status(500).send(err.toString());
@@ -34,7 +36,7 @@ app.post('/save-dialog', async (req, res) => {
 // 获取对话记录的接口
 app.get('/dialogs', async (req, res) => {
   try {
-    const dialogs = await client.lRange('dialogs', 0, -1);
+    const dialogs = await client.lRange('chat dialog', 0, -1);
     res.status(200).json(dialogs.map(JSON.parse));
   } catch (err) {
     res.status(500).send(err.toString());
@@ -44,4 +46,3 @@ app.get('/dialogs', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
