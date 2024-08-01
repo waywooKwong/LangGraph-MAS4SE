@@ -1,5 +1,5 @@
 <template>
- 
+
   <div class="chat-main">
     <!-- 侧边栏 -->
     <div class="side-bar">
@@ -20,7 +20,7 @@
           </el-button>
         </el-tooltip>
         <!--  下拉选择模型菜单 -->
-        <el-dropdown @command="handleCommand" class="model-select-bottom-dropdown" >
+        <el-dropdown @command="handleCommand" class="model-select-bottom-dropdown">
           <el-button type="primary" class="model-select-bottom">
             选择模型：{{ ModelSelectText }}<i class="model-select"></i>
           </el-button>
@@ -46,6 +46,8 @@
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息 -->
           <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" />
+
+          
         </div>
       </div>
 
@@ -70,30 +72,20 @@
           </li>
         </ul>
         <!-- 消息输入框 -->
-        <el-input
-          v-model="query"
-          placeholder="Type a message"
-          @keyup.enter.native="sendQuery"
-          :disabled="isSending"
-          type="textarea"
-          :rows="1"
-          :autosize="{ minRows: 1, maxRows: 2 }"
-        ></el-input>
+        <el-input v-model="query" placeholder="Type a message" @keyup.enter.native="sendQuery" :disabled="isSending"
+          type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }"></el-input>
         <!-- 发送按钮 -->
-        <el-button  @click="sendQuery" :disabled="isSending" class="sendQueryButton">发送</el-button>
+        <el-button @click="sendQuery" :disabled="isSending" class="sendQueryButton">发送</el-button>
         <!-- 上传文件按钮 -->
-        <el-button  @click="uploadFiles" :disabled="isSending || files.length === 0" class="uploadFilesButton">上传文件</el-button>
-        <el-button  @click="wstest" :disabled="isSending" class="wstestButton">MAS-WebSocket</el-button>
+        <el-button @click="uploadFiles" :disabled="isSending || files.length === 0"
+          class="uploadFilesButton">上传文件</el-button>
+        <el-button @click="wstest" :disabled="isSending" class="wstestButton">MAS-WebSocket</el-button>
 
       </el-footer>
     </div>
 
     <!-- 抽屉组件 -->
-    <el-drawer
-      title="历史记录"
-      :visible.sync="drawerVisible"
-      direction="ltr"
-      size="20%">
+    <el-drawer title="历史记录" :visible.sync="drawerVisible" direction="ltr" size="20%">
       <div class="history-contain">
         <div class="history-header">
           <!-- 新建聊天按钮 -->
@@ -143,53 +135,53 @@ export default {
   },
   methods: {
     initWebSocket() {
-    this.client = new WebSocket('ws://localhost:8000/ws/run_workflow');
-    
-    this.client.onopen = () => {
-      console.log('WebSocket Client Connected');
-    };
+      this.client = new WebSocket('ws://localhost:8000/ws/run_workflow');
 
-    this.client.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      
-      this.messages.push({ text: message, sender: 'bot' });
-      this.saveMessages();
+      this.client.onopen = () => {
+        console.log('WebSocket Client Connected');
+      };
+
+      this.client.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+
+        this.messages.push({ text: message, sender: 'bot' });
+        this.saveMessages();
+        this.scrollToBottom();
+        console.log("获取信息：", this.messages)
+      };
+
+      this.client.onclose = () => {
+        console.log('WebSocket Client Closed');
+      };
+
+      this.client.onerror = (error) => {
+        console.error('WebSocket Client Error', error);
+      };
+    },
+
+    wstest() {
+      if (this.query.trim() === '') return;
+
+      // 添加用户消息到消息列表
+      this.messages.push({ text: this.query, sender: 'user' });
       this.scrollToBottom();
-      console.log("获取信息：",this.messages)
-    };
 
-    this.client.onclose = () => {
-      console.log('WebSocket Client Closed');
-    };
+      this.isSending = true;
 
-    this.client.onerror = (error) => {
-      console.error('WebSocket Client Error', error);
-    };
-  },
-
-  wstest() {
-    if (this.query.trim() === '') return;
-
-    // 添加用户消息到消息列表
-    this.messages.push({ text: this.query, sender: 'user' });
-    this.scrollToBottom();
-
-    this.isSending = true;
-
-    try {
-      // 通过 WebSocket 发送消息到服务器
-      this.client.send(this.query);
-    } catch (error) {
-      console.error(error);
-      this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
-    } finally {
-      // 清空输入框并重置发送状态
-      this.saveMessages();
-      this.query = '';
-      this.isSending = false;
-      this.scrollToBottom();
-    }
-  },
+      try {
+        // 通过 WebSocket 发送消息到服务器
+        this.client.send(this.query);
+      } catch (error) {
+        console.error(error);
+        this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
+      } finally {
+        // 清空输入框并重置发送状态
+        this.saveMessages();
+        this.query = '';
+        this.isSending = false;
+        this.scrollToBottom();
+      }
+    },
     handleIncomingMessage(message) {
       // 将接收到的消息添加到消息列表中
       this.messages.push({ text: message, sender: 'backend' });
@@ -206,6 +198,7 @@ export default {
     removeFile(index) {
       this.files.splice(index, 1);
     },
+    // 与客服机器人对话
     async sendQuery() {
       if (this.query.trim() === '') return;
 
@@ -218,7 +211,7 @@ export default {
         const res = await apiClient.post('/ask', {
           query: this.query,
         });
-        this.messages.push({ text: res.data.response, sender: 'bot' });
+        this.messages.push({ text: res.data, sender: 'bot' });
         // ????可能是在这里接收
       } catch (error) {
         console.error(error);
@@ -230,6 +223,7 @@ export default {
         this.scrollToBottom();
       }
     },
+    // 上传文件
     async uploadFiles() {
       if (this.files.length === 0) {
         alert('请选择要上传的文件');
@@ -355,14 +349,14 @@ export default {
     left: 90px;
     top: 50%;
     transform: translateY(-50%);
-    
+
     .model-select-bottom {
       font-size: 14px;
       width: auto;
       height: 30px;
       display: flex;
       align-items: center;
-      justify-content: center; 
+      justify-content: center;
       color: #394398;
       // background-color: #222222;
       border: rgb(251, 248, 248);
@@ -373,21 +367,23 @@ export default {
       font-size: 12px;
     }
   }
-  
-  
-  
+
+
+
 
   .drawer-button {
     position: absolute;
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: 70px; /* 自动宽度适应文字 */
-    height: 30px; /* 自动高度适应文字 */
+    width: 70px;
+    /* 自动宽度适应文字 */
+    height: 30px;
+    /* 自动高度适应文字 */
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #DCE2FA; 
+    background-color: #DCE2FA;
     color: #394398;
     padding: 0;
   }
@@ -397,22 +393,25 @@ export default {
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: 60px; /* 自动宽度适应文字 */
-    height: 30px; /* 自动高度适应文字 */
+    width: 60px;
+    /* 自动宽度适应文字 */
+    height: 30px;
+    /* 自动高度适应文字 */
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #DCE2FA; 
+    background-color: #DCE2FA;
     color: #394398;
     padding: 0;
   }
 }
 
 .main-window {
-  
+
   display: flex;
   flex: 1;
-  overflow: hidden; /* 避免整个窗口的滚动条 */
+  overflow: hidden;
+  /* 避免整个窗口的滚动条 */
   justify-content: center;
   background: linear-gradient(to right, #7853B2, #ddc0f8, #f8eed2, #f6da87);
 }
@@ -420,27 +419,33 @@ export default {
 .chat-window {
   width: 63%;
   // flex: 1;
-  overflow-y: auto; /* 仅对话信息框可以滚动 */
+  overflow-y: auto;
+  /* 仅对话信息框可以滚动 */
   padding: 10px;
   border-bottom: 1px solid #dcdfe6;
-/* 自定义滚动条样式 */
-&::-webkit-scrollbar {
+
+  /* 自定义滚动条样式 */
+  &::-webkit-scrollbar {
     width: 12px;
   }
 
   &::-webkit-scrollbar-track {
-    background: transparent; /* 滚动条轨道背景透明 */
+    background: transparent;
+    /* 滚动条轨道背景透明 */
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2); /* 滚动条颜色 */
+    background-color: rgba(0, 0, 0, 0.2);
+    /* 滚动条颜色 */
     border-radius: 10px;
-    border: 3px solid transparent; /* 为滚动条添加间距 */
+    border: 3px solid transparent;
+    /* 为滚动条添加间距 */
     background-clip: content-box;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.4); /* 悬停时滚动条颜色 */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* 悬停时滚动条颜色 */
   }
 }
 
@@ -449,41 +454,46 @@ export default {
   display: flex;
   // padding: 10px;
   background-color: #DCE2FA;
-  align-items: center; /* 底部水平对齐 */
+  align-items: center;
+  /* 底部水平对齐 */
 
-  .selectFilesButton{
+  .selectFilesButton {
     height: 30px;
     width: 30px;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
     display: flex;
   }
+
   .el-input {
-  flex: 1;
-  margin-right: 10px;
-  display: flex;
-  align-items: center;
-  top:10%;
-  
+    flex: 1;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    top: 10%;
+
   }
+
   .sendQueryButton {
     margin-left: 10px;
     background-color: #dbd3e4;
     color: #000;
     font-weight: bold;
   }
-  .uploadFilesButton{
+
+  .uploadFilesButton {
     background-color: #dbd3e4;
     color: #000;
     font-weight: bold;
   }
-  .wstestButton{
+
+  .wstestButton {
     background-color: #dbd3e4;
     color: #000;
     font-weight: bold;
   }
 }
- 
+
 
 
 .upload-demo {
@@ -540,13 +550,15 @@ export default {
         position: absolute;
         top: 50%;
         left: 100%;
-        transform: translateY(-50%) translateX(10px); /* 右侧显示并略微偏移 */
+        transform: translateY(-50%) translateX(10px);
+        /* 右侧显示并略微偏移 */
         background: #333;
         color: #fff;
         padding: 5px 10px;
         border-radius: 4px;
         white-space: nowrap;
-        font-size: 12px; /* 缩小字体 */
+        font-size: 12px;
+        /* 缩小字体 */
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s, visibility 0.3s;
@@ -561,7 +573,8 @@ export default {
 
     .go-to-agent {
       &:before {
-        content: '\E8AF'; /* 请确保这个内容与您的字体图标设置相匹配 */
+        content: '\E8AF';
+        /* 请确保这个内容与您的字体图标设置相匹配 */
       }
     }
 
@@ -572,37 +585,50 @@ export default {
 }
 
 .history-contain {
-  padding: 10px; /* 增加内边距 */
+  padding: 10px;
+
+  /* 增加内边距 */
   h3 {
     text-align: center;
-    margin-bottom: 10px; /* 增加下边距 */
+    margin-bottom: 10px;
+    /* 增加下边距 */
     color: #333;
   }
 
   .history-header {
     display: flex;
-    flex-direction: column; /* 垂直排列按钮 */
-    align-items: center; /* 居中对齐 */
-    margin-bottom: 10px; /* 增加下边距 */
+    flex-direction: column;
+    /* 垂直排列按钮 */
+    align-items: center;
+    /* 居中对齐 */
+    margin-bottom: 10px;
+    /* 增加下边距 */
 
     button {
-      margin: 5px 0; /* 增加上下间距 */
-      padding: 5px 10px; /* 增加内边距 */
-      width: 100%; /* 按钮宽度为100% */
-      box-sizing: border-box; /* 包括内边距和边框在内的宽度和高度 */
+      margin: 5px 0;
+      /* 增加上下间距 */
+      padding: 5px 10px;
+      /* 增加内边距 */
+      width: 100%;
+      /* 按钮宽度为100% */
+      box-sizing: border-box;
+      /* 包括内边距和边框在内的宽度和高度 */
     }
   }
 
   .chat-history {
     display: flex;
-    flex-direction: column; /* 垂直排列历史记录 */
-    gap: 5px; /* 增加历史记录之间的间距 */
+    flex-direction: column;
+    /* 垂直排列历史记录 */
+    gap: 5px;
+    /* 增加历史记录之间的间距 */
   }
 
   .chat-history-message {
     background-color: #fff;
     padding: 5px;
-    border-radius: 5px; /* 圆角边框 */
+    border-radius: 5px;
+    /* 圆角边框 */
     cursor: pointer;
     transition: background-color 0.3s;
 
@@ -614,7 +640,8 @@ export default {
 
 .el-drawer__wrapper {
   .el-drawer__container {
-    margin-left: 50px; /* 从侧边栏展开 */
+    margin-left: 50px;
+    /* 从侧边栏展开 */
   }
 }
 </style>

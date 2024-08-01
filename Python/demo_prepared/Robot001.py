@@ -115,18 +115,22 @@ class RobotAgent:
         附加细节:\n
             1.0 你至少需要向用户提出5个问题从而收集到完整的项目需求信息，但是你不能一次性将这五个问题全部抛给用户，每次与用户交流时，你只能问其中一个问题！！！！\n
             2.0 你每次向用户提问的问题字数必须严格控制在100字以内!!!(重点)\n
-            3.0 你的回答必须严格按照jason格式!!!\n
+            3.0 (重要！！！！)你的回答必须严格按照json格式!!!\n
             4.0 你必须参考所有历史对话记录!!!\n
             5.0 最后生成的需求说明文档必须严格按照软件开发的需求分析文档来生成，字数不限\n
             6.0 你要始终记住，用户是一个小白,用户是一个小白,用户是一个小白,用户是一个小白。有关软件开发专业性的问题一概不要提问，你只需要搞清楚用户想开发一个什么样的系统即可，其他的比如技术栈、数据库的设计这些你自己生成\n
             7.0 在收集完所有信息时，你最后必须生成一个需求说明书(对用户想要开发的系统的详细描述)
             8.0 (重要!!!)当用户的回答中涉及到市面上已经出现的软件、游戏或者其他程序，比如‘拼多多’、‘淘宝’、‘抖音’、‘微信’等等，你必须使用检索工具进行全面而细致的回答!!!!!!
-        用户的每一次回答如下{user_input}，你只能根据用户的回答来分析问题，提出问题
+        用户的每一次回答如下{user_input}，你只能根据用户的回答来分析问题，提出问题\n
+        输出格式必须严格按照如下进行输出：{format_instructions}
                     """
                                     )
         response_schemas = [
             # ResponseSchema(name="description", description="用户问题"),
-            ResponseSchema(name="answer", description="根据信息划分任务或者回答另一个角色的问题"),
+            ResponseSchema(name="sender", description="发送者，对你来说就是‘智能客服机器人’"),
+            ResponseSchema(name="progress",
+                           description="状态判断，如果需求说明书已经生成那么返回‘true’,否则返回‘false’"),
+            ResponseSchema(name="answer", description="与用户对话的内容"),
         ]
         self.output_parser = StructuredOutputParser.from_response_schemas(response_schemas=response_schemas)
         self.format_instructions = self.output_parser.get_format_instructions()
@@ -134,12 +138,14 @@ class RobotAgent:
             template=self.prompt_template_str,
             partial_variables={"format_instructions": self.format_instructions}
         )
+
     def detect_encoding(self, file_path):
         import chardet
         with open(file_path, 'rb') as f:
             raw_data = f.read(10000)  # 读取文件的一部分来检测编码
         result = chardet.detect(raw_data)
         return result['encoding']
+
     def load_documents(self):
         docs = []
         for filename in os.listdir(self.base_dir):
@@ -256,9 +262,46 @@ class RobotAgent:
             "input": prompt_str_input,
             "chat_history": self.chat_history,
         })
-
+        print("Response:", response)
         # Update chat history
         self.chat_history.append(HumanMessage(content=prompt_str_input))
         self.chat_history.append(AIMessage(content=response["output"]))
 
         return response["output"]
+
+
+# import json
+# import re
+#
+#
+#
+# agent = RobotAgent()
+#
+# while True:
+#     user_input = input("请输入问题：")
+#     response = agent.invoke(user_input)
+#
+#     # 清理 JSON 字符串
+#     cleaned_json_string = response.strip('`')
+#     cleaned_json_string=cleaned_json_string.strip("json")
+#
+#
+#     # 打印格式化后的 JSON 字符串以调试
+#
+#
+#     try:
+#         # 解析 JSON 字符串
+#         response_dict = json.loads(cleaned_json_string)
+#
+#         # 提取字段示例
+#         sender = response_dict.get("sender", "字段不存在")
+#         progress = response_dict.get("progress", "字段不存在")
+#         answer = response_dict.get("answer", "字段不存在")
+#
+#         print("\n解析结果：")
+#         print(f"Sender: {sender}")
+#         print(f"Progress: {progress}")
+#         print(f"Answer: {answer}")
+#
+#     except json.JSONDecodeError as e:
+#         print(f"JSON 解析失败: {e}")
