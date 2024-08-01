@@ -11,20 +11,16 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.chat_models import ChatOllama
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain.prompts import PromptTemplate
-
+from demo_prepared.ModelChoise.modelchoise import get_zhipuai_chat_model
 # LangSmith 内容指定
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = "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"
 os.environ["LANGCHAIN_PROJECT"] = "classifier-chatbot"
 
 # ChatModel设定
-chat_model = ChatOllama(model="gemma2")
+chat_model = get_zhipuai_chat_model()
 
-# Embedding模型
-embeddings = HuggingFaceEmbeddings(
-    model_name="kuangweihua/ollama/models/m3e-base", model_kwargs={"device": "cpu"}
-)
-print("Embedding: \n", embeddings)
+
 
 duty_classifier = {
     "Project Manager(PM)",
@@ -41,7 +37,7 @@ The list of developer responsibilities are duty_classfier,
 and classify the type of the request as one of the following duty_classifier: {duty_classifier}.
 User modification request is: {request}
 
-Please provide the classification and explain the reason for the classification.
+Please provide the classification and explain the reason for the classification,answer with Chinese.
 {format_instruction}
 """
 
@@ -87,7 +83,7 @@ def topic_classifier(input_text):
 
 
 run_id = str(uuid.uuid4())
-user_request = "please pull the project to next month"
+user_request = "写一个飞机大战的游戏"
 classifier_result = topic_classifier(user_request, langsmith_extra={"run_id": run_id})
 
 print("\nclassifier result:", classifier_result["classifier"])

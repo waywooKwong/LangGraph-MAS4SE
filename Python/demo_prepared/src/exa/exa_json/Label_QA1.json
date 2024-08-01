@@ -1,0 +1,31 @@
+{
+    "searchParameters": {
+        "q": "Label_QA1",
+        "gl": "us",
+        "hl": "en",
+        "type": "search",
+        "num": 3,
+        "engine": "google"
+    },
+    "organic": [
+        {
+            "title": "How to get the description of column name in tibble? - Stack Overflow",
+            "link": "https://stackoverflow.com/questions/57154007/how-to-get-the-description-of-column-name-in-tibble",
+            "snippet": "To get the attribute itself, use attr(raw$QA1, \"label\"). This will get you a named character vector, and while you can use that just fine in ...",
+            "date": "Jul 22, 2019",
+            "position": 1
+        },
+        {
+            "title": "Describe - Your.Org",
+            "link": "https://ftpmirror.your.org/pub/misc/ftp.software.ibm.com/software/rational/docs/presentations/ruc98_pres/ccm21/tsld007.htm",
+            "snippet": "When assigning label QA1 to an elements it fails. The error message indicates that there is already a version of the element with this label. Why can't more ...",
+            "position": 2
+        },
+        {
+            "title": "Layer: Unidades Fisiogr\u00e1ficas (ID: 36)",
+            "link": "https://geoportal.cm-caminha.pt/arcgis/rest/services/INF_AMBIENTAL/MapServer/36",
+            "snippet": "Label: Qa1 Description: Symbol: Style: esriSFSSolid. Color: [214, 187, 152, 255] Outline: Style: esriSLSSolid. Color: [110, 110, 110, 255] Width: 0. Value: Qa2",
+            "position": 3
+        }
+    ]
+}

@@ -17,7 +17,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
+from langchain_core.prompts import PromptTemplate, MessagesPlaceholder, ChatPromptTemplate
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 
 from langchain_community.chat_models import ChatOllama
@@ -30,12 +30,11 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from ModelChoise import modelchoise
 from Class_01_PromptGenerator import PromptGenerator
+from Class_03_WebScratchRoleTxt import WebScratchRoleTxt
 
 # from Python.demo_prepared.Class01_PromptGenerator import PromptGenerator
-from langchain_core.prompts import PromptTemplate
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
 
 def generate_prompt(role: str, duty: str) -> str:
     generator = PromptGenerator()
@@ -72,7 +71,9 @@ class BuildChainAgent:
         self.duty = duty
         self.object = ""
         self.chat_model = modelchoise.get_zhipuai_chat_model()
+        
         self.docs = self.load_documents()
+        
         self.embeddings = self.load_embeddings()
         self.vector_retriever = self.create_vector_retriever()
         self.retriever_chain = self.create_retriever_chain()
@@ -115,20 +116,19 @@ class BuildChainAgent:
         return result['encoding']
     
     def load_documents(self):
+        # !!! 需要定制角色文本的时候再启动这部分代码，因为一直启动速度过慢
+        # role_text_generator = WebScratchRoleTxt(role=self.role)
+        # # role_text_generator.DuckDuckGo_search()
+        # role_text_generator.GoogleSerper_search()
+        # role_text_generator.Google_ScrapeUrls()
+        # docs = []
+        # file_path = role_text_generator.URL_Scraper_txt_path
         docs = []
-        for filename in os.listdir(self.base_dir):
-            file_path = f"{self.base_dir}/{filename}"
-            print("file_path:",file_path)
-            encoding = self.detect_encoding(file_path)
-            if filename.endswith(".pdf"):
-                loader = PyPDFLoader(file_path,encoding=encoding)
-            elif filename.endswith(".docx"):
-                loader = Docx2txtLoader(file_path,encoding=encoding)
-            elif filename.endswith(".txt"):
-                loader = TextLoader(file_path,encoding=encoding)
-            else:
-                continue
-            docs.extend(loader.load())
+        file_path = "src/role_txt/SoftwareBasicFlow.txt"
+        encoding = self.detect_encoding(file_path)
+        loader = TextLoader(file_path,encoding=encoding)
+        docs.extend(loader.load())
+        print(f"{self.role} role txt generate & load:",file_path)
         return docs
 
     def load_embeddings(self):
