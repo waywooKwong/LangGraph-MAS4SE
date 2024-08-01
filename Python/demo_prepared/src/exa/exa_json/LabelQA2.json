@@ -1,0 +1,31 @@
+{
+    "searchParameters": {
+        "q": "LabelQA2",
+        "gl": "us",
+        "hl": "en",
+        "type": "search",
+        "num": 3,
+        "engine": "google"
+    },
+    "organic": [
+        {
+            "title": "Eric In The Evening: Friday, March 19, 2021 | GBH - WGBH",
+            "link": "https://www.wgbh.org/music/jazz/2021-03-22/eric-in-the-evening-friday-march-19-2021",
+            "snippet": "LABEL: qa2. 11:09pm 05/25/2024 GBH Music's Jazz on 89.7. Thedia. ARTIST: Cory Weeds. ALBUM: Home Cookin'. LABEL: \u2117 2023 Cellar Live under ...",
+            "date": "Mar 22, 2021",
+            "position": 1
+        },
+        {
+            "title": "[PDF] ADMV4420-EVALZ User Guide | UG-1404 - Analog Devices",
+            "link": "https://www.analog.com/media/en/technical-documentation/user-guides/admv4420-evalz-ug-1404.pdf",
+            "snippet": "This value updates the Charge Pump Current (Label QA2), seen in. Figure 15, after the Apply button (Label Initial 12) is clicked. Initial 7. Enter the Bleed ...",
+            "position": 2
+        },
+        {
+            "title": "Billboard",
+            "link": "https://books.google.com/books?id=Xg4EAAAAMBAJ&pg=PA81&lpg=PA81&dq=LabelQA2&source=bl&ots=Qf-VFlkHQW&sig=ACfU3U2dIdhCPSuy5TbD9oqUNP4znTI3zg&hl=en&sa=X&ved=2ahUKEwjg56STxNGHAxWfk4kEHYkWODwQ6AF6BAgDEAE",
+            "snippet": "... LABEL q. a. 2 Weeks At Number 1 21 QUESTIONS O 50 Cent Featuring Nate Dogg ? 46 35 I'M WITH YOU \u2022 Avril Lavigne *? 4 THE MATRIX (A.LAVIGNE.LCHRISTY.S.SPOCK ...",
+            "position": 3
+        }
+    ]
+}

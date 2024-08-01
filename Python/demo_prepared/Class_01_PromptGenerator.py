@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from ModelChoise import modelchoise
+from ModelChoise import Model
 from langchain_core.prompts import PromptTemplate
-
+Model.os_setenv()
 class PromptGenerator:
     def __init__(self):
         # Model.os_setenv()
-        self.chat_model = modelchoise.get_zhipuai_chat_model()
+        self.chat_model = Model.get_zhupuai_model()
         self.prompt_template_str = ("""
             您是一个专业的提示词模板生成器。\n
             您可以生成非常专业的提示词模板用于构建栩栩如生的角色\n
@@ -29,7 +29,7 @@ class PromptGenerator:
               如果你作为回答方:不要重复提问方发布的任务，也不要生成分析过程，直接生成解决方案:比如，任务要求生成前端vue架构，那么你直接生成架构即可，再添加一些注释；如果任务要求生成后端接口文档，你直接生成就行!!!剩下的以此类推\n
                     
             - 对话细节(必须要有,接上一条): 对话过程中你必须遵循你的角色设定，明确上下级关系，生成最生动的对话口吻。 \n
-            - 最终回答(最重要):生成的最终回答必须只能是{duty}中涉及到的
+            - 最终回答(最最重要，the most important):生成的回答核心点必须围绕 {duty} !!!!!!!!!!! 
             生成的格式必须是字符串类型，并且按需换行。\n
             """
                                     )

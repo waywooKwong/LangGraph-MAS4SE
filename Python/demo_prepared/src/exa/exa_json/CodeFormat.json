@@ -1,0 +1,92 @@
+{
+    "searchParameters": {
+        "q": "CodeFormat",
+        "gl": "us",
+        "hl": "en",
+        "type": "search",
+        "num": 3,
+        "engine": "google"
+    },
+    "organic": [
+        {
+            "title": "Code Formatter and Code Beautifier - formatter.org",
+            "link": "https://formatter.org/",
+            "snippet": "This online code formatter is capable of formatting code in various programming languages, including C, C++, Java, Python, C#, Objective-C, Protobuf, SQL, ...",
+            "sitelinks": [
+                {
+                    "title": "HTML Formatter",
+                    "link": "https://formatter.org/html-formatter"
+                },
+                {
+                    "title": "JavaScript Formatter",
+                    "link": "https://formatter.org/javascript-formatter"
+                },
+                {
+                    "title": "Python Formatter",
+                    "link": "https://formatter.org/python-formatter"
+                },
+                {
+                    "title": "JSON Formatter",
+                    "link": "https://formatter.org/json-formatter"
+                }
+            ],
+            "position": 1
+        },
+        {
+            "title": "Prettier \u00b7 Opinionated Code Formatter",
+            "link": "https://prettier.io/",
+            "snippet": "What is Prettier? An opinionated code formatter; Supports many languages; Integrates with most editors; Has few options \u00bb ...",
+            "sitelinks": [
+                {
+                    "title": "Playground",
+                    "link": "https://prettier.io/playground/"
+                },
+                {
+                    "title": "Install",
+                    "link": "https://prettier.io/docs/en/install.html"
+                },
+                {
+                    "title": "Options",
+                    "link": "https://prettier.io/docs/en/options.html"
+                },
+                {
+                    "title": "Docs",
+                    "link": "https://prettier.io/docs/en/"
+                }
+            ],
+            "position": 2
+        },
+        {
+            "title": "CodeFormat (OpenJPA 1.1.0 API)",
+            "link": "https://openjpa.apache.org/builds/1.1.0/apache-openjpa-1.1.0/docs/javadoc/org/apache/openjpa/lib/util/CodeFormat.html",
+            "snippet": "Encapsulates some common Java source code formatting options. The class can also be used as a buffer for formatted Java code. Author: Abe White. Constructor ...",
+            "position": 3
+        }
+    ],
+    "relatedSearches": [
+        {
+            "query": "Code formatter"
+        },
+        {
+            "query": "Code beautify Online"
+        },
+        {
+            "query": "Code formatter C++"
+        },
+        {
+            "query": "Java code beautifier"
+        },
+        {
+            "query": "Code formatter HTML"
+        },
+        {
+            "query": "Prettier"
+        },
+        {
+            "query": "Java code formatter online"
+        },
+        {
+            "query": "PHP code Formatter online"
+        }
+    ]
+}
