@@ -1,0 +1,90 @@
+{
+    "Message": [
+        {
+            "label_text": "Start",
+            "description_text": "FlowchartStart",
+            "id": "7c07484e-e5e3-4257-b036-b2f4cd0e2a6a"
+        },
+        {
+            "label_text": "TechLeader",
+            "description_text": "TeamTechnologyLeader ",
+            "id": "297a5a49-2426-492b-ae1e-a82a43e1891c"
+        },
+        {
+            "label_text": "QA1",
+            "description_text": "Code Format",
+            "id": "9c29341a-8de1-4368-9c22-047605b94ebd"
+        },
+        {
+            "label_text": "QA2",
+            "description_text": "Schedule Plan",
+            "id": "8206ecf2-0751-4363-a97e-6048a29cd82a"
+        },
+        {
+            "label_text": "End",
+            "description_text": "FlowchartEnd",
+            "id": "bba99ff4-30ae-4cb1-95f5-a8aa37979d92"
+        },
+        {
+            "label_text": "Bot2",
+            "description_text": "DutyClassifier",
+            "id": "8dcc3698-8443-4e05-875d-9c2ba8bffc74"
+        }
+    ],
+    "Link": [
+        {
+            "source_label": "TechLeader",
+            "target_label": "QA1",
+            "source_id": "297a5a49-2426-492b-ae1e-a82a43e1891c",
+            "target_id": "9c29341a-8de1-4368-9c22-047605b94ebd"
+        },
+        {
+            "source_label": "TechLeader",
+            "target_label": "QA2",
+            "source_id": "297a5a49-2426-492b-ae1e-a82a43e1891c",
+            "target_id": "8206ecf2-0751-4363-a97e-6048a29cd82a"
+        },
+        {
+            "source_label": "Start",
+            "target_label": "TechLeader",
+            "source_id": "7c07484e-e5e3-4257-b036-b2f4cd0e2a6a",
+            "target_id": "297a5a49-2426-492b-ae1e-a82a43e1891c"
+        },
+        {
+            "source_label": "QA1",
+            "target_label": "Bot2",
+            "source_id": "9c29341a-8de1-4368-9c22-047605b94ebd",
+            "target_id": "8dcc3698-8443-4e05-875d-9c2ba8bffc74"
+        },
+        {
+            "source_label": "QA2",
+            "target_label": "Bot2",
+            "source_id": "8206ecf2-0751-4363-a97e-6048a29cd82a",
+            "target_id": "8dcc3698-8443-4e05-875d-9c2ba8bffc74"
+        },
+        {
+            "source_label": "Bot2",
+            "target_label": "TechLeader",
+            "source_id": "8dcc3698-8443-4e05-875d-9c2ba8bffc74",
+            "target_id": "297a5a49-2426-492b-ae1e-a82a43e1891c"
+        },
+        {
+            "source_label": "Bot2",
+            "target_label": "QA1",
+            "source_id": "8dcc3698-8443-4e05-875d-9c2ba8bffc74",
+            "target_id": "9c29341a-8de1-4368-9c22-047605b94ebd"
+        },
+        {
+            "source_label": "Bot2",
+            "target_label": "QA2",
+            "source_id": "8dcc3698-8443-4e05-875d-9c2ba8bffc74",
+            "target_id": "8206ecf2-0751-4363-a97e-6048a29cd82a"
+        },
+        {
+            "source_label": "Bot2",
+            "target_label": "End",
+            "source_id": "8dcc3698-8443-4e05-875d-9c2ba8bffc74",
+            "target_id": "bba99ff4-30ae-4cb1-95f5-a8aa37979d92"
+        }
+    ]
+}
