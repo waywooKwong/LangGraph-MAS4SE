@@ -13,6 +13,7 @@
       <!-- 聊天窗口头部 -->
       <div class="chat-header">
         <h2>智能对话客服</h2>
+        
         <!-- 打开抽屉按钮 -->
         <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
           <el-button :disabled="isSending" class="drawer-button" type="text" @click="toggleDrawer">
@@ -97,6 +98,8 @@
       <div class="history-contain">
         <div class="history-header">
           <!-- 新建聊天按钮 -->
+          <button @click="saveDialog">上传数据库</button>
+          <!-- 新建聊天按钮 -->
           <button class="new-chat-button" @click="createNewChat">新建对话</button>
           <!-- 手动保存历史记录按钮 -->
           <button :disabled="messages.length === 0" class="save-history-button" @click="saveHistory">保存对话</button>
@@ -118,6 +121,7 @@
 <script>
 import Message from '@/components/Message.vue';
 import apiClient from '@/axios';
+import axios from 'axios';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 export default {
@@ -133,7 +137,7 @@ export default {
       chatHistory: [], // 聊天历史记录
       drawerVisible: false, // 抽屉是否可见
       client: null, // WebSocket 客户端实例
-      ModelSelectText: 'qwen2'
+      ModelSelectText: 'glm4(zhipu)'
     };
   },
   mounted() {
@@ -142,6 +146,21 @@ export default {
     this.initWebSocket(); // 初始化 WebSocket 连接
   },
   methods: {
+    async saveDialog() {
+      try {
+        const response = await axios.post('http://localhost:3000/save-dialog', {
+          user: 'QC',
+          message: this.chatHistory,
+        });
+        console.log(response.data);
+        alert('Message saved successfully');
+        
+      } catch (error) {
+        console.error('Error saving message:', error);
+        alert('Error saving message');
+      }
+    },
+  
     initWebSocket() {
     this.client = new WebSocket('ws://localhost:8000/ws/run_workflow');
     
@@ -152,7 +171,12 @@ export default {
     this.client.onmessage = (event) => {
       const message = JSON.parse(event.data);
       
-      this.messages.push({ text: message, sender: 'bot' });
+      if (message.message) {
+        this.messages.push({ text: message.message, sender: message.sender });
+      } else {
+        console.log("Received JSON without message field:", message);
+        this.messages.push({ text: JSON.stringify(message, null, 2), sender: 'bot' });
+      }
       this.saveMessages();
       this.scrollToBottom();
       console.log("获取信息：",this.messages)
@@ -190,12 +214,12 @@ export default {
       this.scrollToBottom();
     }
   },
-    handleIncomingMessage(message) {
-      // 将接收到的消息添加到消息列表中
-      this.messages.push({ text: message, sender: 'backend' });
-      this.saveMessages();
-      this.scrollToBottom();
-    },
+    // handleIncomingMessage(message) {
+    //   // 将接收到的消息添加到消息列表中
+    //   this.messages.push({ text: message.message, sender: 'backend' });
+    //   this.saveMessages();
+    //   this.scrollToBottom();
+    // },
     toggleDrawer() {
       this.drawerVisible = !this.drawerVisible;
     },
@@ -218,8 +242,13 @@ export default {
         const res = await apiClient.post('/ask', {
           query: this.query,
         });
-        this.messages.push({ text: res.data.response, sender: 'bot' });
-        // ????可能是在这里接收
+        const response = res.data;
+        if(response.message){
+          this.messages.push({ text: response.message, sender: response.sender });}
+        else{
+          this.messages.push({ text: JSON.stringify(response, null, 2), sender: 'bot' });
+        }
+        // this.messages.push({ text: response, sender: response.sender });
       } catch (error) {
         console.error(error);
         this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
@@ -603,9 +632,12 @@ export default {
     background-color: #fff;
     padding: 5px;
     border-radius: 5px; /* 圆角边框 */
+
     cursor: pointer;
     transition: background-color 0.3s;
-
+    white-space: nowrap; /* 防止换行 */
+  overflow: hidden; /* 隐藏溢出内容 */
+  text-overflow: ellipsis; /* 使用省略号表示溢出的文本 */
     &:hover {
       background-color: #f5f5f5;
     }
