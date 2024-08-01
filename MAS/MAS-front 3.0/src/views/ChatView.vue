@@ -13,6 +13,7 @@
       <!-- 聊天窗口头部 -->
       <div class="chat-header">
         <h2>智能对话客服</h2>
+        <button @click="saveDialog">Save Dialog</button>
         <!-- 打开抽屉按钮 -->
         <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
           <el-button :disabled="isSending" class="drawer-button" type="text" @click="toggleDrawer">
@@ -118,6 +119,7 @@
 <script>
 import Message from '@/components/Message.vue';
 import apiClient from '@/axios';
+import axios from 'axios';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 export default {
@@ -142,6 +144,21 @@ export default {
     this.initWebSocket(); // 初始化 WebSocket 连接
   },
   methods: {
+    async saveDialog() {
+      try {
+        const response = await axios.post('http://localhost:3000/save-dialog', {
+          user: 'QC',
+          message: this.chatHistory,
+        });
+        console.log(response.data);
+        alert('Message saved successfully');
+        
+      } catch (error) {
+        console.error('Error saving message:', error);
+        alert('Error saving message');
+      }
+    },
+  
     initWebSocket() {
     this.client = new WebSocket('ws://localhost:8000/ws/run_workflow');
     
