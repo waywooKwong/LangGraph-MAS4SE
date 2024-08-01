@@ -33,13 +33,15 @@ class default_config:
     )
 
     def __init__(self):
-        self.path = None
+        self.path = (
+            "frontend_json_process/json_simplified/frontend-0729_simplified.json"
+        )
         self.json_file_path = (
-            "frontend_json_process/json_simplified/frontend-0729_simpified.json"
+            "frontend_json_process/json_simplified/frontend-0729_simplified.json"
         )
         self.chat_model = Model.get_zhupuai_model()
         self.conversation_finished = False  # 标志对话是否完成
-        self.initial_question = initial_question = HumanMessage(content="")
+        self.initial_question = initial_question = HumanMessage(content="请设计一个银行atm系统")
 
     def set_path(self, new_path):
         self.path = new_path
@@ -190,8 +192,8 @@ async def ask(request: QueryRequest):
 
 @app.post("/upload-agent")
 async def upload_agent(file: UploadFile = File(...)):
-    if not default_config.is_conversation_finished():
-        return JSONResponse(content={"error": "Conversation is not finished yet"}, status_code=400)
+    # if not default_config.is_conversation_finished():
+    #     return JSONResponse(content={"error": "Conversation is not finished yet"}, status_code=400)
 
     global file_uploaded
     try:
@@ -211,9 +213,9 @@ async def upload_agent(file: UploadFile = File(...)):
 
 
 def initialize_workflow():
-    if not file_uploaded:
-        print("No file uploaded yet.")
-        return
+    # if not file_uploaded:
+    #     print("No file uploaded yet.")
+    #     return
 
     json_file_path = default_config.get_path()
     print("jason路径:", json_file_path)
@@ -315,9 +317,9 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
     try:
-        if not file_uploaded:
-            await websocket.send_text(json.dumps({"error": "No file uploaded yet"}))
-            return
+        # if not file_uploaded:
+        #     await websocket.send_text(json.dumps({"error": "No file uploaded yet"}))
+        #     return
 
         await run_workflow_and_send_updates(websocket)
     except WebSocketDisconnect:
