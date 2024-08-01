@@ -13,11 +13,14 @@ import os
 import pprint
 
 import json
+import re
+
 import requests
 from bs4 import BeautifulSoup
+from langchain_community.tools import DuckDuckGoSearchResults
 
 ### 关键词输入
-keyword = "Project Manager"
+keyword = "ProjectManager"
 
 # Tool 1 : EXA
 # def EXA_search(input_keyword):
@@ -65,17 +68,76 @@ keyword = "Project Manager"
 
 
 # Tool 2 : DuckDuckGo (false)
-def DuckDuckGo_search(input_keyword):
-    from langchain_community.tools import DuckDuckGoSearchRun, DuckDuckGoSearchResults
+base_json_dir = "src/exa/exa_json/"
+base_txt_dir = f"src/exa/exa_txt/"
+# 在 base_txt_dir下建一个文件夹'{keyword}'，文件夹包含《duckduckgo_snippet》《serper_snippet》《urls》《main_txt》
+# 在 base_json_dir下建一个'{keyword}'的json文件
+# 根据DuckduckGo获取keyword相关内容，分别存放《duckduckgo-snippet》与《urls》文件中
+# 根据GoogleSerper获取keyword相关内容，存放《duckduckgo-snippet》与《urls》文件中
+# 使用GoogleSerper遍历urls，获取主要内容，存放在《main_txt》
 
-    # DuckDuckGo_search = DuckDuckGoSearchRun()
-    DuckDuckGo_search = DuckDuckGoSearchResults()
-    results = DuckDuckGo_search._run(input_keyword)
-    print("DuckDuckGo response", results)
+# 创建目录
+# 定义关键词目录路径和JSON文件路径
+keyword_dir = os.path.join(base_txt_dir, keyword)
+json_file_path = os.path.join(base_json_dir, f"{keyword}.json")
+
+# 定义需要创建的文件列表
+files_to_create = ["serper_snippet", "main_txt"]
+
+# 定义各个文件的路径
+file_paths = {file_name: os.path.join(keyword_dir, file_name) for file_name in files_to_create}
 
 
-DuckDuckGo_search(keyword)
+def create_files_and_json():
+    # 如果目录不存在则创建
+    os.makedirs(keyword_dir, exist_ok=True)
+    os.makedirs(base_json_dir, exist_ok=True)
 
+    # 在目录中创建每个文件
+    for file_path in file_paths.values():
+        open(file_path, 'w').close()
+
+    # 创建一个空的JSON文件
+    with open(json_file_path, 'w') as json_file:
+        json.dump({}, json_file)
+
+
+create_files_and_json()
+
+# 定义各个文件路径变量
+GoogleSerper_path = file_paths["serper_snippet"]
+
+main_txt_path = file_paths["main_txt"]
+
+
+#
+# def DuckDuckGo_search(input_keyword):
+#     DuckDuckGo_search = DuckDuckGoSearchResults()
+#     results = DuckDuckGo_search._run(input_keyword)
+#     return results
+#
+#
+# # 执行DuckDuckGo搜索
+# DuckDuckGo_results = DuckDuckGo_search(keyword)
+#
+# # 打印DuckDuckGo搜索结果
+# print(DuckDuckGo_results)
+# print(type(DuckDuckGo_results))
+#
+# # 用正则表达式将原始字符串转换为 JSON 格式
+# json_str = re.sub(r'\[snippet: ', '{"snippet": ', DuckDuckGo_results)
+# json_str = re.sub(r', title: ', ', "title": ', json_str)
+# json_str = re.sub(r', link: ', ', "link": ', json_str)
+# json_str = re.sub(r'\]', '}', json_str)
+# json_str = '[' + json_str + ']'
+#
+# # 解析 JSON 字符串
+# try:
+#     json_data = json.loads(json_str)
+#     print(json_data)
+# except json.JSONDecodeError as e:
+#     print(f"JSON 解码错误: {e}")
+#
 
 # Tool 3 : Google Serper
 # 官网: https://serper.dev/
@@ -86,9 +148,80 @@ def GoogleSerper_search(input_keyword):
     from langchain_community.utilities import GoogleSerperAPIWrapper
     # 进 GoogleSerperAPIWrapper 中，有直接拼接 Snippet 的函数
     os.environ["SERPER_API_KEY"] = "0b33d1ee4053a32b93f6d029f66aa149599d7c91"
-    GoogleSerper_search = GoogleSerperAPIWrapper()
-    response = GoogleSerper_search.run(input_keyword)
+    GoogleSerper_search = GoogleSerperAPIWrapper(k=10, type="search")
+    response = GoogleSerper_search.results(input_keyword)
     print("GoogleSerper response:", response)
+    print(type(response))
+    # 将响应结果保存为 JSON 文件
+    file_path = json_file_path
+    with open(file_path, 'w') as file:
+        json.dump(response, file, indent=4)
+
+    print(f"响应结果已保存到 {file_path}")
+
+    # 将snippet保存
+    # Extract snippets and links
+    snippets = [item['snippet'] for item in response['organic']]
+
+    file_path = GoogleSerper_path
+    with open(file_path, 'w') as file:
+        file.write('Snippets:\n')
+        file.write('\n'.join(snippets))
+    print(f"snippet结果已保存到 {file_path}")
 
 
 GoogleSerper_search(keyword)
+
+
+# 通过json里的urls获取主要txt，存放到main_txt中
+#     # 2. 读取并提取 json 文件中的 url
+def extract_links_from_json(json_file_path):
+    # 读取 JSON 文件
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+
+    # 提取链接
+    links = [item['link'] for item in data.get('organic', [])]
+    return links
+
+
+urls = extract_links_from_json(json_file_path)
+
+print(urls)
+
+
+def scrape_urls(api_key, urls, output_file):
+    # 设置请求的URL
+    url = "https://scrape.serper.dev"
+
+    # 打开输出文件
+    with open(output_file, 'w', encoding='utf-8') as file:
+        # 遍历所有的URL
+        for target_url in urls:
+            # 构建请求的payload
+            payload = json.dumps({
+                "url": target_url
+            })
+
+            # 设置请求头
+            headers = {
+                'X-API-KEY': api_key,
+                'Content-Type': 'application/json'
+            }
+
+            # 发送POST请求
+            response = requests.request("POST", url, headers=headers, data=payload)
+            print(type(response))
+            print(response)
+            # 写入响应结果
+            # file.write(f"URL: {target_url}\n")
+            file.write(response.text + "\n")
+
+    print(f"所有响应结果已保存到 {output_file}")
+
+
+# 示例用法
+api_key = 'ed86bb07558520108083d454996e405afa715db1'
+
+output_file = main_txt_path
+scrape_urls(api_key, urls, output_file)
