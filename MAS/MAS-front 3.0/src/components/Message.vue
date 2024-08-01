@@ -1,10 +1,9 @@
 <template>
-  <div :class="['message', sender]">
-    <img :src="getAvatar(sender)" class="avatar" />
+  <div :class="['message', senderClass]">
+    <div v-if="avatar === 'text'" class="avatar-text">{{ sender }}</div>
+    <img v-else :src="avatar" class="avatar" />
 
-    <div class="message-bubble">
-      {{ text }}
-    </div>
+    <div class="message-bubble" :class="bubbleClass">{{ text }}</div>
   </div>
 </template>
 
@@ -15,12 +14,37 @@ export default {
     text: String,
     sender: String,
   },
+  computed: {
+    senderClass() {
+      if (this.sender === 'user') {
+        return 'user';
+      } else if (this.sender === 'bot') {
+        return 'bot';
+      } else {
+        return 'unknown'; // 处理未知发送者
+      }
+    },
+    bubbleClass() {
+      if (this.sender === 'user') {
+        return 'user-bubble';
+      } else if (this.sender === 'bot') {
+        return 'bot-bubble';
+      } else {
+        return 'unknown-bubble'; // 处理未知发送者
+      }
+    },
+    avatar() {
+      return this.getAvatar(this.sender);
+    }
+  },
   methods: {
     getAvatar(sender) {
       if (sender === 'user') {
         return '/icons/用户.png';
-      } else {
+      } else if (sender === 'bot') {
         return '/icons/Bot.png';
+      } else {
+        return 'text'; // 显示发送者文字
       }
     },
   },
@@ -38,15 +62,16 @@ export default {
 
 .message.user {
   flex-direction: row-reverse;
-  /* background-color: #409eff; */
-  /* color: white; */
   text-align: right;
 }
 
 .message.bot {
   flex-direction: row;
-  /* background-color: #f1f1f1; */
-  /* color: black; */
+  text-align: left;
+}
+
+.message.unknown {
+  flex-direction: row;
   text-align: left;
 }
 
@@ -55,25 +80,41 @@ export default {
   height: 30px;
   border-radius: 50%;
   margin: 0 10px;
- 
+}
+
+.message .avatar-text {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ccc;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
 }
 
 .message-bubble {
   max-width: 60%;
   padding: 10px;
   border-radius: 10px;
-  background-color: #f1f1f1;
 }
 
-.message.user .message-bubble {
- 
+.user-bubble {
   background-color: #7853B2;
   color: #fff4f4;
   border-bottom-right-radius: 0;
 }
 
-.message.bot .message-bubble {
-  
+.bot-bubble {
+  background-color: #f6da87;
+  color: #07050b;
+  border-bottom-left-radius: 0;
+}
+
+.unknown-bubble {
   background-color: #f6da87;
   color: #07050b;
   border-bottom-left-radius: 0;
