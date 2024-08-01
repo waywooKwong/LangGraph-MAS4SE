@@ -3,7 +3,7 @@
     <img :src="getAvatar(sender)" class="avatar" />
 
     <div class="message-bubble">
-      {{ text.Sender }}
+      {{ text }}
       <!-- 仅当发送者是机器人时显示按钮 -->
       <div v-if="sender === 'bot'" class="button-container">
         <button @click="handleButtonClick" class="action-button">满意</button>
