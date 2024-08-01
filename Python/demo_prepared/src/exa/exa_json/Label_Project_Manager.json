@@ -1,0 +1,56 @@
+{
+    "searchParameters": {
+        "q": "Label_Project_Manager",
+        "gl": "us",
+        "hl": "en",
+        "type": "search",
+        "num": 3,
+        "engine": "google"
+    },
+    "organic": [
+        {
+            "title": "Label Manager - Berklee College of Music",
+            "link": "https://www.berklee.edu/careers/roles/label-manager",
+            "snippet": "Enter the label manager, a high-level record label project manager who coordinates the activities of departments and individuals in order to guide a musical ...",
+            "position": 1
+        },
+        {
+            "title": "Record Label Project Manager jobs - Indeed",
+            "link": "https://www.indeed.com/q-record-label-project-manager-jobs.html",
+            "snippet": "1320 Record Label Project Manager jobs available on Indeed.com. Apply to Produce Manager, Project Manager, Director of Strategy and more!",
+            "position": 2
+        },
+        {
+            "title": "Music Label Project Manager Jobs - EntertainmentCareers.Net",
+            "link": "https://www.entertainmentcareers.net/jobs/s/music-label-project-manager/",
+            "snippet": "Music Label Project Manager Jobs, Employment Listings on EntertainmentCareers.Net. Jobs in Film, TV, Music, VFX and more.",
+            "position": 3
+        }
+    ],
+    "relatedSearches": [
+        {
+            "query": "Label project manager salary"
+        },
+        {
+            "query": "Label project manager jobs"
+        },
+        {
+            "query": "Label project manager responsibilities"
+        },
+        {
+            "query": "Label project manager job description"
+        },
+        {
+            "query": "Label project manager resume"
+        },
+        {
+            "query": "Label project manager roles and responsibilities"
+        },
+        {
+            "query": "Label Coordinator"
+        },
+        {
+            "query": "Project Manager in music"
+        }
+    ]
+}

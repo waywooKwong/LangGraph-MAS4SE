@@ -1,0 +1,61 @@
+{
+    "searchParameters": {
+        "q": "SchedulePlan",
+        "gl": "us",
+        "hl": "en",
+        "type": "search",
+        "num": 3,
+        "engine": "google"
+    },
+    "knowledgeGraph": {
+        "title": "Plan",
+        "type": "A plan is typically any diagram or list of steps with details of timing and resources, used to achieve an objective to do something. It is commonly ..."
+    },
+    "organic": [
+        {
+            "title": "Schedule Plan: Definition + How to Create One - Coursera",
+            "link": "https://www.coursera.org/articles/schedule-plan",
+            "snippet": "A schedule plan, also called a schedule management plan, is an essential component of project management. Project managers create schedule plans ...",
+            "date": "Feb 23, 2024",
+            "position": 1
+        },
+        {
+            "title": "Free and customizable weekly planner templates - Canva",
+            "link": "https://www.canva.com/planners/templates/weekly-schedule/",
+            "snippet": "Plan your whole week with our collection of weekly schedule planner templates you can personalize in minutes.",
+            "position": 2
+        },
+        {
+            "title": "How to Make a Project Schedule: The Ultimate Guide (with Examples)",
+            "link": "https://www.projectmanager.com/guides/project-scheduling",
+            "snippet": "A project schedule is a timetable that organizes tasks, resources and due dates in an ideal sequence so that a project can be completed on time.",
+            "position": 3
+        }
+    ],
+    "relatedSearches": [
+        {
+            "query": "Schedule plan template"
+        },
+        {
+            "query": "Schedule plan example"
+        },
+        {
+            "query": "Schedule plan template excel"
+        },
+        {
+            "query": "Schedule plan template free"
+        },
+        {
+            "query": "schedule plan \u0e41\u0e1b\u0e25\u0e27\u0e48\u0e32"
+        },
+        {
+            "query": "Weekly schedule"
+        },
+        {
+            "query": "Weekly schedule planner"
+        },
+        {
+            "query": "Weekly planner printable PDF free"
+        }
+    ]
+}
