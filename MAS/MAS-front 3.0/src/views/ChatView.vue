@@ -86,9 +86,18 @@
     </div>
 
     <!-- 抽屉组件 -->
+<<<<<<< HEAD
     <el-drawer title="历史记录" :visible.sync="drawerVisible" direction="ltr" size="20%">
+=======
+    <el-drawer class="history-drawer-contain"
+      title="历史记录"
+      :visible.sync="drawerVisible"
+      direction="ltr"
+      size="20%">
+>>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
       <div class="history-contain">
         <div class="history-header">
+          <button @click="saveDialog">上传数据库</button>
           <!-- 新建聊天按钮 -->
           <button @click="saveDialog">上传数据库</button>
           <!-- 新建聊天按钮 -->
@@ -107,14 +116,21 @@
         </div>
       </div>
     </el-drawer>
-  </div>
+  </div> 
 </template>
 
 <script>
+<<<<<<< HEAD
 import Message from "@/components/Message.vue";
 import apiClient from "@/axios";
 import axios from "axios";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
+=======
+import Message from '@/components/Message.vue';
+import apiClient from '@/axios';
+import axios from 'axios';
+
+>>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
 
 export default {
   components: {
@@ -367,7 +383,12 @@ export default {
 .chat-header {
   height: 60px;
   padding: 0 10px;
+<<<<<<< HEAD
   background-color: #7853b2;
+=======
+  // background-color: #7853B2;
+  background-image: url('@/background/hback2.png');
+>>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
   border-bottom: 1px solid #f4f4f4;
   display: flex;
   align-items: center;
@@ -446,7 +467,27 @@ export default {
   overflow: hidden;
   /* 避免整个窗口的滚动条 */
   justify-content: center;
+<<<<<<< HEAD
   background: linear-gradient(to right, #7853b2, #ddc0f8, #f8eed2, #f6da87);
+=======
+ 
+  background-size: cover;
+  background-position: center;
+}
+
+.main-window::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('@/background/bluebackground.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5; /* 设置透明度，范围是 0 到 1 */
+  z-index: -1; /* 使背景图片在内容下方 */
+>>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
 }
 
 .chat-window {
@@ -613,11 +654,21 @@ export default {
     }
   }
 }
+::v-deep .el-drawer {
+  background-image: url('@/background/floral-6475479_1920.png');
+  background-size: cover;
+  background-position: center;
+}
 
 .history-contain {
+<<<<<<< HEAD
   padding: 10px;
 
   /* 增加内边距 */
+=======
+  padding: 10px; /* 增加内边距 */
+  
+>>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
   h3 {
     text-align: center;
     margin-bottom: 10px;
