@@ -31,6 +31,7 @@ from ModelChoise import Model
 from fastapi.responses import StreamingResponse
 from typing import AsyncIterable
 import json
+
 Model.os_setenv()
 
 
@@ -59,7 +60,8 @@ class default_config:
         self.user_is_satisfy = False
         self.file_uploaded = False
         # 是否停止上传标签
-        self.is_stop=False
+        self.is_stop = False
+
     def set_path(self, new_path):
         self.path = new_path
 
@@ -103,8 +105,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 
 class AgentState(TypedDict):
@@ -285,6 +285,7 @@ async def receive_model(request: ModelRequest):
 class QueryRequest(BaseModel):
     query: str
 
+
 agent = RobotAgent()
 
 
@@ -336,6 +337,9 @@ async def upload_agent(file: UploadFile = File(...)):
         return JSONResponse(content={"error": "An error occurred"}, status_code=500)
 
 
+workflow = StateGraph(AgentState)
+
+
 def initialize_workflow():
     if not default_config.file_uploaded:
         print("No json uploaded yet.")
@@ -348,7 +352,6 @@ def initialize_workflow():
         data = json.load(file)
 
     global workflow
-    workflow = StateGraph(AgentState)
 
     # 处理 link 部分信息并添加边
     link_edges = {}
@@ -444,9 +447,9 @@ def initialize_workflow():
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
     try:
-        # if not file_uploaded:
-        #     await websocket.send_text(json.dumps({"error": "No file uploaded yet"}))
-        #     return
+        if not file_uploaded:
+            await websocket.send_text(json.dumps({"error": "No file uploaded yet"}))
+            return
 
         await run_workflow_and_send_updates(websocket)
     except WebSocketDisconnect:
@@ -489,12 +492,6 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
         print("serialized_round:", json.dumps(serialized_round))
         await websocket.send_text(json.dumps(serialized_round, ensure_ascii=False))
         print("----")
-
-
-
-
-
-
 
 
 class ButtonClick(BaseModel):
