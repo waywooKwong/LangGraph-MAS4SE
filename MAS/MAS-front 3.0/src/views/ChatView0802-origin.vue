@@ -66,14 +66,11 @@
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息 -->
           <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" :status="message.status"/>
+
+          
         </div>
       </div>
-      <!-- 修改意见对话框 -->>
-      <div>
-          <input v-model="feedback" placeholder="请输入您的修改意见" />
-          <button @click="userRequest">提交</button>
-      </div>
-      <!-- 修改意见对话框 -->>
+
       <el-footer class="footer">
         <!-- 文件上传组件 -->
         <el-upload class="upload-demo" ref="upload" action="" :file-list="fileList" :show-file-list="false"
@@ -155,11 +152,9 @@ export default {
       chatHistory: [], // 聊天历史记录
       drawerVisible: false, // 抽屉是否可见
       client: null, // WebSocket 客户端实例
-      clientUserRequest: null,
       ModelSelectText: 'zhipu', // 当前选择的模型文本
       userIdDialogVisible: false, // 用户ID输入对话框可见性
-      userId: '',// 用户ID
-      feedback:''
+      userId: '' // 用户ID
     };
   },
   mounted() {
@@ -208,13 +203,10 @@ export default {
         console.error('Error fetching user history records:', error);
         alert('Error fetching user history records');
       }
+
+
     },
-    userRequest() {
-      if (this.clientUserRequest && this.clientUserRequest.readyState === WebSocket.OPEN) {
-        this.clientUserRequest.send(this.feedback);
-        this.feedback = '已提交完成'; // 清空输入框
-      }
-    },
+
 
   
     initWebSocket() {
@@ -242,55 +234,31 @@ export default {
           console.error("WebSocket Client Error", error);
         };
       };
-
-      // 初始化 userRequest WebSocket
-      this.clientUserRequest = new WebSocket("ws://localhost:8000/ws/userRequest");
-      this.clientUserRequest.onopen = () => {
-        console.log('WebSocket connection for userRequest established');
-      };
-      this.clientUserRequest.onmessage = (event) => {
-        console.log('Message from server (userRequest):', event.data);
-      };
-      this.clientUserRequest.onclose = () => {
-        console.log('WebSocket connection for userRequest closed');
-      };
-      this.clientUserRequest.onerror = (error) => {
-        console.error('WebSocket error (userRequest):', error);
-      };
     },
-    // 20240802 16:53 weihua 为后端添加的新函数
-    sendFeedback() {
-      if (this.client && this.client.readyState === WebSocket.OPEN) {
-        this.client.send(this.feedback);
-        this.feedback = ''; // 清空输入框
-      }
-    },
-
-    
    
-    wstest() {
-      if (this.query.trim() === '') return;
+  wstest() {
+    if (this.query.trim() === '') return;
 
-      // 添加用户消息到消息列表
-      this.messages.push({ text: this.query, sender: 'user' });
+    // 添加用户消息到消息列表
+    this.messages.push({ text: this.query, sender: 'user' });
+    this.scrollToBottom();
+
+    this.isSending = true;
+
+    try {
+      // 通过 WebSocket 发送消息到服务器
+      this.client.send(this.query);
+    } catch (error) {
+      console.error(error);
+      this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
+    } finally {
+      // 清空输入框并重置发送状态
+      this.saveMessages();
+      this.query = '';
+      this.isSending = false;
       this.scrollToBottom();
-
-      this.isSending = true;
-
-      try {
-        // 通过 WebSocket 发送消息到服务器
-        this.client.send(this.query);
-      } catch (error) {
-        console.error(error);
-        this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
-      } finally {
-        // 清空输入框并重置发送状态
-        this.saveMessages();
-        this.query = '';
-        this.isSending = false;
-        this.scrollToBottom();
-      }
-    },
+    }
+  },
 
     // 打开用户ID输入对话框
     openUserIdDialog() {
