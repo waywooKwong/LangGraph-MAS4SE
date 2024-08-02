@@ -116,7 +116,8 @@ class BuildChainAgent:
         return result['encoding']
     
     def load_documents(self):
-        # !!! 需要定制角色文本的时候再启动这部分代码，因为一直启动速度过慢
+        ### !!! 需要定制角色文本的时候再启动这部分代码，因为一直启动速度过慢
+        ## 直接取消下述的注释即可(DuckDuckGo 保持注释)
         # role_text_generator = WebScratchRoleTxt(role=self.role)
         # # role_text_generator.DuckDuckGo_search()
         # role_text_generator.GoogleSerper_search()
