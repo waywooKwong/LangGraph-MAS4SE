@@ -132,13 +132,13 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     # print("last_message:",last_message)
     # print("type of last_message",type(last_message))
     prompt = last_message.content
-    # print("prompt:",prompt)
-    # response = chat_model.process(input=prompt)
-    # ai_message_content = response
-    test_model = default_config.chat_model
-    response = test_model.invoke(prompt)
+    print("prompt:",prompt)
+    response = chat_model.process(input=prompt)
+    ai_message_content = response
+    # test_model = default_config.chat_model
+    # response = test_model.invoke(prompt)
     # print("response:",response)
-    ai_message_content = response.content
+    # ai_message_content = response.content
     print("ai_message_content:", ai_message_content)
 
     print(node_name, "答案：", ai_message_content)
@@ -288,28 +288,33 @@ class QueryRequest(BaseModel):
 
 agent = RobotAgent()
 
+import re
+
+
 
 @app.post("/ask")
 async def ask(request: QueryRequest):
     try:
         response = agent.invoke(input=request.query)
         print(response)
-        cleaned_json_string = response.strip('`')
+        cleaned_json_string = response.strip()
+        cleaned_json_string = cleaned_json_string.strip('`')
         cleaned_json_string = cleaned_json_string.strip("json")
+
         response_dict = json.loads(cleaned_json_string)
         sender = response_dict.get("sender", "字段不存在")
         progress = response_dict.get("progress", "字段不存在")
         answer = response_dict.get("answer", "字段不存在")
         print("\n解析结果：")
-        print(f"Sender: {sender}")
-        print(f"Progress: {progress}")
-        print(f"Answer: {answer}")
+        print(f"sender: {sender}")
+        print(f"progress: {progress}")
+        print(f"answer: {answer}")
 
         if default_config.user_is_satisfy:
             default_config.initial_question = HumanMessage(
                 content="请你根据以下需求说明书完成你的工作并向下属分配工作" + answer)
         # 返回正常响应
-        return JSONResponse({"Sender": sender, "Progress": progress, "message": answer})
+        return JSONResponse({"sender": sender, "progress": progress, "message": answer})
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -320,14 +325,13 @@ async def upload_agent(file: UploadFile = File(...)):
     if not default_config.is_conversation_finished():
         return JSONResponse(content={"error": "Conversation is not finished yet"}, status_code=400)
 
-    global file_uploaded
     try:
         file_content = await file.read()
         data = json.loads(file_content)
         print("Received JSON data:", data)
         simplified_json_path = CLASS_JointPlus_jsonprocess.extract_data_to_simplified_json(data)
         default_config.set_path(simplified_json_path)
-        file_uploaded = True
+        default_config.file_uploaded = True
         print("成功解析为json:", default_config.get_path())
         # Initialize the workflow and run it
 
@@ -335,9 +339,6 @@ async def upload_agent(file: UploadFile = File(...)):
     except Exception as e:
         print("Error:", e)
         return JSONResponse(content={"error": "An error occurred"}, status_code=500)
-
-
-workflow = StateGraph(AgentState)
 
 
 def initialize_workflow():
@@ -352,7 +353,7 @@ def initialize_workflow():
         data = json.load(file)
 
     global workflow
-
+    workflow = StateGraph(AgentState)
     # 处理 link 部分信息并添加边
     link_edges = {}
     for link in data["Link"]:
@@ -372,7 +373,7 @@ def initialize_workflow():
         if label_text.lower() != "start" and label_text.lower() != "end":
             role = label_text
             duty = description_text
-            # model_role = BuildChainAgent(role=role, duty=duty)
+            model_role = BuildChainAgent(role=role, duty=duty)
             # 如果 label_text == "Bot2"，构造 conditional_map
             if label_text == "Bot2":
                 # 找到 Bot2 对应的 targets
@@ -391,7 +392,7 @@ def initialize_workflow():
             else:
                 workflow.add_node(
                     label_text,
-                    partial(func_node, node_name=label_text, chat_model=chat_model),
+                    partial(func_node, node_name=label_text, chat_model=model_role),
                 )
 
     for source_label, targets in link_edges.items():
@@ -447,8 +448,8 @@ def initialize_workflow():
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
     try:
-        if not file_uploaded:
-            await websocket.send_text(json.dumps({"error": "No file uploaded yet"}))
+        if not default_config.file_uploaded:
+            # await websocket.send_text(json.dumps({"error": "No json uploaded yet"}))
             return
 
         await run_workflow_and_send_updates(websocket)
@@ -465,6 +466,7 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     workflow_graph_path = f"src/workflow_graph/workflow_graph_{timestamp}.png"
     save_graph_image(graph, workflow_graph_path)
+    print("需求说明书：",default_config.initial_question)
     events = graph.stream(
         {
             "sender": "__start__",

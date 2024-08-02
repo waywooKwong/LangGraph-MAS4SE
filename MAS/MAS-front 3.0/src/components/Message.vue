@@ -1,11 +1,14 @@
 <template>
-  <div :class="['message', sender]">
-    <img :src="getAvatar(sender)" class="avatar" />
-
-    <div class="message-bubble">
+  <div :class="['message', senderClass]">
+    <div v-if="avatar === 'text'" class="avatar-text">{{ sender }}</div>
+    <img v-else :src="avatar" class="avatar" />
+    <div class="message-bubble" :class="bubbleClass">
       {{ text }}
       <!-- 仅当发送者是机器人时显示按钮 -->
-      <div v-if="sender === 'bot'" class="button-container">
+      <div
+        v-if="sender === '智能客服机器人' && status === 'true'"
+        class="button-container"
+      >
         <button @click="handleButtonClick" class="action-button">满意</button>
       </div>
     </div>
@@ -18,18 +21,39 @@ export default {
   props: {
     text: String,
     sender: String,
+    status: String,
   },
-  // data() {
-  //   return {
-  //     ws: null, // 保存 WebSocket 实例
-  //   };
-  // },
+  computed: {
+    senderClass() {
+      if (this.sender === "user") {
+        return "user";
+      } else if (this.sender === "智能客服机器人") {
+        return "bot";
+      } else {
+        return "unknown"; // 处理未知发送者
+      }
+    },
+    bubbleClass() {
+      if (this.sender === "user") {
+        return "user-bubble";
+      } else if (this.sender === "智能客服机器人") {
+        return "bot-bubble";
+      } else {
+        return "unknown-bubble"; // 处理未知发送者
+      }
+    },
+    avatar() {
+      return this.getAvatar(this.sender);
+    },
+  },
   methods: {
     getAvatar(sender) {
       if (sender === "user") {
         return "/icons/用户.png";
-      } else {
+      } else if (sender === "bot") {
         return "/icons/Bot.png";
+      } else {
+        return "text"; // 显示发送者文字
       }
     },
     async handleButtonClick() {
@@ -51,24 +75,6 @@ export default {
         console.error("发送请求时发生错误:", error);
       }
     },
-    // setupWebSocket() {
-    //   this.ws = new WebSocket("ws://localhost:8000/showButton");
-
-    //   this.ws.onmessage = (event) => {
-    //     const data = JSON.parse(event.data);
-    //     console.log(data);
-    //     if (data.label) {
-    //       this.showButton = data.label; // 根据实际业务逻辑更新显示状态
-    //     }
-    //   };
-
-    //   this.ws.onerror = (error) => {
-    //     console.error("WebSocket error:", error);
-    //   };
-    // },
-  },
-  mounted() {
-    this.setupWebSocket();
   },
 };
 </script>
@@ -92,6 +98,11 @@ export default {
   text-align: left;
 }
 
+.message.unknown {
+  flex-direction: row;
+  text-align: left;
+}
+
 .message .avatar {
   width: 30px;
   height: 30px;
@@ -99,20 +110,39 @@ export default {
   margin: 0 10px;
 }
 
+.message .avatar-text {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ccc;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+}
+
 .message-bubble {
   max-width: 60%;
   padding: 10px;
   border-radius: 10px;
-  background-color: #f1f1f1;
 }
 
-.message.user .message-bubble {
+.user-bubble {
   background-color: #7853b2;
   color: #fff4f4;
   border-bottom-right-radius: 0;
 }
 
-.message.bot .message-bubble {
+.bot-bubble {
+  background-color: #f6da87;
+  color: #07050b;
+  border-bottom-left-radius: 0;
+}
+
+.unknown-bubble {
   background-color: #f6da87;
   color: #07050b;
   border-bottom-left-radius: 0;
