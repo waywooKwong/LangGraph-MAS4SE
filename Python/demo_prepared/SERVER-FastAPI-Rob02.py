@@ -57,10 +57,11 @@ class default_config:
         self.conversation_finished = False  # 标志对话是否完成
         self.initial_question = HumanMessage(content="")
         # self.showButton = False
-        self.user_is_satisfy = False
+        # self.user_is_satisfy = False
         self.file_uploaded = False
         # 是否停止上传标签
-        self.is_stop = False
+        # self.is_stop = False
+        self.answer = ""
 
     def set_path(self, new_path):
         self.path = new_path
@@ -132,7 +133,7 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     # print("last_message:",last_message)
     # print("type of last_message",type(last_message))
     prompt = last_message.content
-    print("prompt:",prompt)
+    print("prompt:", prompt)
     response = chat_model.process(input=prompt)
     ai_message_content = response
     # test_model = default_config.chat_model
@@ -293,7 +294,6 @@ agent = RobotAgent()
 import re
 
 
-
 @app.post("/ask")
 async def ask(request: QueryRequest):
     try:
@@ -307,14 +307,12 @@ async def ask(request: QueryRequest):
         sender = response_dict.get("sender", "字段不存在")
         progress = response_dict.get("progress", "字段不存在")
         answer = response_dict.get("answer", "字段不存在")
+        default_config.answer = answer
         print("\n解析结果：")
         print(f"sender: {sender}")
         print(f"progress: {progress}")
         print(f"answer: {answer}")
 
-        if default_config.user_is_satisfy:
-            default_config.initial_question = HumanMessage(
-                content="请你根据以下需求说明书完成你的工作并向下属分配工作" + answer)
         # 返回正常响应
         return JSONResponse({"sender": sender, "progress": progress, "message": answer})
 
@@ -373,9 +371,7 @@ def initialize_workflow():
         description_text = message["description_text"]
         # "start" "end" 特殊处理
         if label_text.lower() != "start" and label_text.lower() != "end":
-            role = label_text
-            duty = description_text
-            model_role = BuildChainAgent(role=role, duty=duty)
+
             # 如果 label_text == "Bot2"，构造 conditional_map
             if label_text == "Bot2":
                 # 找到 Bot2 对应的 targets
@@ -392,6 +388,9 @@ def initialize_workflow():
                         del conditional_map["End"]
                     workflow.add_node("Bot2", func_node_Bot02)
             else:
+                role = label_text
+                duty = description_text
+                model_role = BuildChainAgent(role=role, duty=duty)
                 workflow.add_node(
                     label_text,
                     partial(func_node, node_name=label_text, chat_model=model_role),
@@ -468,7 +467,7 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     workflow_graph_path = f"src/workflow_graph/workflow_graph_{timestamp}.png"
     save_graph_image(graph, workflow_graph_path)
-    print("需求说明书：",default_config.initial_question)
+    print("需求说明书：", default_config.initial_question)
     events = graph.stream(
         {
             "sender": "__start__",
@@ -510,8 +509,11 @@ async def handle_button_click(button_click: ButtonClick):
 
         # 可以根据需要进行更多处理
         default_config.conversation_finished = True
-        default_config.user_is_satisfy = True
-        default_config.is_stop = True
+        # default_config.user_is_satisfy = True
+
+        default_config.initial_question = HumanMessage(
+            content="请你根据以下需求说明书完成你的工作并向下属分配工作" + default_config.answer)
+        # default_config.is_stop = True
 
         # 返回成功的响应
         return {"status": "success", "received_message": button_click.message}

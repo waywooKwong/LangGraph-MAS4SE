@@ -445,6 +445,7 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     workflow_graph_path = f"src/workflow_graph/workflow_graph_{timestamp}.png"
     save_graph_image(graph, workflow_graph_path)
+    print("需求说明书：",default_config.initial_question)
     events = graph.stream(
         {
             "sender": "__start__",
