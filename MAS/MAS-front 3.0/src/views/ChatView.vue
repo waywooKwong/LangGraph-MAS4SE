@@ -65,15 +65,16 @@
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息 -->
-          <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" :status="message.status"/>
+          <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" :status="message.status" :class="{'transparent-message': message.sender === 'kuangweihua'}"/>
+          <input v-model="feedback" placeholder="请输入您的修改意见"/>
+          <button @click="userRequest">提交</button>
+          <!-- 检查最后一条消息的发送者 -->
+          <div v-if="messages.length > 0 && messages[messages.length - 1].sender === 'kuangweihua'" class="userRequestDialog">
+            
+          </div>
+
         </div>
       </div>
-      <!-- 修改意见对话框 -->>
-      <div>
-          <input v-model="feedback" placeholder="请输入您的修改意见" />
-          <button @click="userRequest">提交</button>
-      </div>
-      <!-- 修改意见对话框 -->>
       <el-footer class="footer">
         <!-- 文件上传组件 -->
         <el-upload class="upload-demo" ref="upload" action="" :file-list="fileList" :show-file-list="false"
@@ -102,7 +103,6 @@
         <!-- 上传文件按钮 -->
         <el-button @click="uploadFiles" :disabled="isSending || files.length === 0"
           class="uploadFilesButton">上传文件</el-button>
-        <el-button @click="wstest" :disabled="isSending" class="wstestButton">MAS-WebSocket</el-button>
 
       </el-footer>
     </div>
@@ -154,8 +154,8 @@ export default {
       files: [], // 待上传的文件列表
       chatHistory: [], // 聊天历史记录
       drawerVisible: false, // 抽屉是否可见
-      client: null, // WebSocket 客户端实例
-      clientUserRequest: null,
+      client: null, // WebSocket 客户端实例 1
+      clientUserRequest: null, // WebSocket 客户端实例 2: 专用于处理用户反馈修改信息
       ModelSelectText: 'zhipu', // 当前选择的模型文本
       userIdDialogVisible: false, // 用户ID输入对话框可见性
       userId: '',// 用户ID
@@ -209,14 +209,6 @@ export default {
         alert('Error fetching user history records');
       }
     },
-    userRequest() {
-      if (this.clientUserRequest && this.clientUserRequest.readyState === WebSocket.OPEN) {
-        this.clientUserRequest.send(this.feedback);
-        this.feedback = '已提交完成'; // 清空输入框
-      }
-    },
-
-  
     initWebSocket() {
       this.client = new WebSocket("ws://localhost:8000/ws/run_workflow");
 
@@ -224,7 +216,7 @@ export default {
         const message = JSON.parse(event.data);
 
         if (message.message) {
-          this.messages.push({ text: message.message, sender: message.sender ,status:message.progress});
+            this.messages.push({ text: message.message, sender: message.sender, status: message.progress });
         } else {
           console.log("Received JSON without message field:", message);
           this.messages.push({
@@ -258,40 +250,14 @@ export default {
         console.error('WebSocket error (userRequest):', error);
       };
     },
-    // 20240802 16:53 weihua 为后端添加的新函数
-    sendFeedback() {
-      if (this.client && this.client.readyState === WebSocket.OPEN) {
-        this.client.send(this.feedback);
-        this.feedback = ''; // 清空输入框
-      }
-    },
-
     
-   
-    wstest() {
-      if (this.query.trim() === '') return;
-
-      // 添加用户消息到消息列表
-      this.messages.push({ text: this.query, sender: 'user' });
-      this.scrollToBottom();
-
-      this.isSending = true;
-
-      try {
-        // 通过 WebSocket 发送消息到服务器
-        this.client.send(this.query);
-      } catch (error) {
-        console.error(error);
-        this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
-      } finally {
-        // 清空输入框并重置发送状态
-        this.saveMessages();
-        this.query = '';
-        this.isSending = false;
-        this.scrollToBottom();
+    userRequest() {
+      if (this.clientUserRequest && this.clientUserRequest.readyState === WebSocket.OPEN) {
+        this.clientUserRequest.send(this.feedback);
+        this.feedback = '已提交完成'; // 清空输入框
       }
     },
-
+  
     // 打开用户ID输入对话框
     openUserIdDialog() {
       this.userIdDialogVisible = true;
@@ -811,4 +777,24 @@ export default {
     /* 从侧边栏展开 */
   }
 }
+
+.userRequestDialog {
+    display: flex;
+    align-items: center;
+
+  }
+  .userRequestDialog input {
+    flex: 1;
+    margin-top: 15px;
+    margin-right: 20px; /* 使按钮和输入框之间有间距 */
+    height: 40px;
+  }
+  .userRequestDialog button {
+    font-size: 16px; 
+    height: 40px;
+    width: 88px;
+  }
+  .transparent-message {
+    opacity: 0.5; /* 设置透明度 */
+  }
 </style>
