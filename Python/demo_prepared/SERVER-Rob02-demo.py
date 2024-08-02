@@ -225,6 +225,18 @@ def supervisor_chain_Bot02(state: AgentState, conditional_map: Dict[str, Any]):
     # members 是分类的目标对象
     print("enter superviosr_chain_Bot02")
     duty_classifier = list(conditional_map.keys())
+    duty_description = {}
+    json_file_path = default_config.get_path()
+    for duty in  duty_classifier:
+        with open(json_file_path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+        for message in data["Message"]:
+            if message["label_text"] == duty:
+                description_text = message["description_text"]
+                duty_description[duty] = description_text
+    print("duty description:",duty_description)
+                
+                
 
     # 获取前端的 “修改意见”
     # 向前端发送请求消息
