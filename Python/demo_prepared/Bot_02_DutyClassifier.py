@@ -11,13 +11,6 @@ from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 class DutyClassifier:
     def __init__(self, duty_classifiers):
         self.run_id = str(uuid.uuid4())
-
-        os.environ["LANGCHAIN_TRACING_V2"] = "true"
-        os.environ["LANGCHAIN_API_KEY"] = (
-            "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"
-        )
-        os.environ["LANGCHAIN_PROJECT"] = "classifier-chatbot-weihua"
-
         Model.os_setenv()
         self.chat_model = Model.get_zhupuai_model()
 

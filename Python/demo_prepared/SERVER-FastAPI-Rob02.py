@@ -245,6 +245,8 @@ def supervisor_chain_Bot02(state: AgentState, conditional_map: Dict[str, Any]):
     # # 等待从前端接收反馈
     # input_request = await get_response_from_frontend(websocket)
     input_request = "请向 Bot2 反馈您的修改意见"
+    
+    # classifier_bot 放到 default_config 里
     classifier_bot = DutyClassifier(duty_classifiers=duty_classifier)
     classifier_result = classifier_bot.topic_classifier(input_request)
     next_value = classifier_result["classifier"]
