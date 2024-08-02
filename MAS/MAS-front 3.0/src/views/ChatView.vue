@@ -367,8 +367,8 @@ export default {
   height: 60px;
   padding: 0 10px;
   // background-color: #7853B2;
-  background-image: url('@/background/hback2.png');
-  border-bottom: 1px solid #f4f4f4;
+  // background-image: url('@/background/hback2.png');
+  // border-bottom: 1px solid #f4f4f4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -450,6 +450,19 @@ export default {
   background-position: center;
 }
 
+// .main-window::after {
+//   content: '';
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   background-image: url('@/background/bluebackground.jpg');
+//   background-size: cover;
+//   background-position: center;
+//   opacity: 0.5; /* 设置透明度，范围是 0 到 1 */
+//   z-index: -1; /* 使背景图片在内容下方 */
+// }
 .main-window::after {
   content: '';
   position: absolute;
@@ -457,11 +470,8 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('@/background/bluebackground.jpg');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.5; /* 设置透明度，范围是 0 到 1 */
   z-index: -1; /* 使背景图片在内容下方 */
+  background-image: linear-gradient(-225deg, #231557 0%, #44107A 29%, #FF1361 67%, #FFF800 100%);
 }
 
 .chat-window {
