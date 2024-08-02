@@ -1,5 +1,4 @@
 <template>
- 
   <div class="chat-main">
     <!-- 侧边栏 -->
     <div class="side-bar">
@@ -13,27 +12,48 @@
       <!-- 聊天窗口头部 -->
       <div class="chat-header">
         <h2>智能对话客服</h2>
-        
+
+       
+
+        <!-- 用户ID输入对话框 -->
+        <el-dialog
+          title="输入用户ID"
+          :visible.sync="userIdDialogVisible"
+          >
+          <el-input v-model="userId" placeholder="请输入用户ID"></el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="userIdDialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="saveUserId()">保存</el-button>
+          </span>
+        </el-dialog>
+
         <!-- 打开抽屉按钮 -->
         <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
           <el-button :disabled="isSending" class="drawer-button" type="text" @click="toggleDrawer">
             历史记录
           </el-button>
         </el-tooltip>
-        <!--  下拉选择模型菜单 -->
-        <el-dropdown @command="handleCommand" class="model-select-bottom-dropdown" >
+        
+        <!-- 下拉选择模型菜单 -->
+        <el-dropdown @command="handleCommand" class="model-select-bottom-dropdown">
           <el-button type="primary" class="model-select-bottom">
             选择模型：{{ ModelSelectText }}<i class="model-select"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="aqwen2">qwen2 </el-dropdown-item>
+            <el-dropdown-item command="aqwen2">qwen2</el-dropdown-item>
             <el-dropdown-item command="llama3">llama3</el-dropdown-item>
             <el-dropdown-item command="gemma2">gemma2</el-dropdown-item>
             <el-dropdown-item command="glm4(zhipu)">glm4(zhipu)</el-dropdown-item>
             <el-dropdown-item command="sparkv3.0">sparkv3.0</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-
+ 
+        <!-- 头像按钮，点击后弹出用户ID输入框 -->
+        <el-tooltip effect="dark" content="输入用户ID" placement="bottom">
+          <el-button :disabled="isSending" class="avatar-button" type="text" @click="openUserIdDialog">
+            <i class="el-icon-user">1111111</i>1111111
+          </el-button>
+        </el-tooltip>
         <!-- "关于"按钮，点击后跳转到GitHub -->
         <el-tooltip effect="dark" content="跳转到 GitHub 页面" placement="bottom">
           <el-button :disabled="isSending" class="about-button" type="text" @click="goToGithub">
@@ -137,7 +157,9 @@ export default {
       chatHistory: [], // 聊天历史记录
       drawerVisible: false, // 抽屉是否可见
       client: null, // WebSocket 客户端实例
-      ModelSelectText: 'glm4(zhipu)'
+      ModelSelectText: 'glm4(zhipu)', // 当前选择的模型文本
+      userIdDialogVisible: false, // 用户ID输入对话框可见性
+      userId: '' // 用户ID
     };
   },
   mounted() {
@@ -149,7 +171,7 @@ export default {
     async saveDialog() {
       try {
         const response = await axios.post('http://localhost:3000/save-dialog', {
-          user: 'QC',
+          user: this.userId,
           message: this.chatHistory,
         });
         console.log(response.data);
@@ -160,6 +182,38 @@ export default {
         alert('Error saving message');
       }
     },
+
+     // 保存用户ID
+    async saveUserId() {
+      console.log('用户ID:', this.userId);
+      this.userIdDialogVisible = false;
+      // 在这里进一步处理用户ID的逻辑，连接数据库，检查用户id下是否含有历史记录，如果有历史记录，则取出放到历史记录框中
+         try {
+        // 发送请求以获取用户ID下的历史记录
+        const response = await axios.get(`http://localhost:3000/dialogs?user=${this.userId}`);
+        const userDialogs = response.data;
+
+        if (userDialogs.length > 0) {
+          // 按时间戳排序，获取最新的历史记录
+          const latestDialog = userDialogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+          
+          // 将最新的历史记录里的消息放到历史记录框中
+          this.chatHistory = latestDialog.message;
+        } else {
+          // 如果没有历史记录，则清空历史记录框
+          this.chatHistory = '';
+        }
+
+        console.log('用户历史记录:', userDialogs);
+      } catch (error) {
+        console.error('Error fetching user history records:', error);
+        alert('Error fetching user history records');
+      }
+
+
+    },
+
+
   
     initWebSocket() {
     this.client = new WebSocket('ws://localhost:8000/ws/run_workflow');
@@ -214,12 +268,14 @@ export default {
       this.scrollToBottom();
     }
   },
-    // handleIncomingMessage(message) {
-    //   // 将接收到的消息添加到消息列表中
-    //   this.messages.push({ text: message.message, sender: 'backend' });
-    //   this.saveMessages();
-    //   this.scrollToBottom();
-    // },
+
+    // 打开用户ID输入对话框
+    openUserIdDialog() {
+      this.userIdDialogVisible = true;
+    },
+
+   
+    
     toggleDrawer() {
       this.drawerVisible = !this.drawerVisible;
     },
@@ -347,6 +403,7 @@ export default {
 };
 </script>
 
+
 <style lang="scss" scoped>
 @import "@/assets/fonts/index";
 
@@ -355,6 +412,9 @@ export default {
   height: 100%;
 }
 
+.avatar-button{
+ color: #000;
+}
 .main-content {
   display: flex;
   flex: 1;
