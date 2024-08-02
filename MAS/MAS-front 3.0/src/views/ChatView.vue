@@ -46,7 +46,7 @@
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息 -->
-          <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" />
+          <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" :status="message.status"/>
 
           
         </div>
@@ -86,15 +86,11 @@
     </div>
 
     <!-- 抽屉组件 -->
-<<<<<<< HEAD
-    <el-drawer title="历史记录" :visible.sync="drawerVisible" direction="ltr" size="20%">
-=======
     <el-drawer class="history-drawer-contain"
       title="历史记录"
       :visible.sync="drawerVisible"
       direction="ltr"
       size="20%">
->>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
       <div class="history-contain">
         <div class="history-header">
           <button @click="saveDialog">上传数据库</button>
@@ -120,17 +116,10 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-import Message from "@/components/Message.vue";
-import apiClient from "@/axios";
-import axios from "axios";
-import { w3cwebsocket as W3CWebSocket } from "websocket";
-=======
 import Message from '@/components/Message.vue';
 import apiClient from '@/axios';
 import axios from 'axios';
 
->>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
 
 export default {
   components: {
@@ -175,12 +164,13 @@ export default {
         const message = JSON.parse(event.data);
 
         if (message.message) {
-          this.messages.push({ text: message.message, sender: message.sender });
+          this.messages.push({ text: message.message, sender: message.sender ,status:message.progress});
         } else {
           console.log("Received JSON without message field:", message);
           this.messages.push({
             text: JSON.stringify(message, null, 2),
             sender: "bot",
+            status: "false"
           });
         }
         this.saveMessages();
@@ -197,7 +187,7 @@ export default {
       if (this.query.trim() === "") return;
 
       // 添加用户消息到消息列表
-      this.messages.push({ text: this.query, sender: "user" });
+      this.messages.push({ text: this.query, sender: "user" ,status:"false"});
       this.scrollToBottom();
 
       this.isSending = true;
@@ -207,7 +197,7 @@ export default {
         this.client.send(this.query);
       } catch (error) {
         console.error(error);
-        this.messages.push({ text: "请求失败，请稍后再试。", sender: "bot" });
+        this.messages.push({ text: "请求失败，请稍后再试。", sender: "bot" ,status:"false"});
       } finally {
         // 清空输入框并重置发送状态
         this.saveMessages();
@@ -236,7 +226,7 @@ export default {
     async sendQuery() {
       if (this.query.trim() === "") return;
 
-      this.messages.push({ text: this.query, sender: "user" });
+      this.messages.push({ text: this.query, sender: "user" ,status:"false"});
       this.scrollToBottom();
 
       this.isSending = true;
@@ -246,21 +236,27 @@ export default {
           query: this.query,
         });
         const response = res.data;
+        console.log(response.message)
+        console.log(response.sender)
+        console.log(response.progress)
         if (response.message) {
           this.messages.push({
             text: response.message,
             sender: response.sender,
+            status: String(response.progress)
+            
           });
         } else {
           this.messages.push({
             text: JSON.stringify(response, null, 2),
             sender: "bot",
+            status: "false"
           });
         }
         // this.messages.push({ text: response, sender: response.sender });
       } catch (error) {
         console.error(error);
-        this.messages.push({ text: "请求失败，请稍后再试。", sender: "bot" });
+        this.messages.push({ text: "请求失败，请稍后再试。", sender: "bot" ,status:"false"});
       } finally {
         this.saveMessages();
         this.query = "";
@@ -288,7 +284,7 @@ export default {
             "Content-Type": "multipart/form-data",
           },
         });
-        this.messages.push({ text: "文件上传成功", sender: "bot" });
+        this.messages.push({ text: "文件上传成功", sender: "bot" ,status:"false"});
         this.files = [];
       } catch (error) {
         console.error(error);
@@ -297,6 +293,7 @@ export default {
             error.response ? error.response.data : error.message
           }`,
           sender: "bot",
+          status:"false"
         });
       } finally {
         this.isSending = false;
@@ -383,12 +380,8 @@ export default {
 .chat-header {
   height: 60px;
   padding: 0 10px;
-<<<<<<< HEAD
-  background-color: #7853b2;
-=======
   // background-color: #7853B2;
   background-image: url('@/background/hback2.png');
->>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
   border-bottom: 1px solid #f4f4f4;
   display: flex;
   align-items: center;
@@ -467,9 +460,6 @@ export default {
   overflow: hidden;
   /* 避免整个窗口的滚动条 */
   justify-content: center;
-<<<<<<< HEAD
-  background: linear-gradient(to right, #7853b2, #ddc0f8, #f8eed2, #f6da87);
-=======
  
   background-size: cover;
   background-position: center;
@@ -487,7 +477,6 @@ export default {
   background-position: center;
   opacity: 0.5; /* 设置透明度，范围是 0 到 1 */
   z-index: -1; /* 使背景图片在内容下方 */
->>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
 }
 
 .chat-window {
@@ -661,14 +650,8 @@ export default {
 }
 
 .history-contain {
-<<<<<<< HEAD
-  padding: 10px;
-
-  /* 增加内边距 */
-=======
   padding: 10px; /* 增加内边距 */
   
->>>>>>> 753544f2e33b35a51c37f6de0852d494d97b413c
   h3 {
     text-align: center;
     margin-bottom: 10px;
