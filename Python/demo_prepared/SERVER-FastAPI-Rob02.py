@@ -28,6 +28,9 @@ from Bot_02_DutyClassifier import DutyClassifier
 # 0 - 前端响应传送 json 字符串，保存到文件夹中
 from frontend_json_process import CLASS_JointPlus_jsonprocess
 from ModelChoise import Model
+from fastapi.responses import StreamingResponse
+from typing import AsyncIterable
+import json
 
 Model.os_setenv()
 
@@ -51,8 +54,13 @@ class default_config:
         self.path = "frontend_json_process/json_simplified_with_bot02.json"
         self.json_file_path = "frontend_json_process/json_simplified_with_bot02.json"
         self.chat_model = Model.get_zhupuai_model()
-        self.conversation_finished = True  # 标志对话是否完成
-        self.initial_question = HumanMessage(content="请设计一个银行管理系统")
+        self.conversation_finished = False  # 标志对话是否完成
+        self.initial_question = HumanMessage(content="")
+        # self.showButton = False
+        self.user_is_satisfy = False
+        self.file_uploaded = False
+        # 是否停止上传标签
+        self.is_stop = False
 
     def set_path(self, new_path):
         self.path = new_path
@@ -99,7 +107,12 @@ app.add_middleware(
 )
 
 
-# 保存 workflow_image 图像
+class AgentState(TypedDict):
+    sender: str
+    progress: str
+    messages: Annotated[List[BaseMessage], operator.add]
+
+
 def save_graph_image(graph, file_path):
     from PIL import Image as PILImage
     import io
@@ -119,13 +132,13 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     # print("last_message:",last_message)
     # print("type of last_message",type(last_message))
     prompt = last_message.content
-    # print("prompt:",prompt)
-    # response = chat_model.process(input=prompt)
-    # ai_message_content = response
-    test_model = default_config.chat_model
-    response = test_model.invoke(prompt)
+    print("prompt:",prompt)
+    response = chat_model.process(input=prompt)
+    ai_message_content = response
+    # test_model = default_config.chat_model
+    # response = test_model.invoke(prompt)
     # print("response:",response)
-    ai_message_content = response.content
+    # ai_message_content = response.content
     print("ai_message_content:", ai_message_content)
 
     print(node_name, "答案：", ai_message_content)
@@ -268,13 +281,70 @@ async def receive_model(request: ModelRequest):
 
 
 # Global variable to track if the file has been uploaded
-file_uploaded = False
+
+class QueryRequest(BaseModel):
+    query: str
+
+
+agent = RobotAgent()
+
+import re
+
+
+
+@app.post("/ask")
+async def ask(request: QueryRequest):
+    try:
+        response = agent.invoke(input=request.query)
+        print(response)
+        cleaned_json_string = response.strip()
+        cleaned_json_string = cleaned_json_string.strip('`')
+        cleaned_json_string = cleaned_json_string.strip("json")
+
+        response_dict = json.loads(cleaned_json_string)
+        sender = response_dict.get("sender", "字段不存在")
+        progress = response_dict.get("progress", "字段不存在")
+        answer = response_dict.get("answer", "字段不存在")
+        print("\n解析结果：")
+        print(f"sender: {sender}")
+        print(f"progress: {progress}")
+        print(f"answer: {answer}")
+
+        if default_config.user_is_satisfy:
+            default_config.initial_question = HumanMessage(
+                content="请你根据以下需求说明书完成你的工作并向下属分配工作" + answer)
+        # 返回正常响应
+        return JSONResponse({"sender": sender, "progress": progress, "message": answer})
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/upload-agent")
+async def upload_agent(file: UploadFile = File(...)):
+    if not default_config.is_conversation_finished():
+        return JSONResponse(content={"error": "Conversation is not finished yet"}, status_code=400)
+
+    try:
+        file_content = await file.read()
+        data = json.loads(file_content)
+        print("Received JSON data:", data)
+        simplified_json_path = CLASS_JointPlus_jsonprocess.extract_data_to_simplified_json(data)
+        default_config.set_path(simplified_json_path)
+        default_config.file_uploaded = True
+        print("成功解析为json:", default_config.get_path())
+        # Initialize the workflow and run it
+
+        return JSONResponse(content={"message": "JSON received successfully"})
+    except Exception as e:
+        print("Error:", e)
+        return JSONResponse(content={"error": "An error occurred"}, status_code=500)
 
 
 def initialize_workflow():
-    # if not file_uploaded:
-    #     print("No file uploaded yet.")
-    #     return
+    if not default_config.file_uploaded:
+        print("No json uploaded yet.")
+        return
 
     json_file_path = default_config.get_path()
     print("----")
@@ -284,7 +354,6 @@ def initialize_workflow():
 
     global workflow
     workflow = StateGraph(AgentState)
-
     # 处理 link 部分信息并添加边
     link_edges = {}
     for link in data["Link"]:
@@ -304,7 +373,7 @@ def initialize_workflow():
         if label_text.lower() != "start" and label_text.lower() != "end":
             role = label_text
             duty = description_text
-            # model_role = BuildChainAgent(role=role, duty=duty)
+            model_role = BuildChainAgent(role=role, duty=duty)
             # 如果 label_text == "Bot2"，构造 conditional_map
             if label_text == "Bot2":
                 # 找到 Bot2 对应的 targets
@@ -323,7 +392,7 @@ def initialize_workflow():
             else:
                 workflow.add_node(
                     label_text,
-                    partial(func_node, node_name=label_text, chat_model=chat_model),
+                    partial(func_node, node_name=label_text, chat_model=model_role),
                 )
 
     for source_label, targets in link_edges.items():
@@ -371,15 +440,17 @@ def initialize_workflow():
                 workflow.add_edge(source_label, END)
             else:
                 workflow.add_edge(source_label, target_label)
+        # 将default_config.file_uploaded复原
+        default_config.file_uploaded = False
 
 
 @app.websocket("/ws/run_workflow")
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
     try:
-        # if not file_uploaded:
-        #     await websocket.send_text(json.dumps({"error": "No file uploaded yet"}))
-        #     return
+        if not default_config.file_uploaded:
+            # await websocket.send_text(json.dumps({"error": "No json uploaded yet"}))
+            return
 
         await run_workflow_and_send_updates(websocket)
     except WebSocketDisconnect:
@@ -395,6 +466,7 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     workflow_graph_path = f"src/workflow_graph/workflow_graph_{timestamp}.png"
     save_graph_image(graph, workflow_graph_path)
+    print("需求说明书：",default_config.initial_question)
     events = graph.stream(
         {
             "sender": "__start__",
@@ -424,72 +496,47 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
         print("----")
 
 
-class QueryRequest(BaseModel):
-    query: str
+class ButtonClick(BaseModel):
+    message: str
 
 
-agent = RobotAgent()
-
-
-@app.post("/ask")
-async def ask(request: QueryRequest):
+@app.post("/button-clicked")
+async def handle_button_click(button_click: ButtonClick):
     try:
-        response = agent.invoke(input=request.query)
-        print(response)
+        # 打印接收到的消息
+        print(f"Received message from client: {button_click.message}")
 
-        # 检查对话是否结束
-        if request.query == "满意":
-            # 返回最后一次响应后，设置对话已结束标志
-            print("满意")
-            default_config.set_conversation_finished(True)
-            default_config.initial_question = HumanMessage(
-                content="请项目经理根据以下需求说明文档完成你的职责" + response
-            )
-            return JSONResponse({"response": "对话已结束，感谢使用！"})
+        # 可以根据需要进行更多处理
+        default_config.conversation_finished = True
+        default_config.user_is_satisfy = True
+        default_config.is_stop = True
 
-        # 返回正常响应
-        return JSONResponse({"response": response})
-
+        # 返回成功的响应
+        return {"status": "success", "received_message": button_click.message}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # 捕获异常并返回错误响应
+        print(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@app.post("/upload-agent")
-async def upload_agent(file: UploadFile = File(...)):
-    if not default_config.is_conversation_finished():
-        return JSONResponse(
-            content={"error": "Conversation is not finished yet"}, status_code=400
-        )
-
-    global file_uploaded
-    try:
-        file_content = await file.read()
-        data = json.loads(file_content)
-        print("Received JSON data:", data)
-        simplified_json_path = (
-            CLASS_JointPlus_jsonprocess.extract_data_to_simplified_json(data)
-        )
-        default_config.set_path(simplified_json_path)
-        file_uploaded = True
-        print("成功解析为json:", default_config.get_path())
-
-        # Initialize the workflow and run it
-        return JSONResponse(content={"message": "JSON received successfully"})
-    except Exception as e:
-        print("Error:", e)
-        return JSONResponse(content={"error": "An error occurred"}, status_code=500)
-
-
-# 备用测试 websocket 连通的响应函数
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        while True:
-            data = await websocket.receive_text()  # 获取前端文本
-            await websocket.send_text(f"Message text was: {data}")
-    except WebSocketDisconnect:
-        print("Client disconnected")
+# @app.websocket("/showButton")
+# async def websocket_endpoint(websocket: WebSocket):
+#     await websocket.accept()
+#     try:
+#         while True:
+#             if default_config.is_stop:
+#                 break
+#             # data = await websocket.receive_text()
+#             # message = json.loads(data)  # 解析接收到的 JSON 数据
+#             # if message.get("action") == "button_clicked":
+#             #     print(f"Received message from client: {message.get('message')}")
+#             #     default_config.conversation_finished = True
+#             # 这里可以根据需要处理消息或发送响应
+#             await websocket.send_json({"label": default_config.showButton})
+#     except WebSocketDisconnect:
+#         print("Client disconnected")
+#     except Exception as e:
+#         print(f"An error occurred: {e}")
 
 
 if __name__ == "__main__":
