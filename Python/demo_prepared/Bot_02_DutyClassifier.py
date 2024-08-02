@@ -9,7 +9,7 @@ from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 
 class DutyClassifier:
-    def __init__(self, duty_classifiers):
+    def __init__(self, duty_classifiers, duty_description):
         self.run_id = str(uuid.uuid4())
         Model.os_setenv()
         self.chat_model = Model.get_zhupuai_model()
@@ -21,15 +21,20 @@ class DutyClassifier:
         print("Embedding: \n", self.embeddings)
 
         self.duty_classifier = duty_classifiers
+        self.duty_description = duty_description
 
         # 定义提示模板
         self.classifier_prompt_template = """
-        You are now a customer service agent in the software development process,
+        You are now a customer service robot in the software development process,
         responsible for receiving user modification requests and categorizing them to the corresponding software developers.
         Now, user give u request for modification, User modification request is: {request}
         
+        The developer and duty description corresponding are:{duty_description},
+        duty_descrpiton in format: role : duty, duty_classfier are duties, your judgement should based on 'duty'
+        
+        Now accroding to the duty description,
         If the request shows that User has already been satisfied, then classify as "Finish".
-        Else,if user give modification request, classify which developer are requried,
+        Else, if user give modification request, classify which developer are requried,
             The list of developer responsibilities are duty_classfier,
             and classify the type of the request as one of the following duty_classifier: {duty_classifier}.
 
@@ -62,9 +67,11 @@ class DutyClassifier:
         )
 
     def create_messages(self, input_text):
-        duty_descriptions = ",".join(self.duty_classifier)
+        duty_classifier = ",".join(self.duty_classifier)
+        duty_description = ",".join(self.duty_classifier)
         prompt = self.prompt_template_01.format(
-            duty_classifier=duty_descriptions,
+            duty_classifier=duty_classifier,
+            duty_description=duty_description,
             request=input_text,
             format_instruction=self.format_instruction,
         )
@@ -83,16 +90,20 @@ class DutyClassifier:
         return self.classifier_output_parser.parse(response.content)
 
 
-# 测试样例
+# # 测试样例
 # duty_classifier = {
 #     "Project Manager(PM)",
 #     "Technology Leader(TTL)",
 #     "Schedule Planning(QA1)",
 #     "Coding Standard(QA2)",
 # }
-# classifier_bot = DutyClassifier(duty_classifiers=duty_classifier)
+# duty_description= {
+#     'TechLeader': 'TeamTechnologyLeader ',
+#     'QA1': 'Code Format',
+#     'QA2': 'Schedule Plan'} 
+# classifier_bot = DutyClassifier(duty_classifiers=duty_classifier,duty_description=duty_description)
 
-# user_request = "please pull the project to next month"
+# user_request = "请调整一下 code format"
 
 # classifier_result = classifier_bot.topic_classifier(user_request)
 # print("\n== user request ==:",user_request)
