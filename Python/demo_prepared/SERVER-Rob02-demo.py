@@ -178,7 +178,7 @@ def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
 
     # 创建成员列表，并移除发送者
     members = list(conditional_map.keys())
-    print("members before removing sender:", members)
+    # print("members before removing sender:", members)
     if sender in members:
         members.remove(sender)
     print("next members:", members)
