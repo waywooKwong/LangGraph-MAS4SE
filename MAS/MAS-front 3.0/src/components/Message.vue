@@ -103,7 +103,7 @@ export default {
 }
 
 .user-bubble {
-  background-color: #7853B2;
+  background-color: rgb(126, 18, 110);
   color: #fff4f4;
   border-bottom-right-radius: 0;
 }
