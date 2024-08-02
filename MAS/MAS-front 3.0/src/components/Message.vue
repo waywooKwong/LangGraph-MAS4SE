@@ -9,19 +9,29 @@
         v-if="sender === '智能客服机器人' && status === 'true'"
         class="button-container"
       >
-        <button @click="handleButtonClick" class="action-button">满意</button>
+        <!-- <button @click="handleButtonClick" class="action-button">满意</button> -->
+        <!-- 弹窗 -->
+        <el-button type="text" @click="open"
+          >如果您对这个方案满意，请点击此处</el-button
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { MessageBox } from "element-ui";
 export default {
   name: "ChatMessage",
   props: {
     text: String,
     sender: String,
     status: String,
+  },
+  data() {
+    return {
+      showModal: false, // 控制弹窗显示与隐藏
+    };
   },
   computed: {
     senderClass() {
@@ -47,6 +57,32 @@ export default {
     },
   },
   methods: {
+    open() {
+      this.$confirm(
+        "此操作将跳转到定制角色界面，你可以私人定制你的开发团队，是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          center: true,
+        }
+      )
+        .then(() => {
+          console.log("跳转成功");
+          this.handleButtonClick();
+          this.$message({
+            type: "success",
+            message: "跳转成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
+    },
     getAvatar(sender) {
       if (sender === "user") {
         return "/icons/用户.png";
@@ -164,5 +200,15 @@ export default {
 
 .action-button:hover {
   background-color: #0056b3;
+}
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 </style>
