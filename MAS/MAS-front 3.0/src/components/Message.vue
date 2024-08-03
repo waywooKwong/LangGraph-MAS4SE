@@ -21,6 +21,7 @@
 
 <script>
 import { MessageBox } from "element-ui";
+import apiClient from '@/axios'; 
 export default {
   name: "ChatMessage",
   props: {
@@ -70,6 +71,9 @@ export default {
       )
         .then(() => {
           console.log("跳转成功");
+
+          this.$router.push({ name: "AgentMap" });
+
           this.handleButtonClick();
           this.$message({
             type: "success",
@@ -94,12 +98,8 @@ export default {
     },
     async handleButtonClick() {
       try {
-        const response = await fetch("http://localhost:8000/button-clicked", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message: "按钮被点击了" }),
+        const response = await apiClient.post('/button-clicked', {
+          message: '按钮被点击了',
         });
 
         if (!response.ok) {
