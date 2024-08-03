@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from ModelChoise import Model
 from langchain_core.prompts import PromptTemplate
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+from typing import AsyncIterable
 Model.os_setenv()
+app = FastAPI()
 class PromptGenerator:
     def __init__(self):
         # Model.os_setenv()
@@ -41,4 +45,17 @@ class PromptGenerator:
         # 使用流式输出
         for chunk in self.chat_model.stream(prompt_str_input):
             # print(chunk.content, end="|", flush=True)
+            # print(chunk.content.strip())
             yield chunk.content.strip()
+
+
+# agent=PromptGenerator()
+#
+# @app.get("/stream")
+# async def stream_response():
+#     return StreamingResponse(agent.generate_prompt(role="项目经理",duty="向下属分配任务"), media_type='text/plain')
+#
+# if __name__ == "__main__":
+#     import uvicorn
+#
+#     uvicorn.run(app, host="0.0.0.0", port=8000)

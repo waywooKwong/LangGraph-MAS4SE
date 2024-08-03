@@ -70,6 +70,7 @@ export default {
       )
         .then(() => {
           console.log("跳转成功");
+
           this.handleButtonClick();
           this.$message({
             type: "success",
