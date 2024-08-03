@@ -64,16 +64,13 @@
       <div class="main-window">
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
-          <!-- 遍历并渲染每条消息/ 排除发送者是 'kuangweihua'(我定义发送修改意见的那个 sender 是 'kuangwiehua' :） ) -->
-          <Message v-for="(message, index) in messages" v-if="!(index === messages.length - 1 && message.sender === 'kuangweihua')"  :key="index" :text="message.text" :sender="message.sender" :status="message.status" />
-          <!-- v-if="(message.sender != 'kuangweihua')" -->
-          <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
-          <div v-if="messages.length > 0 && messages[messages.length - 1].sender === 'kuangweihua'" class="userRequestDialog">
-            <el-input v-model="feedback" placeholder="输入您的修改意见" type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }"></el-input>
-            <el-button @click="userRequest" class=".sendQueryButton">发送</el-button>
-          </div>
+          <!-- 遍历并渲染每条消息 -->
+          <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" :status="message.status"/>
+
+          
         </div>
       </div>
+
       <el-footer class="footer">
         <!-- 文件上传组件 -->
         <el-upload class="upload-demo" ref="upload" action="" :file-list="fileList" :show-file-list="false"
@@ -102,6 +99,7 @@
         <!-- 上传文件按钮 -->
         <el-button @click="uploadFiles" :disabled="isSending || files.length === 0"
           class="uploadFilesButton">上传文件</el-button>
+        <el-button @click="wstest" :disabled="isSending" class="wstestButton">MAS-WebSocket</el-button>
 
       </el-footer>
     </div>
@@ -153,13 +151,10 @@ export default {
       files: [], // 待上传的文件列表
       chatHistory: [], // 聊天历史记录
       drawerVisible: false, // 抽屉是否可见
-      client: null, // WebSocket 客户端实例 1
-      clientUserRequest: null, // WebSocket 客户端实例 2: 专用于处理用户反馈修改信息
+      client: null, // WebSocket 客户端实例
       ModelSelectText: 'zhipu', // 当前选择的模型文本
       userIdDialogVisible: false, // 用户ID输入对话框可见性
-      userRequestDialogVisible: false, //用户反馈意见可见性
-      userId: '',// 用户ID
-      feedback:''
+      userId: '' // 用户ID
     };
   },
   mounted() {
@@ -208,7 +203,12 @@ export default {
         console.error('Error fetching user history records:', error);
         alert('Error fetching user history records');
       }
+
+
     },
+
+
+  
     initWebSocket() {
       this.client = new WebSocket("ws://localhost:8000/ws/run_workflow");
 
@@ -216,10 +216,7 @@ export default {
         const message = JSON.parse(event.data);
 
         if (message.message) {
-            this.messages.push({ text: message.message, sender: message.sender, status: message.progress });
-            this.userRequestDialogVisible = false
-            if(message.sender=='kuangweihua')
-              this.userRequestDialogVisible = true
+          this.messages.push({ text: message.message, sender: message.sender ,status:message.progress});
         } else {
           console.log("Received JSON without message field:", message);
           this.messages.push({
@@ -237,30 +234,32 @@ export default {
           console.error("WebSocket Client Error", error);
         };
       };
+    },
+   
+  wstest() {
+    if (this.query.trim() === '') return;
 
-      // 初始化 userRequest WebSocket
-      this.clientUserRequest = new WebSocket("ws://localhost:8000/ws/userRequest");
-      this.clientUserRequest.onopen = () => {
-        console.log('WebSocket connection for userRequest established');
-      };
-      this.clientUserRequest.onmessage = (event) => {
-        console.log('Message from server (userRequest):', event.data);
-      };
-      this.clientUserRequest.onclose = () => {
-        console.log('WebSocket connection for userRequest closed');
-      };
-      this.clientUserRequest.onerror = (error) => {
-        console.error('WebSocket error (userRequest):', error);
-      };
-    },
-    
-    userRequest() {
-      if (this.clientUserRequest && this.clientUserRequest.readyState === WebSocket.OPEN) {
-        this.clientUserRequest.send(this.feedback);
-        this.feedback = '已提交完成'; // 清空输入框
-      }
-    },
-  
+    // 添加用户消息到消息列表
+    this.messages.push({ text: this.query, sender: 'user' });
+    this.scrollToBottom();
+
+    this.isSending = true;
+
+    try {
+      // 通过 WebSocket 发送消息到服务器
+      this.client.send(this.query);
+    } catch (error) {
+      console.error(error);
+      this.messages.push({ text: '请求失败，请稍后再试。', sender: 'bot' });
+    } finally {
+      // 清空输入框并重置发送状态
+      this.saveMessages();
+      this.query = '';
+      this.isSending = false;
+      this.scrollToBottom();
+    }
+  },
+
     // 打开用户ID输入对话框
     openUserIdDialog() {
       this.userIdDialogVisible = true;
@@ -780,25 +779,4 @@ export default {
     /* 从侧边栏展开 */
   }
 }
-
-.userRequestDialog {
-    display: flex;
-    align-items: center;
-
-  }
-  .userRequestDialog input {
-    flex: 1;
-    margin-top: 15px;
-    margin-right: 20px; /* 使按钮和输入框之间有间距 */
-    height: 40px;
-  }
-  .userRequestDialog button {
-    font-size: 16px; 
-    height: 40px;
-    width: 88px;
-    margin-left: 10px;
-    background-color: #dbd3e4;
-    color: #000;
-    font-weight: bold;
-  }
 </style>
