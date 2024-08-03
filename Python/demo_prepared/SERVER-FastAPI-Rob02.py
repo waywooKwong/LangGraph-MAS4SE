@@ -435,7 +435,15 @@ async def initialize_workflow(websocket: WebSocket):
         if source_label not in link_edges:
             link_edges[source_label] = []
         link_edges[source_label].append(target_label)
-
+    roles = []
+    for message in data["Message"]:
+        label_text = message["label_text"]
+        if label_text != "Bot2" and label_text.lower() != "start" and label_text.lower() != "end":
+            roles.append(label_text)
+    # 将roles传给前端
+    await websocket.send_text(
+        json.dumps({"roles": roles}, ensure_ascii=False)
+    )
     # 提取 message 部分信息并添加结点
     for message in data["Message"]:
         label_text = message["label_text"]
@@ -468,7 +476,9 @@ async def initialize_workflow(websocket: WebSocket):
                 for chunk in default_config.prompt_creatation.generate_prompt(role=role, duty=duty):
                     await asyncio.sleep(0.1)  # 模拟延迟
                     description += chunk
-                    await websocket.send_text(chunk)
+                    await websocket.send_text(
+                        json.dumps({"message": chunk, "role": role}, ensure_ascii=False)
+                    )
                 # print(description)
                 model_role = BuildChainAgent(role=role, duty=duty, description=description)
                 ###
@@ -527,7 +537,6 @@ async def initialize_workflow(websocket: WebSocket):
         default_config.file_uploaded = False
         # 将角色创建判断置为true
         default_config.is_role = True
-
 
 
 @app.websocket("/ws/run_workflow")

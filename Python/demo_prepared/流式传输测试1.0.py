@@ -23,26 +23,32 @@ prompt = PromptGenerator()
 #         print(chunk, end="", flush=True)
 #     return description
 description = ""
-role = "项目经理"
-duty = "生成需求说明书"
+roles = ["项目经理", "开发经理", "QA工程师","后端工程师"]
+dutys = ["生成需求说明书", "生成软件架构", "生成测试样例","生成后端架构"]
 
-
+import json
 @app.websocket("/ws/stream")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    # 发送角色数据到前端
+    await websocket.send_text(
+        json.dumps({"roles": roles}, ensure_ascii=False)
+    )
     global description
 
     # 模拟生成流式数据
-    for chunk in prompt.generate_prompt(role=role, duty=duty):
-        await asyncio.sleep(0.1)  # 模拟延迟
-        description += chunk
-        await websocket.send_text(chunk)
-    print(description)
-    agent = BuildChainAgent(role=role, duty=duty, description=description)
-    print("角色定制成功！！！")
-    print(agent.process("你好"))
-    await websocket.close()
-
+    for role, duty in zip(roles, dutys):
+        description = ""
+        for chunk in prompt.generate_prompt(role=role, duty=duty):
+            await asyncio.sleep(0.1)  # 模拟延迟
+            description += chunk
+            await websocket.send_text(
+                json.dumps({"message": chunk, "role": role}, ensure_ascii=False)
+            )
+        print(description)
+        # agent = BuildChainAgent(role=role, duty=duty, description=description)
+        # print("角色定制成功！！！")
+        # print(agent.process("你好"))
 
 
 if __name__ == "__main__":
