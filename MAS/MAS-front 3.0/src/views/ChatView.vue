@@ -18,7 +18,7 @@
         <!-- 用户ID输入对话框 -->
         <el-dialog
           title="输入用户ID"
-          :visible.sync="userIdDialogVisible"
+          :visible.sync="userIdDialogVisible" 
           >
           <el-input v-model="userId" placeholder="请输入用户ID"></el-input>
           <span slot="footer" class="dialog-footer">
@@ -48,9 +48,9 @@
         </el-dropdown>
  
         <!-- 头像按钮，点击后弹出用户ID输入框 -->
-        <el-tooltip effect="dark" content="输入用户ID" placement="bottom">
+        <el-tooltip effect="dark" content="输入用户ID" placement="bottom" class="userID-input">
           <el-button :disabled="isSending" class="avatar-button" type="text" @click="openUserIdDialog">
-            <i class="el-icon-user">1111111</i>1111111
+            <i class="el-icon-user"></i>{{ userId }}
           </el-button>
         </el-tooltip>
         <!-- "关于"按钮，点击后跳转到GitHub -->
@@ -154,7 +154,7 @@ export default {
       client: null, // WebSocket 客户端实例
       ModelSelectText: 'glm4(zhipu)', // 当前选择的模型文本
       userIdDialogVisible: false, // 用户ID输入对话框可见性
-      userId: '' // 用户ID
+      userId: '2333' // 用户ID
     };
   },
   mounted() {
@@ -476,6 +476,10 @@ export default {
     .model-select {
       font-size: 12px;
     }
+  }
+  .userID-input{
+    position: relative;
+    right: 80px;
   }
 
   .drawer-button {
