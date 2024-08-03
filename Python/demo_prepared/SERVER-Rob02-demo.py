@@ -430,7 +430,7 @@ async def websocket_run_workflow(websocket: WebSocket):
         # if not file_uploaded:
         #     await websocket.send_text(json.dumps({"error": "No file uploaded yet"}))
         #     return
-
+        print("/ws/run_workflow is here")
         await run_workflow_and_send_updates(websocket)
     except WebSocketDisconnect:
         print("Client disconnected")

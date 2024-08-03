@@ -64,15 +64,14 @@
       <div class="main-window">
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
-          <!-- 遍历并渲染每条消息 -->
-          <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender" :status="message.status" :class="{'transparent-message': message.sender === 'kuangweihua'}"/>
-          <input v-model="feedback" placeholder="请输入您的修改意见"/>
-          <button @click="userRequest">提交</button>
-          <!-- 检查最后一条消息的发送者 -->
+          <!-- 遍历并渲染每条消息/ 排除发送者是 'kuangweihua'(我定义发送修改意见的那个 sender 是 'kuangwiehua' :） ) -->
+          <Message v-for="(message, index) in messages" v-if="!(index === messages.length - 1 && message.sender === 'kuangweihua')"  :key="index" :text="message.text" :sender="message.sender" :status="message.status" />
+          <!-- v-if="(message.sender != 'kuangweihua')" -->
+          <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
           <div v-if="messages.length > 0 && messages[messages.length - 1].sender === 'kuangweihua'" class="userRequestDialog">
-            
+            <el-input v-model="feedback" placeholder="输入您的修改意见" type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }"></el-input>
+            <el-button @click="userRequest" class=".sendQueryButton">发送</el-button>
           </div>
-
         </div>
       </div>
       <el-footer class="footer">
@@ -158,6 +157,7 @@ export default {
       clientUserRequest: null, // WebSocket 客户端实例 2: 专用于处理用户反馈修改信息
       ModelSelectText: 'zhipu', // 当前选择的模型文本
       userIdDialogVisible: false, // 用户ID输入对话框可见性
+      userRequestDialogVisible: false, //用户反馈意见可见性
       userId: '',// 用户ID
       feedback:''
     };
@@ -217,6 +217,9 @@ export default {
 
         if (message.message) {
             this.messages.push({ text: message.message, sender: message.sender, status: message.progress });
+            this.userRequestDialogVisible = false
+            if(message.sender=='kuangweihua')
+              this.userRequestDialogVisible = true
         } else {
           console.log("Received JSON without message field:", message);
           this.messages.push({
@@ -793,8 +796,9 @@ export default {
     font-size: 16px; 
     height: 40px;
     width: 88px;
-  }
-  .transparent-message {
-    opacity: 0.5; /* 设置透明度 */
+    margin-left: 10px;
+    background-color: #dbd3e4;
+    color: #000;
+    font-weight: bold;
   }
 </style>
