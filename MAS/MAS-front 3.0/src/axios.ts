@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://10.22.102.81:8000', // 后端服务地址
+  baseURL: 'http://10.22.190.184:8000', // 后端服务地址
   headers: {
     'Content-Type': 'application/json',
   },
