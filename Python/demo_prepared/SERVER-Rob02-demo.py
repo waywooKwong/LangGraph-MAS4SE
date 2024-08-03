@@ -6,6 +6,7 @@
 请留意
 """
 
+import asyncio
 import operator
 import os
 import json
@@ -53,6 +54,9 @@ class default_config:
         self.chat_model = Model.get_zhupuai_model()
         self.conversation_finished = True  # 标志对话是否完成
         self.initial_question = HumanMessage(content="请设计一个银行管理系统")
+        
+        self.hasRequest = False
+        self.userRequest = "我的需求已满足, 请直接退出, 返回 'Finish'"
 
     def set_path(self, new_path):
         self.path = new_path
@@ -65,6 +69,15 @@ class default_config:
 
     def is_conversation_finished(self):
         return self.conversation_finished
+    
+    def set_hasRequest(self, tnf: bool):
+        self.hasRequest = tnf
+    
+    def hasRequest(self, tnf: bool):
+        return self.hasRequest
+    
+    def set_userRequest(self, request):
+        self.userRequest = request
 
 
 class AgentState(TypedDict):
@@ -158,10 +171,12 @@ def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
     print("sender before:", sender)
     system_prompt = (
         " You are a supervisor tasked with managing a conversation between the"
-        " following workers(Attetion:Just select one of them):  {members}. Given the following user request,"
-        " respond with the worker to act next. Each worker will perform a"
-        " task and respond with their results and status. When finished,"
-        " respond with FINISH."
+        " following workers(Attetion:Just select one of them):  {members}."
+        " each member's duty are {duty_description}"
+        " Given the following user request, and according to the duty of members"
+        " respond with the worker to act next. "
+        " Each worker will perform a task and respond with their results and status. "
+        " When finished, respond with 'Finish'."
         "{format_instruction}"
     )
     response_schema_01 = [
@@ -183,7 +198,20 @@ def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
         members.remove(sender)
     print("next members:", members)
 
-    prompt_str_input_01 = prompt_template_01.format(members=members)
+    duty_description = {}
+    json_file_path = default_config.get_path()
+    for duty in members:
+        with open(json_file_path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+        for message in data["Message"]:
+            if message["label_text"] == duty:
+                description_text = message["description_text"]
+                duty_description[duty] = description_text
+    print("duty description:\n", duty_description)
+
+    prompt_str_input_01 = prompt_template_01.format(
+        members=members, duty_description=duty_description
+    )
     llm = chat_model
     output_completion_01: AIMessage = llm.invoke(input=prompt_str_input_01)
     content_str = output_completion_01.content
@@ -209,37 +237,60 @@ def func_node_Bot02(state: AgentState) -> AgentState:
         "messages": state["messages"] + [result],
     }
 
-
-async def send_message_to_frontend(websocket: WebSocket, message: str):
-    await websocket.send_text(json.dumps({"request": message}))
-
-
-async def get_response_from_frontend(websocket: WebSocket) -> str:
-    response = await websocket.receive_text()
-    return json.loads(response).get("response", "")
-
-
-#### 这里需要实现 向前端获取信息！
-##### 函数调用的位置: line337 lambda state: supervisor_chain_Bot02(state, conditional_map),(注意参数?)
+# 前端定义ChatView 中定义的新的 clientUserRequest
+# 这里在 Bot02 过程中有三次 3s 的循环留给 用户发送修改意见
+@app.websocket("/ws/userRequest")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            print("this websocket start!")
+            request = await websocket.receive_text()
+            response = {"message": f"User request received: {request}"}
+            default_config.set_userRequest(request)
+            default_config.set_hasRequest(tnf=True)
+            print("ws/userRequest 接收到用户修改意见\n",default_config.userRequest)
+            await websocket.send_text(json.dumps(response))  # 发送响应回前端
+    except WebSocketDisconnect:
+        print("Client disconnected")
+    except Exception as e:
+        print(f"Error: {e}")
+        
 def supervisor_chain_Bot02(state: AgentState, conditional_map: Dict[str, Any]):
-    # members 是分类的目标对象
     print("enter superviosr_chain_Bot02")
     duty_classifier = list(conditional_map.keys())
+    print("duty classifier:\n", duty_classifier)
+    duty_description = {}
+    json_file_path = default_config.get_path()
+    for duty in duty_classifier:
+        with open(json_file_path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+        for message in data["Message"]:
+            if message["label_text"] == duty:
+                description_text = message["description_text"]
+                duty_description[duty] = description_text
+    print("duty description:\n", duty_description)
+    
+    import time
+    if not default_config.hasRequest:
+        print("Bot02 没有接收到反馈, while continue")
+        time.sleep(3)  
 
-    # 获取前端的 “修改意见”
-    # 向前端发送请求消息
-    # await send_message_to_frontend(websocket, "请向 Bot2 反馈您的修改意见：")
-    # # 等待从前端接收反馈
-    # input_request = await get_response_from_frontend(websocket)
-    input_request = "请向 Bot2 反馈您的修改意见"
-    classifier_bot = DutyClassifier(duty_classifiers=duty_classifier)
+    input_request = default_config.userRequest
+    print("get userRequest:",input_request)
+    # input_request = "请调整一下 QA2 的工作"
+    classifier_bot = DutyClassifier(
+        duty_classifiers=duty_classifier, duty_description=duty_description
+    )
     classifier_result = classifier_bot.topic_classifier(input_request)
     next_value = classifier_result["classifier"]
     print("Bot2 router next", next_value)
     next_key = {v: k for k, v in conditional_map.items()}.get(next_value, "Finish")
     print("Bot2 next key:", next_key)
+    # 恢复默认
+    default_config.set_userRequest("我的需求已满足, 请直接退出, 返回 'Finish'")
+    default_config.set_hasRequest(tnf=False)
     return next_key
-    # return 'QA1'
 
 
 # 定义 POST 路由来接收 /model 请求，实现选择模型
@@ -372,7 +423,6 @@ def initialize_workflow():
             else:
                 workflow.add_edge(source_label, target_label)
 
-
 @app.websocket("/ws/run_workflow")
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
@@ -380,7 +430,7 @@ async def websocket_run_workflow(websocket: WebSocket):
         # if not file_uploaded:
         #     await websocket.send_text(json.dumps({"error": "No file uploaded yet"}))
         #     return
-
+        print("/ws/run_workflow is here")
         await run_workflow_and_send_updates(websocket)
     except WebSocketDisconnect:
         print("Client disconnected")
@@ -423,8 +473,10 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
         print("serialized_round:", json.dumps(serialized_round))
         await websocket.send_text(json.dumps(serialized_round, ensure_ascii=False))
         print("----")
-
-
+        # if round_data["sender"]=="Bot02":
+        await websocket.send_text(json.dumps({"sender":"kuangweihua","progress":"userRequest","message":"随时提出修改意见",},ensure_ascii=False))
+        await asyncio.sleep(10)  # Add 3-second delay
+            
 class QueryRequest(BaseModel):
     query: str
 
