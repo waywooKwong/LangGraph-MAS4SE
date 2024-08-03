@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import ChatView from '@/views/ChatView.vue';
 import AgentMap from '@/views/AgentMap.vue';
 import StartView from '@/views/StartView.vue';
+import LoadPage from '@/views/LoadPage.vue';
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/agent-map',
     name: 'AgentMap',
     component: AgentMap,
+  },
+  {
+    path: '/load',
+    name: 'LoadPage',
+    component: LoadPage,
   },
 ];
 
