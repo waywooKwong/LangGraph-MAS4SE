@@ -865,7 +865,7 @@ export default {
       /* 垂直排列历史记录 */
       gap: 5px;
       /* 增加历史记录之间的间距 */
-      margin: 0 50px; /* 增加左右间距 */
+      margin: 0 51px; /* 增加左右间距 */
     }
 
     .chat-history-message {
