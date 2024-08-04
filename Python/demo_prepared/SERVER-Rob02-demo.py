@@ -5,6 +5,12 @@
 为了提高测试效率，我暂时注释掉了 Robot001 以及 role_model 的相关生成
 请留意
 """
+"""
+20240804 代码说明-邝伟华
+为了收集函数运行最终的 state, 我调整 func_node 的逻辑
+在 default_config 中添加 state 变量,
+在每次结点函数调用后更新最新的 state
+"""
 
 import asyncio
 import operator
@@ -30,8 +36,13 @@ from Bot_02_DutyClassifier import DutyClassifier
 from frontend_json_process import CLASS_JointPlus_jsonprocess
 from ModelChoise import Model
 
-Model.os_setenv()
+from Class_06_MessagesSum import MessagesSum
 
+Model.os_setenv()
+class AgentState(TypedDict):
+    sender: str
+    progress: str
+    messages: Annotated[List[BaseMessage], operator.add]
 
 class default_config:
     """
@@ -57,6 +68,7 @@ class default_config:
         
         self.hasRequest = False
         self.userRequest = "我的需求已满足, 请直接退出, 返回 'Finish'"
+        self.final_state:AgentState = None
 
     def set_path(self, new_path):
         self.path = new_path
@@ -78,12 +90,12 @@ class default_config:
     
     def set_userRequest(self, request):
         self.userRequest = request
+    
+    def set_state(self, state:AgentState):
+        self.final_state = state
 
 
-class AgentState(TypedDict):
-    sender: str
-    progress: str
-    messages: Annotated[List[BaseMessage], operator.add]
+
 
 
 default_config = default_config()
@@ -143,11 +155,13 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
 
     print(node_name, "答案：", ai_message_content)
     result = AIMessage(name=node_name, content=ai_message_content)
-    return {
+    state:AgentState={
         "sender": node_name,
         "progress": state["progress"],
         "messages": state["messages"] + [result],
     }
+    default_config.set_state(state=state)
+    return state
 
 
 # 多边连接顺序遍历的 router 函数
@@ -231,11 +245,13 @@ def func_node_Bot02(state: AgentState) -> AgentState:
         name="Bot02",
         content="您好, 我是客服机器人Bot2, 我已将您的意见反馈, 请等待反馈结果",
     )
-    return {
+    state:AgentState={
         "sender": "Bot02",
         "progress": state["progress"],
         "messages": state["messages"] + [result],
     }
+    default_config.set_state(state=state)
+    return state
 
 # 前端定义ChatView 中定义的新的 clientUserRequest
 # 这里在 Bot02 过程中有三次 3s 的循环留给 用户发送修改意见
@@ -322,6 +338,7 @@ async def receive_model(request: ModelRequest):
 file_uploaded = False
 
 
+
 def initialize_workflow():
     # if not file_uploaded:
     #     print("No file uploaded yet.")
@@ -346,11 +363,21 @@ def initialize_workflow():
         if source_label not in link_edges:
             link_edges[source_label] = []
         link_edges[source_label].append(target_label)
+    
+    """
+    20240804 weihua
+    default_config 中新增构造整体的
+    构造整体 role-duty 的 map
+    """
+
 
     # 提取 message 部分信息并添加结点
     for message in data["Message"]:
         label_text = message["label_text"]
         description_text = message["description_text"]
+        
+        # 添加到 map_role_duty 中
+        map_role_duty[label_text] = description_text
         # "start" "end" 特殊处理
         if label_text.lower() != "start" and label_text.lower() != "end":
             role = label_text
@@ -375,7 +402,11 @@ def initialize_workflow():
                 workflow.add_node(
                     label_text,
                     partial(func_node, node_name=label_text, chat_model=chat_model),
-                )
+                )    
+        # elif label_text.lower() == "start":
+        #     workflow.add_node("START", start_function)
+        # elif label_text.lower() == "end":
+        #     workflow.add_node("END", end_function)
 
     for source_label, targets in link_edges.items():
 
@@ -432,6 +463,11 @@ async def websocket_run_workflow(websocket: WebSocket):
         #     return
         print("/ws/run_workflow is here")
         await run_workflow_and_send_updates(websocket)
+        final_state = default_config.final_state
+        final_state_messages = final_state["messages"]
+        messageSum = MessagesSum()
+        messageSum.sum_message_to_file(messages=final_state_messages)
+        print("workflow run end!")
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:

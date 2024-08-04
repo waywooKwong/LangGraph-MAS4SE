@@ -2,7 +2,7 @@
 20240801 代码说明-邝伟华
 
 这次我加入 Bot02 进行 Duty_Classfier 的测试，
-为了提高测试效率，我暂时注释掉了 Robot001 以及 role_model 的相关生成
+为了提高测试效率，我暂时注释掉了 Robot001 以及 model_role 的相关生成
 请留意
 """
 
@@ -28,6 +28,8 @@ from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain_core.prompts import PromptTemplate
 from ModelChoise import modelchoise
 from Class_02_BuildChainAgent import BuildChainAgent
+# Ollama model 接入
+from Class_04_OllamaCustomMade import OllamaCustomMade
 
 # Robot001 与客户经理对接需求文档说明书
 from Robot001 import RobotAgent
@@ -63,7 +65,13 @@ class default_config:
     def __init__(self):
         self.path = "frontend_json_process/json_simplified_with_bot02.json"
         self.json_file_path = "frontend_json_process/json_simplified_with_bot02.json"
+        
         self.chat_model = Model.get_zhupuai_model()
+        # Ollama 角色定制是否启动, 图节点对于角色定制的添加
+        ## 关联line: model_role = BuildChainAgent(role=role, duty=duty) 
+        self.OllamaCustomMade = False
+        self.OllamaModelName = None
+        
         self.conversation_finished = False  # 标志对话是否完成
         self.initial_question = HumanMessage(content="")
         # self.showButton = False
@@ -89,6 +97,7 @@ class default_config:
     def is_conversation_finished(self):
         return self.conversation_finished
 
+    ### Bot02
     def set_hasRequest(self, tnf: bool):
         self.hasRequest = tnf
 
@@ -97,6 +106,14 @@ class default_config:
 
     def set_userRequest(self, request):
         self.userRequest = request
+    ###
+    
+    def is_OllamaCustonMade(self)->bool:
+        return self.OllamaCustomMade
+    def set_OllamaCustomMade(self,tnf:bool):
+        self.OllamaCustomMade=tnf
+    def set_OllamaModelName(self,target_model):
+        self.OllamaModelName = target_model
 
 
 class AgentState(TypedDict):
@@ -314,35 +331,6 @@ def supervisor_chain_Bot02(state: AgentState, conditional_map: Dict[str, Any]):
     default_config.set_hasRequest(tnf=False)
     return next_key
 
-
-# 定义 POST 路由来接收 /model 请求，实现选择模型
-# 定义请求体模型
-class ModelRequest(BaseModel):
-    model: str
-
-
-@app.post("/model")
-async def receive_model(request: ModelRequest):
-    try:
-        # 从请求体中提取 model 数据
-        model_data = request.model
-        print("Received model:", model_data)
-
-        # 处理 model 数据（这里可以根据需要进行处理）
-        # ...
-
-        # 返回响应给前端
-        return JSONResponse(
-            content={"message": "Model received successfully", "model": model_data}
-        )
-    except Exception as e:
-        print("Error:", e)
-        raise HTTPException(status_code=500, detail="An error occurred")
-
-
-# Global variable to track if the file has been uploaded
-
-
 class QueryRequest(BaseModel):
     query: str
 
@@ -402,7 +390,31 @@ async def upload_agent(file: UploadFile = File(...)):
         print("Error:", e)
         return JSONResponse(content={"error": "An error occurred"}, status_code=500)
 
+# 定义 POST 路由来接收 /OllamaMade 请求，实现选择定制Ollama模型
+class ModelRequest(BaseModel):
+    model: str
+@app.post("/OllamaMade")
+async def receive_model(request: ModelRequest):
+    try:
+        print("====")
+        print("before config OllamaCustomMade:",default_config.OllamaCustomMade)
+        print("before config OllamaModelName:",default_config.OllamaModelName)
+        print("====")
+        model_name = request.model
+        default_config.set_OllamaCustomMade(tnf=True)
+        default_config.set_OllamaModelName(target_model=model_name)
+        print("config OllamaCustomMade:",default_config.OllamaCustomMade)
+        print("config OllamaModelName:",default_config.OllamaModelName)
+        print("====")
 
+        # 返回响应给前端
+        return JSONResponse(
+            content={"message": "Model received successfully", "model": model_name}
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail="An error occurred")
+    
 def initialize_workflow():
     if not default_config.file_uploaded:
         print("No json uploaded yet.")
@@ -454,11 +466,17 @@ def initialize_workflow():
                 role = label_text
                 duty = description_text
 
-                ### 角色定制逻辑在这里实现
-                ### 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
-                model_role = BuildChainAgent(role=role, duty=duty)
+                ### 角色定制逻辑在这里实现: 
+                ## 1. Ollama 直接 model system prompt 进行模型级的定制
+                if default_config.is_OllamaCustonMade == True:
+                    # "/OllamaMade" 响应触发 Ollama 定制运行
+                    OllamaBuild = OllamaCustomMade(model_name='phi3',role='ProjectManager',duty='ManageProject')
+                    model_role = OllamaBuild.get_ChatOllama()
+                else:
+                    ## 2. BuildChainAgent 常规流程
+                    # 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
+                    model_role = BuildChainAgent(role=role, duty=duty)
                 ###
-
                 workflow.add_node(
                     label_text,
                     partial(func_node, node_name=label_text, chat_model=model_role),
@@ -521,7 +539,7 @@ async def websocket_run_workflow(websocket: WebSocket):
             # await websocket.send_text(json.dumps({"error": "No json uploaded yet"}))
             return
 
-        await run_workflow_and_send_updates(websocket)
+        # await run_workflow_and_send_updates(websocket)
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
