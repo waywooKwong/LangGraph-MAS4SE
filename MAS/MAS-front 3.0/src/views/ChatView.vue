@@ -6,6 +6,9 @@
         <!-- 图标，点击后跳转到AgentMap页面 -->
         <div @click="goToAgentMap()" class="icon go-to-agent" data-tooltip="Go to AgentMap"></div>
       </div>
+      <div class="move-sidebar">
+        <MainSidebar />
+      </div>
     </div>
 
     <div class="main-content">
@@ -29,7 +32,7 @@
 
         <!-- 打开抽屉按钮 -->
         <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
-          <el-button :disabled="isSending" class="drawer-button" type="text" @click="toggleDrawer">
+          <el-button :disabled="isSending" class="chat-history-button" type="text" @click="toggleDrawer">
             历史记录
           </el-button>
         </el-tooltip>
@@ -139,11 +142,12 @@
 import Message from '@/components/Message.vue';
 import apiClient from '@/axios';
 import axios from 'axios';
-
+import MainSidebar from '@/components/MainSidebar.vue';
 
 export default {
   components: {
     Message,
+    MainSidebar,
   },
   data() {
     return {
@@ -431,6 +435,7 @@ export default {
 .avatar-button{
  color: #000;
 }
+
 .main-content {
   display: flex;
   flex: 1;
@@ -456,9 +461,25 @@ export default {
     text-align: center;
   }
 
+  .chat-history-button {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 70px;
+    /* 自动宽度适应文字 */
+    height: 30px;
+    /* 自动高度适应文字 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dce2fa;
+    color: #394398;
+    padding: 0;
+  }
   .model-select-bottom-dropdown {
     position: absolute;
-    left: 90px;
+    left: 110px;
     top: 50%;
     transform: translateY(-50%);
 
@@ -484,22 +505,7 @@ export default {
     right: 80px;
   }
 
-  .drawer-button {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 70px;
-    /* 自动宽度适应文字 */
-    height: 30px;
-    /* 自动高度适应文字 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #dce2fa;
-    color: #394398;
-    padding: 0;
-  }
+  
 
   .about-button {
     position: absolute;
@@ -657,6 +663,7 @@ export default {
   z-index: 2;
   background: none;
   display: flex;
+  flex: 0 0 100px; /* 固定宽度，可以根据需要调整 */
 
   .toggle-bar {
     height: 100%;
@@ -667,6 +674,7 @@ export default {
     flex-flow: column;
     align-items: center;
     padding: 13px;
+    flex: 0 0 50px; /* 固定宽度，可以根据需要调整 */
 
     .icon {
       margin-bottom: 26px;
@@ -716,6 +724,9 @@ export default {
     .disabled-icon {
       opacity: 0.35;
     }
+  }
+  .move-sidebar {
+  flex: 1; /* 占据剩余空间 */
   }
 }
 ::v-deep .el-drawer {
