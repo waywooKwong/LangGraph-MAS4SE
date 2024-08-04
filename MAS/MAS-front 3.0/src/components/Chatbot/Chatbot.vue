@@ -151,7 +151,9 @@ export default class Chatbot extends Vue {
         }
         finally {
             this.isUploading = false; // 上传完成后设置为 false
+            this.$router.push({ name: "LoadPageTest" });
         }
+        
     }
    
     
