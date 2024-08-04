@@ -538,7 +538,6 @@ export default {
 .avatar-button{
  color: #000;
 }
-
 .main-content {
   display: flex;
   flex: 1;

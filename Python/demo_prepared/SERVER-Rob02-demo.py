@@ -340,7 +340,6 @@ async def receive_model(request: ModelRequest):
 file_uploaded = False
 
 
-
 def initialize_workflow():
     # if not file_uploaded:
     #     print("No file uploaded yet.")
