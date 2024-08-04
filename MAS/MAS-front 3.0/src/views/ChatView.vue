@@ -7,7 +7,38 @@
         <div @click="goToAgentMap()" class="icon go-to-agent" data-tooltip="Go to AgentMap"></div>
       </div>
       <div class="move-sidebar">
-        <MainSidebar />
+        <div id="menu" ref="menu" :class="{ expanded: menuExpanded }">
+          <!-- 汉堡按钮 -->
+          <div class="hamburger" ref="hamburger">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+          </div>
+          <!-- 菜单内容 -->
+          <div class="menu-inner" ref="menuInner">
+            <div class="history-header">
+        
+              <button @click="saveDialog">上传数据库</button>
+              <!-- 新建聊天按钮 -->
+              <button class="new-chat-button" @click="createNewChat">新建对话</button>
+              <!-- 手动保存历史记录按钮 -->
+              <button :disabled="messages.length === 0" class="save-history-button" @click="saveHistory">保存对话</button>
+              <!-- 清除历史记录按钮 -->
+              <button class="clear-history-button" @click="clearHistory">清除记录</button>
+            </div>
+            <!-- 历史聊天记录 -->
+            <div class="chat-history">
+              <div v-for="(history, index) in chatHistory" :key="index" class="chat-history-message"
+                @click="continueChat(history)">
+                <span>{{ history.summary }}</span>
+              </div>
+            </div>
+          </div>
+          <!-- SVG 背景 -->
+          <svg version="1.1" id="blob" ref="blob" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <path id="blob-path" ref="blobPath" d="M60,500H0V0h60c0,0,20,172,20,250S60,900,60,500z"/>
+          </svg>
+        </div>
       </div>
     </div>
 
@@ -166,15 +197,85 @@ export default {
       userRequestDialogVisible: false, //用户反馈意见可见性
       userId: '',// 用户ID
       feedback:'',
-      userId: '' // 用户ID
+      userId: '', // 用户ID
+      //以下为动画侧边栏参数
+      height: window.innerHeight,
+      x: 0,
+      y: window.innerHeight / 2,
+      curveX: 10,
+      curveY: 0,
+      targetX: 0,
+      xitteration: 0,
+      yitteration: 0,
+      menuExpanded: false,
+      hoverZone: 150,
+      expandAmount: 20
     };
   },
   mounted() {
     this.loadMessages(); // 加载当前聊天记录
     this.loadHistory(); // 加载聊天历史记录
     this.initWebSocket(); // 初始化 WebSocket 连接
+    this.initializeAnimation();//侧边栏动画
   },
   methods: {
+    initializeAnimation() {
+      window.addEventListener('mousemove', this.handleMouseMove);
+
+      // 获取 DOM 元素
+      this.$refs.menu.addEventListener('mouseenter', () => this.menuExpanded = true);
+      this.$refs.menu.addEventListener('mouseleave', () => this.menuExpanded = false);
+
+      // 启动动画
+      this.svgCurve();
+    },
+    handleMouseMove(e) {
+      this.x = e.pageX;
+      this.y = e.pageY;
+    },
+    svgCurve() {
+      if (!this.$refs.blobPath) return; // 确保 blobPath 存在
+
+      if ((this.curveX > this.x - 1) && (this.curveX < this.x + 1)) {
+        this.xitteration = 0;
+      } else {
+        if (this.menuExpanded) {
+          this.targetX = 0;
+        } else {
+          this.xitteration = 0;
+          this.targetX = (this.x > this.hoverZone) ? 0 : -((60 + this.expandAmount) / 100) * (this.x - this.hoverZone);
+        }
+        this.xitteration++;
+      }
+
+      if ((this.curveY > this.y - 1) && (this.curveY < this.y + 1)) {
+        this.yitteration = 0;
+      } else {
+        this.yitteration = 0;
+        this.yitteration++;
+      }
+
+      this.curveX = this.easeOutExpo(this.xitteration, this.curveX, this.targetX - this.curveX, 100);
+      this.curveY = this.easeOutExpo(this.yitteration, this.curveY, this.y - this.curveY, 100);
+
+      const anchorDistance = 200;
+      const curviness = anchorDistance - 40;
+
+      const newCurve2 = `M60,${this.height}H0V0h60v${this.curveY - anchorDistance}c0,${curviness},${this.curveX},${curviness},${this.curveX},${anchorDistance}S60,${this.curveY},60,${this.curveY + anchorDistance * 2}V${this.height}z`;
+
+      this.$refs.blobPath.setAttribute('d', newCurve2);
+      this.$refs.blob.style.width = `${this.curveX + 60}px`;
+      this.$refs.hamburger.style.transform = `translate(${this.curveX}px, ${this.curveY}px)`;
+
+      window.requestAnimationFrame(this.svgCurve);
+    },
+    easeOutExpo(currentIteration, startValue, changeInValue, totalIterations) {
+      return changeInValue * (-Math.pow(2, -10 * currentIteration / totalIterations) + 1) + startValue;
+    },
+    navigateTo(path) {
+      this.$router.push(path); // 使用 Vue Router 跳转
+    },
+
     async saveDialog() {
       try {
         const response = await axios.post('http://localhost:3000/save-dialog', {
@@ -538,19 +639,6 @@ export default {
   background-position: center;
 }
 
-// .main-window::after {
-//   content: '';
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   background-image: url('@/background/bluebackground.jpg');
-//   background-size: cover;
-//   background-position: center;
-//   opacity: 0.5; /* 设置透明度，范围是 0 到 1 */
-//   z-index: -1; /* 使背景图片在内容下方 */
-// }
 .main-window::after {
   content: '';
   position: absolute;
@@ -729,6 +817,117 @@ export default {
   }
   .move-sidebar {
   flex: 1; /* 占据剩余空间 */
+  #menu {
+    height: 100%;
+    position: fixed;
+    background-color: #222222;
+    width: 400px;
+    transition: 1000ms all cubic-bezier(0.19, 1, 0.22, 1);
+    transform: translateX(-100%);
+    left: 110px;
+
+    
+  }
+
+  #menu.expanded {
+    transform: translateX(0%);
+    left: 0;
+  }
+
+  .menu-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* 从上到下排列 */
+    .history-header {
+      display: flex;
+      flex-direction: column; /* 垂直排列按钮 */
+      align-items: center 
+    }
+
+    .history-header button {
+      width: 150px;
+      margin: 3px 0; /* 设置按钮的上下间距 */
+      padding: 10px 20px; /* 调整按钮的大小 */
+      font-size: 16px; /* 修改按钮文字大小 */
+      background-color: transparent; /* 背景透明 */
+      color: white; /* 文字白色 */
+      
+      border-radius: 5px; /* 圆角 */
+      cursor: pointer; /* 鼠标悬停时显示手型 */
+      transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+    }
+    .chat-history {
+      display: flex;
+      flex-direction: column;
+      /* 垂直排列历史记录 */
+      gap: 5px;
+      /* 增加历史记录之间的间距 */
+      margin: 0 50px; /* 增加左右间距 */
+    }
+
+    .chat-history-message {
+      // background-color: #fff;
+      padding: 5px;
+      border-radius: 5px; /* 圆角边框 */
+      color: white; /* 文字白色 */
+      cursor: pointer;
+      transition: background-color 0.3s;
+      white-space: nowrap; /* 防止换行 */
+      overflow: hidden; /* 隐藏溢出内容 */
+      text-overflow: ellipsis; /* 使用省略号表示溢出的文本 */
+      &:hover {
+        background-color: #adadad;
+      }
+    }
+  }
+
+  
+
+  .menu-inner button:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* 鼠标悬停时的背景色 */
+    color: #000;
+  }
+
+  #blob {
+    top: 0;
+    z-index: -1;
+    right: 60px;
+    transform: translateX(100%);
+    height: 100%;
+    position: absolute;
+  }
+
+  #blob-path {
+    height: 100%;
+    fill: #222222;
+  }
+
+  .hamburger {
+    right: 20px;
+    position: absolute;
+    width: 15px;
+    height: 20px;
+    margin-top: -10px;
+  }
+
+  .hamburger .line {
+    width: 100%;
+    height: 4px;
+    background-color: #fff;
+    position: absolute;
+  }
+
+  .hamburger .line:nth-child(2) {
+    top: 50%;
+    margin-top: -2px;
+  }
+
+  .hamburger .line:nth-child(3) {
+    bottom: 0;
+  }
   }
 }
 ::v-deep .el-drawer {

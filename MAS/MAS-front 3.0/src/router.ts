@@ -4,6 +4,7 @@ import ChatView from '@/views/ChatView.vue';
 import AgentMap from '@/views/AgentMap.vue';
 import StartView from '@/views/StartView.vue';
 import LoadPage from '@/views/LoadPage.vue';
+import LoadPageTest from './views/LoadPageTest.vue';
 import MainSidebar from './components/MainSidebar.vue';
 
 Vue.use(VueRouter);
@@ -30,9 +31,9 @@ const routes = [
     component: LoadPage,
   },
   {
-    path: '/s',
-    name: 'MainSidebar',
-    component: MainSidebar,
+    path: '/loadTest',
+    name: 'LoadPageTest',
+    component: LoadPageTest,
   },
 ];
 
