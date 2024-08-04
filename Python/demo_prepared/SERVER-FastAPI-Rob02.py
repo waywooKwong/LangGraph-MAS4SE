@@ -2,7 +2,7 @@
 20240801 代码说明-邝伟华
 
 这次我加入 Bot02 进行 Duty_Classfier 的测试，
-为了提高测试效率，我暂时注释掉了 Robot001 以及 role_model 的相关生成
+为了提高测试效率，我暂时注释掉了 Robot001 以及 model_role 的相关生成
 请留意
 """
 
@@ -29,6 +29,12 @@ from langchain_core.prompts import PromptTemplate
 from ModelChoise import modelchoise
 from Class_02_BuildChainAgent import BuildChainAgent
 
+# Ollama model 接入
+from Class_04_OllamaCustomMade import OllamaCustomMade
+
+# 文档总结
+from Class_06_MessagesSum import MessagesSum
+
 # Robot001 与客户经理对接需求文档说明书
 from Robot001 import RobotAgent
 
@@ -40,6 +46,7 @@ from frontend_json_process import CLASS_JointPlus_jsonprocess
 from ModelChoise import Model
 from fastapi.responses import StreamingResponse
 from typing import AsyncIterable
+from Class_01_PromptGenerator import PromptGenerator
 import json
 
 Model.os_setenv()
@@ -63,19 +70,31 @@ class default_config:
     def __init__(self):
         self.path = "frontend_json_process/json_simplified_with_bot02.json"
         self.json_file_path = "frontend_json_process/json_simplified_with_bot02.json"
+
         self.chat_model = Model.get_zhupuai_model()
+        # Ollama 角色定制是否启动, 图节点对于角色定制的添加
+        ## 关联line: model_role = BuildChainAgent(role=role, duty=duty)
+        self.OllamaCustomMade = False
+        self.OllamaModelName = None
+
+        # 将提示词生成器单独导出
+        self.prompt_creatation = PromptGenerator()
         self.conversation_finished = False  # 标志对话是否完成
         self.initial_question = HumanMessage(content="")
         # self.showButton = False
         # self.user_is_satisfy = False
         self.file_uploaded = False
-        # 是否停止上传标签
-        # self.is_stop = False
+        # 客服机器人的回答
         self.answer = ""
+        # 是否完成角色创建
+        self.is_role = False
 
         # Rob02: hasRequest, userRequest
         self.hasRequest = False
         self.userRequest = "我的需求已满足, 请直接退出, 返回 'Finish'"
+
+        # 收集最终的 state 总结获得文档(.md)
+        self.final_state: AgentState = None
 
     def set_path(self, new_path):
         self.path = new_path
@@ -89,6 +108,7 @@ class default_config:
     def is_conversation_finished(self):
         return self.conversation_finished
 
+    ### Bot02
     def set_hasRequest(self, tnf: bool):
         self.hasRequest = tnf
 
@@ -97,6 +117,17 @@ class default_config:
 
     def set_userRequest(self, request):
         self.userRequest = request
+
+    ###
+
+    def is_OllamaCustonMade(self) -> bool:
+        return self.OllamaCustomMade
+
+    def set_OllamaCustomMade(self, tnf: bool):
+        self.OllamaCustomMade = tnf
+
+    def set_OllamaModelName(self, target_model):
+        self.OllamaModelName = target_model
 
 
 class AgentState(TypedDict):
@@ -164,11 +195,14 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
 
     print(node_name, "func_node answer:", ai_message_content)
     result = AIMessage(name=node_name, content=ai_message_content)
-    return {
+    # fun_node 中及时存储 state
+    state: AgentState = {
         "sender": node_name,
         "progress": state["progress"],
         "messages": state["messages"] + [result],
     }
+    default_config.set_state(state=state)
+    return state
 
 
 # 多边连接顺序遍历的 router 函数
@@ -250,11 +284,14 @@ def func_node_Bot02(state: AgentState) -> AgentState:
         name="Bot02",
         content="您好, 我是客服机器人Bot2, 我已将您的意见反馈, 请等待反馈结果",
     )
-    return {
+    # 及时存储 state
+    state: AgentState = {
         "sender": "Bot02",
         "progress": state["progress"],
         "messages": state["messages"] + [result],
     }
+    default_config.set_state(state=state)
+    return state
 
 
 # 前端定义 ChatView 中定义的新的 clientUserRequest
@@ -315,34 +352,6 @@ def supervisor_chain_Bot02(state: AgentState, conditional_map: Dict[str, Any]):
     return next_key
 
 
-# 定义 POST 路由来接收 /model 请求，实现选择模型
-# 定义请求体模型
-class ModelRequest(BaseModel):
-    model: str
-
-
-@app.post("/model")
-async def receive_model(request: ModelRequest):
-    try:
-        # 从请求体中提取 model 数据
-        model_data = request.model
-        print("Received model:", model_data)
-
-        # 处理 model 数据（这里可以根据需要进行处理）
-        # ...
-
-        # 返回响应给前端
-        return JSONResponse(
-            content={"message": "Model received successfully", "model": model_data}
-        )
-    except Exception as e:
-        print("Error:", e)
-        raise HTTPException(status_code=500, detail="An error occurred")
-
-
-# Global variable to track if the file has been uploaded
-
-
 class QueryRequest(BaseModel):
     query: str
 
@@ -393,6 +402,7 @@ async def upload_agent(file: UploadFile = File(...)):
             CLASS_JointPlus_jsonprocess.extract_data_to_simplified_json(data)
         )
         default_config.set_path(simplified_json_path)
+        # 将判断json文件是否上传置为true
         default_config.file_uploaded = True
         print("成功解析为json:", default_config.get_path())
         # Initialize the workflow and run it
@@ -403,10 +413,41 @@ async def upload_agent(file: UploadFile = File(...)):
         return JSONResponse(content={"error": "An error occurred"}, status_code=500)
 
 
-def initialize_workflow():
-    if not default_config.file_uploaded:
-        print("No json uploaded yet.")
-        return
+# 定义 POST 路由来接收 /OllamaMade 请求，实现选择定制Ollama模型
+class ModelRequest(BaseModel):
+    model: str
+
+
+@app.post("/OllamaMade")
+async def receive_model(request: ModelRequest):
+    try:
+        print("====")
+        print("before config OllamaCustomMade:", default_config.OllamaCustomMade)
+        print("before config OllamaModelName:", default_config.OllamaModelName)
+        print("====")
+        model_name = request.model
+        default_config.set_OllamaCustomMade(tnf=True)
+        default_config.set_OllamaModelName(target_model=model_name)
+        print("config OllamaCustomMade:", default_config.OllamaCustomMade)
+        print("config OllamaModelName:", default_config.OllamaModelName)
+        print("====")
+
+        # 返回响应给前端
+        return JSONResponse(
+            content={"message": "Model received successfully", "model": model_name}
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail="An error occurred")
+
+
+@app.websocket("/ws/stream")
+async def initialize_workflow(websocket: WebSocket):
+    await websocket.accept()
+    # 如果json文件没有上传
+    # if not default_config.file_uploaded:
+    #     print("No json uploaded yet.")
+    #     return
 
     json_file_path = default_config.get_path()
     print("----")
@@ -427,7 +468,17 @@ def initialize_workflow():
         if source_label not in link_edges:
             link_edges[source_label] = []
         link_edges[source_label].append(target_label)
-
+    roles = []
+    for message in data["Message"]:
+        label_text = message["label_text"]
+        if (
+            label_text != "Bot2"
+            and label_text.lower() != "start"
+            and label_text.lower() != "end"
+        ):
+            roles.append(label_text)
+    # 将roles传给前端
+    await websocket.send_text(json.dumps({"roles": roles}, ensure_ascii=False))
     # 提取 message 部分信息并添加结点
     for message in data["Message"]:
         label_text = message["label_text"]
@@ -451,14 +502,37 @@ def initialize_workflow():
                         del conditional_map["End"]
                     workflow.add_node("Bot2", func_node_Bot02)
             else:
+
                 role = label_text
                 duty = description_text
 
-                ### 角色定制逻辑在这里实现
-                ### 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
-                model_role = BuildChainAgent(role=role, duty=duty)
+                ### 角色定制逻辑在这里实现:
+                ## 1. Ollama 直接 model system prompt 进行模型级的定制
+                if default_config.is_OllamaCustonMade == True:
+                    # "/OllamaMade" 响应触发 Ollama 定制运行
+                    OllamaBuild = OllamaCustomMade(
+                        model_name=default_config.OllamaModelName, role=role, duty=duty
+                    )
+                    model_role = OllamaBuild.get_ChatOllama()
+                else:
+                    ## 2. BuildChainAgent 常规流程
+                    # 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
+                    description = ""
+                    for chunk in default_config.prompt_creatation.generate_prompt(
+                        role=role, duty=duty
+                    ):
+                        await asyncio.sleep(0.1)  # 模拟延迟
+                        description += chunk
+                        await websocket.send_text(
+                            json.dumps(
+                                {"message": chunk, "role": role}, ensure_ascii=False
+                            )
+                        )
+                    # print(description)
+                    model_role = BuildChainAgent(
+                        role=role, duty=duty, description=description
+                    )
                 ###
-
                 workflow.add_node(
                     label_text,
                     partial(func_node, node_name=label_text, chat_model=model_role),
@@ -511,17 +585,27 @@ def initialize_workflow():
                 workflow.add_edge(source_label, target_label)
         # 将default_config.file_uploaded复原
         default_config.file_uploaded = False
+        # 将角色创建判断置为true
+        default_config.is_role = True
 
 
 @app.websocket("/ws/run_workflow")
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
     try:
-        if not default_config.file_uploaded:
+        # 如果所有角色没有创建成功
+        if not default_config.is_role:
+            print("角色尚未创建成功")
             # await websocket.send_text(json.dumps({"error": "No json uploaded yet"}))
             return
 
         await run_workflow_and_send_updates(websocket)
+        final_state = default_config.final_state
+        final_state_messages = final_state["messages"]
+        messageSum = MessagesSum()
+        messageSum.sum_message_to_file(messages=final_state_messages)
+        print("workflow run end!")
+
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
@@ -530,7 +614,7 @@ async def websocket_run_workflow(websocket: WebSocket):
 
 
 async def run_workflow_and_send_updates(websocket: WebSocket):
-    initialize_workflow()
+    # initialize_workflow()
     graph = workflow.compile()
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     workflow_graph_path = f"src/workflow_graph/workflow_graph_{timestamp}.png"
@@ -583,13 +667,11 @@ async def handle_button_click(button_click: ButtonClick):
 
         # 可以根据需要进行更多处理
         default_config.conversation_finished = True
-        # default_config.user_is_satisfy = True
 
         default_config.initial_question = HumanMessage(
             content="请你根据以下需求说明书完成你的工作并向下属分配工作"
             + default_config.answer
         )
-        # default_config.is_stop = True
 
         # 返回成功的响应
         return {"status": "success", "received_message": button_click.message}
@@ -597,26 +679,6 @@ async def handle_button_click(button_click: ButtonClick):
         # 捕获异常并返回错误响应
         print(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
-
-
-# @app.websocket("/showButton")
-# async def websocket_endpoint(websocket: WebSocket):
-#     await websocket.accept()
-#     try:
-#         while True:
-#             if default_config.is_stop:
-#                 break
-#             # data = await websocket.receive_text()
-#             # message = json.loads(data)  # 解析接收到的 JSON 数据
-#             # if message.get("action") == "button_clicked":
-#             #     print(f"Received message from client: {message.get('message')}")
-#             #     default_config.conversation_finished = True
-#             # 这里可以根据需要处理消息或发送响应
-#             await websocket.send_json({"label": default_config.showButton})
-#     except WebSocketDisconnect:
-#         print("Client disconnected")
-#     except Exception as e:
-#         print(f"An error occurred: {e}")
 
 
 if __name__ == "__main__":

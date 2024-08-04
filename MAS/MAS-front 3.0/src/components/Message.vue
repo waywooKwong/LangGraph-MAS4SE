@@ -21,7 +21,7 @@
 
 <script>
 import { MessageBox } from "element-ui";
-import apiClient from '@/axios'; 
+import apiClient from "@/axios";
 export default {
   name: "ChatMessage",
   props: {
@@ -98,8 +98,8 @@ export default {
     },
     async handleButtonClick() {
       try {
-        const response = await apiClient.post('/button-clicked', {
-          message: '按钮被点击了',
+        const response = await apiClient.post("/button-clicked", {
+          message: "按钮被点击了",
         });
 
         if (!response.ok) {

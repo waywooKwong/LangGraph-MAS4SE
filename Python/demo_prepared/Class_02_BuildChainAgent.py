@@ -36,13 +36,14 @@ from Class_03_WebScratchRoleTxt import WebScratchRoleTxt
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-def generate_prompt(role: str, duty: str) -> str:
-    generator = PromptGenerator()
-    description = ""
-    for chunk in generator.generate_prompt(role=role, duty=duty):
-        description += chunk
-        print(chunk, end="", flush=True)
-    return description
+
+# def generate_prompt(role: str, duty: str) -> str:
+#     generator = PromptGenerator()
+#     description = ""
+#     for chunk in generator.generate_prompt(role=role, duty=duty):
+#         description += chunk
+#         print(chunk, end="", flush=True)
+#     return description
 
 
 class BuildChainAgent:
@@ -57,7 +58,7 @@ class BuildChainAgent:
 
     """
 
-    def __init__(self, role: str, duty: str):
+    def __init__(self, role: str, duty: str, description: str):
         os.environ["SERPAPI_API_KEY"] = (
             "b0b73f4f0f7a24ef9a1cbba1629e6ac5f4221b5dfb491af209a0a1ae6c241338"
         )
@@ -71,14 +72,14 @@ class BuildChainAgent:
         self.duty = duty
         self.object = ""
         self.chat_model = modelchoise.get_zhipuai_chat_model()
-        
+
         self.docs = self.load_documents()
-        
+
         self.embeddings = self.load_embeddings()
         self.vector_retriever = self.create_vector_retriever()
         self.retriever_chain = self.create_retriever_chain()
         self.chat_history = []
-        self.description = generate_prompt(role=self.role, duty=self.duty)
+        self.description = description
         self.prompt_template_str = """
                     您的描述如下{description}\n
                     您有时候是单独一个人解决用户提出的问题\n
@@ -114,7 +115,7 @@ class BuildChainAgent:
             raw_data = f.read(10000)  # 读取文件的一部分来检测编码
         result = chardet.detect(raw_data)
         return result['encoding']
-    
+
     def load_documents(self):
         ### !!! 需要定制角色文本的时候再启动这部分代码，因为一直启动速度过慢
         ## 直接取消下述的注释即可(DuckDuckGo 保持注释)
@@ -127,9 +128,9 @@ class BuildChainAgent:
         docs = []
         file_path = "src/role_txt/SoftwareBasicFlow.txt"
         encoding = self.detect_encoding(file_path)
-        loader = TextLoader(file_path,encoding=encoding)
+        loader = TextLoader(file_path, encoding=encoding)
         docs.extend(loader.load())
-        print(f"{self.role} role txt generate & load:",file_path)
+        print(f"{self.role} role txt generate & load:", file_path)
         return docs
 
     def load_embeddings(self):
@@ -184,9 +185,9 @@ class BuildChainAgent:
         chain_first = create_retrieval_chain(history_chain, documents_chain)
         ################# system prompt 2(需要个性化定制)
         template_second = (
-            "你的职责是:"
-            + self.duty
-            + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
+                "你的职责是:"
+                + self.duty
+                + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
         )
         prompt_template_second = ChatPromptTemplate.from_template(template_second)
 
@@ -204,10 +205,10 @@ class BuildChainAgent:
         # )
 
         chain_second = (
-            {"role_text": chain_first}
-            | prompt_template_second
-            | self.chat_model
-            | StrOutputParser()
+                {"role_text": chain_first}
+                | prompt_template_second
+                | self.chat_model
+                | StrOutputParser()
         )
 
         return chain_second
