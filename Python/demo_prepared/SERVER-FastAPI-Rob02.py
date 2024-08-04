@@ -445,9 +445,9 @@ async def receive_model(request: ModelRequest):
 async def initialize_workflow(websocket: WebSocket):
     await websocket.accept()
     # 如果json文件没有上传
-    # if not default_config.file_uploaded:
-    #     print("No json uploaded yet.")
-    #     return
+    if not default_config.file_uploaded:
+        print("No json uploaded yet.")
+        return
 
     json_file_path = default_config.get_path()
     print("----")
