@@ -3,3 +3,5 @@ m3e-base
 model.safetensors
 pytorch_model.bin
 __pycache__
+workflow_graph
+workflow_graph/
