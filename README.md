@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 **本仓库是南开大学软件学院2024年中软国际暑期实训的代码仓库**
 
 欢迎交流分享经验，引用参考任意仓库内容请先与我们沟通，抵制抄袭行为
@@ -84,3 +85,6 @@ Project Manager (PM) , mainly focus on :
 - backend developing and tools guiding
 
 p.s. We four members in group, no strict software-engineering structure
+=======
+中软国际-基于 LangChain 技术的 LLM 智能客服系统实战项目
+>>>>>>> e45b13126de8ea0c5185cfb8670167434421371e
