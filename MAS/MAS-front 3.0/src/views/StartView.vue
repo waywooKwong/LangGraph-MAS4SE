@@ -56,7 +56,7 @@
                     {
                       percent: 1,
                       style: {
-                        fill: 'black',
+                        fill: 'rgb(126,12,100)',
                       },
                     },
                   ],
