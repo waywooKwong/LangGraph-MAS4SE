@@ -18,7 +18,7 @@
         <!-- 用户ID输入对话框 -->
         <el-dialog
           title="输入用户ID"
-          :visible.sync="userIdDialogVisible"
+          :visible.sync="userIdDialogVisible" 
           >
           <el-input v-model="userId" placeholder="请输入用户ID"></el-input>
           <span slot="footer" class="dialog-footer">
@@ -50,9 +50,9 @@
         </el-dropdown>
  
         <!-- 头像按钮，点击后弹出用户ID输入框 -->
-        <el-tooltip effect="dark" content="输入用户ID" placement="bottom">
+        <el-tooltip effect="dark" content="输入用户ID" placement="bottom" class="userID-input">
           <el-button :disabled="isSending" class="avatar-button" type="text" @click="openUserIdDialog">
-            <i class="el-icon-user">user</i>user
+            <i class="el-icon-user"></i>{{ userId }}
           </el-button>
         </el-tooltip>
         <!-- "关于"按钮，点击后跳转到GitHub -->
@@ -161,7 +161,8 @@ export default {
       userIdDialogVisible: false, // 用户ID输入对话框可见性
       userRequestDialogVisible: false, //用户反馈意见可见性
       userId: '',// 用户ID
-      feedback:''
+      feedback:'',
+      userId: '' // 用户ID
     };
   },
   mounted() {
@@ -479,6 +480,10 @@ export default {
     .model-select {
       font-size: 12px;
     }
+  }
+  .userID-input{
+    position: relative;
+    right: 80px;
   }
 
   .drawer-button {

@@ -25,6 +25,8 @@ from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain_core.prompts import PromptTemplate
 from ModelChoise import modelchoise
 from Class_02_BuildChainAgent import BuildChainAgent
+# Ollama model 接入
+from Class_04_OllamaCustomMade import OllamaCustomMade
 
 # Robot001 与客户经理对接需求文档说明书
 from Robot001 import RobotAgent
@@ -376,8 +378,6 @@ def initialize_workflow():
         label_text = message["label_text"]
         description_text = message["description_text"]
         
-        # 添加到 map_role_duty 中
-        map_role_duty[label_text] = description_text
         # "start" "end" 特殊处理
         if label_text.lower() != "start" and label_text.lower() != "end":
             role = label_text
@@ -463,6 +463,8 @@ async def websocket_run_workflow(websocket: WebSocket):
         #     return
         print("/ws/run_workflow is here")
         await run_workflow_and_send_updates(websocket)
+        
+        
         final_state = default_config.final_state
         final_state_messages = final_state["messages"]
         messageSum = MessagesSum()
