@@ -34,16 +34,18 @@
           </el-button>
         </el-tooltip>
         <!--  下拉选择模型菜单 -->
-        <el-dropdown @command="handleCommand" class="model-select-bottom-dropdown">
+        <el-dropdown @command="selectOllamaModel" class="model-select-bottom-dropdown">
           <el-button type="primary" class="model-select-bottom">
-            选择模型：{{ ModelSelectText }}<i class="model-select"></i>
+            Ollama Custom-Made: {{ ModelSelectText }}<i class="model-select"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="qwen2">qwen2</el-dropdown-item>
-            <el-dropdown-item command="llama3">llama3</el-dropdown-item>
             <el-dropdown-item command="gemma2">gemma2</el-dropdown-item>
-            <el-dropdown-item command="zhipu">zhipu</el-dropdown-item>
-            <el-dropdown-item command="sparkv3.0">sparkv3.0</el-dropdown-item>
+            <el-dropdown-item command="llama3.1">llama3.1</el-dropdown-item>
+            <el-dropdown-item command="llama3">llama3</el-dropdown-item>
+            <el-dropdown-item command="qwen2">qwen2</el-dropdown-item>
+            <el-dropdown-item command="glm4">glm4</el-dropdown-item>
+            <el-dropdown-item command="phi3">phi3</el-dropdown-item>
+            <el-dropdown-item command="yi">yi</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
  
@@ -155,7 +157,7 @@ export default {
       drawerVisible: false, // 抽屉是否可见
       client: null, // WebSocket 客户端实例 1
       clientUserRequest: null, // WebSocket 客户端实例 2: 专用于处理用户反馈修改信息
-      ModelSelectText: 'zhipu', // 当前选择的模型文本
+      ModelSelectText: 'None', // 当前选择的模型文本
       userIdDialogVisible: false, // 用户ID输入对话框可见性
       userRequestDialogVisible: false, //用户反馈意见可见性
       userId: '',// 用户ID
@@ -405,10 +407,10 @@ export default {
         "_blank"
       );
     },
-    async handleCommand(command) {
+    async selectOllamaModel(command) {
       try {
-        const res = await apiClient.post("/model", { model: command });
-        this.$message("已选择 " + command);
+        const res = await apiClient.post("/OllamaMade", { model: command });
+        this.$message("已选择 " + command +" 进行模型层级 ( Model SystemPrompt ) 的角色定制");
         this.ModelSelectText = command;
       } catch (error) {
         this.$message.error("请求失败: " + error.message);
