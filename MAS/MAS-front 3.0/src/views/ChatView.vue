@@ -5,11 +5,8 @@
       <div class="toggle-bar">
         <!-- 图标，点击后跳转到AgentMap页面 -->
         <div @click="goToAgentMap()" class="icon go-to-agent" data-tooltip="Go to AgentMap"></div>
-<<<<<<< HEAD
         <!-- 图标，点击后跳转到CaseShow页面 -->
          <div @click="goToCaseShow()" class="icon go-to-case " data-tooltip="经典案例">1</div>
-=======
->>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
       </div>
       <div class="move-sidebar">
         <div id="menu" ref="menu" :class="{ expanded: menuExpanded }">
@@ -317,10 +314,7 @@ export default {
         }
 
         console.log('用户历史记录:', userDialogs);
-<<<<<<< HEAD
         alert('已加载用户历史记录');
-=======
->>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
       } catch (error) {
         console.error('Error fetching user history records:', error);
         alert('Error fetching user history records');
