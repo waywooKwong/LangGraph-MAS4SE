@@ -395,10 +395,10 @@ async def ask(request: QueryRequest):
 
 @app.post("/upload-agent")
 async def upload_agent(file: UploadFile = File(...)):
-    if not default_config.is_conversation_finished():
-        return JSONResponse(
-            content={"error": "Conversation is not finished yet"}, status_code=400
-        )
+    # if not default_config.is_conversation_finished():
+    #     return JSONResponse(
+    #         content={"error": "Conversation is not finished yet"}, status_code=400
+    #     )
 
     try:
         file_content = await file.read()

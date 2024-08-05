@@ -107,9 +107,8 @@
            
           <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
           <!-- 如果 userRequestDialogVisible 是 true， 显示弹框 -->
-          <!-- <div v-if="userRequestDialogVisible" class="userRequestDialog"> -->
-          <div class="userRequestDialog">
-            <el-input v-model="feedback" placeholder="输入您的修改意见" type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }"></el-input>
+          <div v-if="userRequestDialogVisible" class="userRequestDialog">
+            <el-input v-model="feedback"  placeholder="输入您的修改意见" type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }" clearable></el-input>
             <el-button @click="userRequest" class=".sendQueryButton">发送修改意见</el-button>
           </div>
         </div>
@@ -516,9 +515,14 @@ export default {
       this.$router.push({ name: "AgentMap" });
     },
     goToCaseShow(){
-        this.$router.push({ name: "CaseShow" }
-          
-        );
+      // 获取当前页面的参数 aaa
+      const id_v = 'QC';  // 假设当前页面有一个属性 
+
+      // 跳转并传递参数
+      this.$router.push({ 
+        name: "CaseShow",
+        params: { id: id_v }
+    });
     },
     goToGithub() {
       window.open(
@@ -1013,21 +1017,37 @@ export default {
 .userRequestDialog {
     display: flex;
     align-items: center;
+    justify-content: center; /* 使内容居中对齐 */
+    padding: 10px; /* 增加内边距 */
+   
+}
 
-  }
-  .userRequestDialog input {
+.userRequestDialog input {
     flex: 1;
     margin-top: 15px;
-    margin-right: 20px; /* 使按钮和输入框之间有间距 */
+    margin-right: 10px; /* 使按钮和输入框之间有间距 */
     height: 40px;
-  }
-  .userRequestDialog button {
+    padding: 0 10px; /* 输入框内边距 */
+    font-size: 16px; /* 字体大小 */
+    border: 1px solid #ccc; /* 边框 */
+    border-radius: 5px; /* 圆角 */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 内阴影 */
+}
+
+.userRequestDialog button {
     font-size: 16px; 
     height: 40px;
-    width: 88px;
-    margin-left: 10px;
-    background-color: #dbd3e4;
-    color: #000;
-    font-weight: bold;
-  }
+    width: 150px; /* 增加按钮宽度 */
+    margin-left: 10px; /* 按钮左侧间距 */
+    background-color: #d5d4d9; /* 按钮背景色 */
+    color: #000000; /* 按钮文字颜色 */
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-align: center;
+    border: none; /* 移除默认边框 */
+    border-radius: 5px; /* 圆角 */
+    cursor: pointer; /* 鼠标悬停时显示手型指针 */
+    transition: background-color 0.3s; /* 背景色过渡效果 */
+}
+
+
 </style>

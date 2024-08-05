@@ -12,7 +12,9 @@
     <div class="main-content">
       <!-- 聊天窗口头部 -->
       <div class="chat-header">
+        <p>参数 id: {{ id }}</p>
         <h2>智能对话客服-案例</h2>
+        
       </div>
 
       <div class="main-window">
@@ -54,7 +56,7 @@ export default {
       client: null, // WebSocket 客户端实例 1
       clientUserRequest: null, // WebSocket 客户端实例 2: 专用于处理用户反馈修改信息
       userRequestDialogVisible: false, //用户反馈意见可见性
-      userId: 'QC',// 用户ID
+      userId: 'Q',// 用户ID
       feedback:''
     };
   },
@@ -70,8 +72,15 @@ export default {
     });
   },
   methods: {
+    
+    id() {
+        // 通过 this.$route.params 获取 params 参数
+        return this.$route.params.id_v;
+    },
+    
     // 保存用户ID
     async saveUserId() {
+      
       console.log('用户ID:', this.userId);
       this.userIdDialogVisible = false;
       // 在这里进一步处理用户ID的逻辑，连接数据库，检查用户id下是否含有历史记录，如果有历史记录，则取出放到历史记录框中
