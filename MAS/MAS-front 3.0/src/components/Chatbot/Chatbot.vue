@@ -290,7 +290,7 @@ export default class Chatbot extends Vue {
             .commit-user-design {
                 &:before {
                     content: '\E92F';
-                    color: #507ff5;
+                    color: #ab1998;
                 }
             }
             

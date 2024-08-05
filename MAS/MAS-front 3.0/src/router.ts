@@ -13,6 +13,7 @@ import LoadPage from '@/views/LoadPage.vue';
 import LoadPageTest from './views/LoadPageTest.vue';
 import MainSidebar from './components/MainSidebar.vue';
 import CaseSelect from './views/CaseSelect.vue';
+import AnimationBackground from './components/AnimationBackground.vue';
 
 Vue.use(VueRouter);
 
@@ -66,6 +67,11 @@ const routes = [
     path: '/lt',
     name: 'LoadPageTest',
     component: LoadPageTest,
+  },
+  {
+    path: '/AB',
+    name: 'AnimationBackground',
+    component: AnimationBackground,
   },
 ];
 

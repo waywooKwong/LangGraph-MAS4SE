@@ -17,7 +17,6 @@ client.on('error', (err) => console.error('Redis Client Error', err));
 })();
 
 // 中间件
-<<<<<<< HEAD
 //app.use(bodyParser.json());
 // 配置 body-parser 以处理较大的请求体
 app.use(bodyParser.json({ limit: '100mb' })); // 增加请求体大小限制
@@ -25,9 +24,6 @@ app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
 
 
-=======
-app.use(bodyParser.json());
->>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
 app.use(cors()); // 使用 cors 中间件
 
 // 存储对话记录的接口
