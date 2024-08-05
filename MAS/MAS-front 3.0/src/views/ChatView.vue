@@ -557,7 +557,6 @@ export default {
   height: 100%;
   position: relative; /* 使 content 可以使用 z-index */
   background-color: transparent;
-  z-index: 1; /* 设置一个较高的 z-index 值 */
 }
 
 .avatar-button {
