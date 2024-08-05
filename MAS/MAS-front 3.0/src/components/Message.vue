@@ -1,6 +1,7 @@
 <template>
   <div :class="['message', senderClass]">
     <div v-if="avatar === 'text'" class="avatar-text">{{ sender }}</div>
+<<<<<<< HEAD
     <div v-else class="avatar-container">
       <img :src="avatar" class="avatar" />
       <div class="sender-name">{{ sender }}</div>
@@ -19,10 +20,16 @@
         >
       </div>
     </div>
+=======
+    <img v-else :src="avatar" class="avatar" />
+
+    <div class="message-bubble" :class="bubbleClass">{{ text }}</div>
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
   </div>
 </template>
 
 <script>
+<<<<<<< HEAD
 import { MessageBox } from "element-ui";
 export default {
   name: "ChatMessage",
@@ -77,10 +84,36 @@ export default {
         return "bot-bubble";
       } else {
         return "unknown-bubble"; // 处理未知发送者
+=======
+export default {
+  name: 'ChatMessage',
+  props: {
+    text: String,
+    sender: String,
+  },
+  computed: {
+    senderClass() {
+      if (this.sender === 'user') {
+        return 'user';
+      } else if (this.sender === 'bot') {
+        return 'bot';
+      } else {
+        return 'unknown'; // 处理未知发送者
+      }
+    },
+    bubbleClass() {
+      if (this.sender === 'user') {
+        return 'user-bubble';
+      } else if (this.sender === 'bot') {
+        return 'bot-bubble';
+      } else {
+        return 'unknown-bubble'; // 处理未知发送者
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
       }
     },
     avatar() {
       return this.getAvatar(this.sender);
+<<<<<<< HEAD
     },
   },
   methods: {
@@ -148,6 +181,18 @@ export default {
         console.log("服务器响应:", data);
       } catch (error) {
         console.error("发送请求时发生错误:", error);
+=======
+    }
+  },
+  methods: {
+    getAvatar(sender) {
+      if (sender === 'user') {
+        return '/icons/用户.png';
+      } else if (sender === 'bot') {
+        return '/icons/Bot.png';
+      } else {
+        return 'text'; // 显示发送者文字
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
       }
     },
   },
@@ -173,6 +218,7 @@ export default {
   text-align: left;
 }
 
+<<<<<<< HEAD
 .message.project-manager {
   flex-direction: row;
   text-align: left;
@@ -198,17 +244,22 @@ export default {
   text-align: left;
 }
 
+=======
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
 .message.unknown {
   flex-direction: row;
   text-align: left;
 }
 
+<<<<<<< HEAD
 .avatar-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+=======
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
 .message .avatar {
   width: 30px;
   height: 30px;
@@ -216,6 +267,7 @@ export default {
   margin: 0 10px;
 }
 
+<<<<<<< HEAD
 .message .sender-name {
   
   font-size: 12px;
@@ -223,6 +275,8 @@ export default {
   text-align: center;
 }
 
+=======
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
 .message .avatar-text {
   width: 30px;
   height: 30px;
@@ -244,7 +298,11 @@ export default {
 }
 
 .user-bubble {
+<<<<<<< HEAD
   background-color: rgb(126, 18, 110);
+=======
+  background-color: #7853B2;
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
   color: #fff4f4;
   border-bottom-right-radius: 0;
 }
@@ -255,6 +313,7 @@ export default {
   border-bottom-left-radius: 0;
 }
 
+<<<<<<< HEAD
 .project-manager-bubble {
   background-color: #87f6da;
   color: #07050b;
@@ -285,11 +344,14 @@ export default {
   border-bottom-left-radius: 0;
 }
 
+=======
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
 .unknown-bubble {
   background-color: #f6da87;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
+<<<<<<< HEAD
 
 .button-container {
   margin-top: 10px; /* 给按钮一个上边距 */
@@ -319,4 +381,6 @@ export default {
   border: 1px solid #ccc;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
+=======
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
 </style>
