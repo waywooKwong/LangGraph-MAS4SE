@@ -32,6 +32,8 @@ app.post('/save-dialog', async (req, res) => {
     const { user, message } = req.body;
     const dialog = { user, message, timestamp: new Date().toISOString() };
 
+    //await client.rPush('CaseDialog', JSON.stringify(dialog));
+
     await client.rPush('chat dialog', JSON.stringify(dialog));
     res.status(200).send('Dialog saved');
   } catch (err) {
@@ -40,7 +42,7 @@ app.post('/save-dialog', async (req, res) => {
 });
 
 // 获取对话记录的接口
-app.get('/dialogs', async (req, res) => {
+app.get('/get-dialogs', async (req, res) => {
   // try {
   //   const dialogs = await client.lRange('chat dialog', 0, -1);
   //   res.status(200).json(dialogs.map(JSON.parse));
@@ -64,6 +66,42 @@ app.get('/dialogs', async (req, res) => {
     res.status(500).send(err.toString());
   }
 });
+
+
+
+
+
+/////////////////////*******************/////////////////////// 
+////
+////案例接口
+////
+/////////////////////*******************/////////////////////// 
+// 获取案例对话记录的接口
+app.get('/get-casedialogs', async (req, res) => {
+  // try {
+  //   const dialogs = await client.lRange('chat dialog', 0, -1);
+  //   res.status(200).json(dialogs.map(JSON.parse));
+  // } catch (err) {
+  //   res.status(500).send(err.toString());
+  // }
+  try {
+    // 从查询参数中获取用户ID
+    const userId = req.query.user;
+
+    // 从Redis中获取所有对话记录
+    const dialogs = await client.lRange('CaseDialog', 0, -1);
+
+    // 解析对话记录，并根据用户ID进行过滤
+    const userDialogs = dialogs
+      .map(JSON.parse) // 将字符串转换为对象
+      .filter(dialog => dialog.user === userId);
+
+    res.status(200).json(userDialogs);
+  } catch (err) {
+    res.status(500).send(err.toString());
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

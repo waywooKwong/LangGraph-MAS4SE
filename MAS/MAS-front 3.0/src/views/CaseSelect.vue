@@ -50,16 +50,36 @@ export default {
       this.$router.push({ name: 'ChatView' });
     },
     goToCase01() {
-      this.$router.push({ name: 'CaseShow01' });
+        // 获取当前页面的参数 aaa
+      const userId = 'QC';  // 假设当前页面有一个属性 
+
+      // 跳转并传递参数
+      this.$router.push({ path: `/case-show` ,query: { id: userId }});
+
     },
     goToCase02() {
-      this.$router.push({ name: 'CaseShow02' });
+        // 获取当前页面的参数 aaa
+      const userId = 'QC';  // 假设当前页面有一个属性 
+
+      // 跳转并传递参数
+      this.$router.push({ path: `/case-show` ,query: { id: userId }});
+
     },
     goToCase03() {
-      this.$router.push({ name: 'CaseShow03' });
+       // 获取当前页面的参数 aaa
+      const userId = 'QC';  // 假设当前页面有一个属性 
+
+      // 跳转并传递参数
+      this.$router.push({ path: `/case-show` ,query: { id: userId }});
+
     },
     goToCase04() {
-      this.$router.push({ name: 'CaseShow01' });
+        // 获取当前页面的参数 aaa
+      const userId = 'QC';  // 假设当前页面有一个属性 
+
+      // 跳转并传递参数
+      this.$router.push({ path: `/case-show` ,query: { id: userId }});
+
     },
   }
 };
