@@ -6,7 +6,7 @@
         <!-- 图标，点击后跳转到AgentMap页面 -->
         <div @click="goToAgentMap()" class="icon go-to-agent" data-tooltip="Go to AgentMap"></div>
         <!-- 图标，点击后跳转到CaseShow页面 -->
-         <div @click="goToCaseShow()" class="icon go-to-case " data-tooltip="经典案例">1</div>
+         <div @click="goToCaseShow()" class="icon go-to-case " data-tooltip="经典案例"></div>
       </div>
       <div class="move-sidebar">
         <div id="menu" ref="menu" :class="{ expanded: menuExpanded }">
@@ -515,14 +515,13 @@ export default {
       this.$router.push({ name: "AgentMap" });
     },
     goToCaseShow(){
-      // 获取当前页面的参数 aaa
-      const id_v = 'QC';  // 假设当前页面有一个属性 
+
 
       // 跳转并传递参数
       this.$router.push({ 
-        name: "CaseShow",
-        params: { id: id_v }
-    });
+        name: "CaseSelect",
+
+      });
     },
     goToGithub() {
       window.open(
@@ -823,6 +822,12 @@ export default {
     .go-to-agent {
       &:before {
         content: "\E8AF";
+        /* 请确保这个内容与您的字体图标设置相匹配 */
+      }
+    }
+    .go-to-case {
+      &:before {
+        content: "\e94c";
         /* 请确保这个内容与您的字体图标设置相匹配 */
       }
     }
