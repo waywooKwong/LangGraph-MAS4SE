@@ -5,7 +5,7 @@
     <div class="side-bar">
       <div class="toggle-bar">
         <!-- 图标，点击后跳转到chatview页面 -->
-         <div @click="goToChatView()" class="icon go-to-case " data-tooltip="ChatView">2</div>
+         <div @click="goToChatView()" class="icon go-to-case " data-tooltip="返回案例选择界面">返回</div>
       </div>
     </div>
 
@@ -105,7 +105,7 @@ export default {
     },
 
     goToChatView() {
-      this.$router.push({ name: "ChatView" });
+      this.$router.push({ name: "CaseSelect" });
     },
   },
 };
