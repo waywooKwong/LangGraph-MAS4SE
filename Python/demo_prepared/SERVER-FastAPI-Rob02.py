@@ -227,8 +227,6 @@ def router_concurrent_choice(state: AgentState, members: Dict[str, Any]) -> str:
 # 通用的多边连接多选一 router 选择函数
 def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
     print("enter supervisor_chain")
-    # sender = state["messages"][-1]
-    # sender = sender.name
     sender = state["sender"]
     print("sender before:", sender)
     system_prompt = (
@@ -253,7 +251,6 @@ def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
 
     # 创建成员列表，并移除发送者
     members = list(conditional_map.keys())
-    print("members before removing sender:", members)
     if sender in members:
         members.remove(sender)
     print("next members:", members)
@@ -479,9 +476,9 @@ async def initialize_workflow(websocket: WebSocket):
     for message in data["Message"]:
         label_text = message["label_text"]
         if (
-                label_text != "Bot2"
-                and label_text.lower() != "start"
-                and label_text.lower() != "end"
+            label_text != "Bot2"
+            and label_text.lower() != "start"
+            and label_text.lower() != "end"
         ):
             roles.append(label_text)
     # 将roles传给前端
@@ -526,7 +523,7 @@ async def initialize_workflow(websocket: WebSocket):
                     # 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
                     description = ""
                     for chunk in default_config.prompt_creatation.generate_prompt(
-                            role=role, duty=duty
+                        role=role, duty=duty
                     ):
                         await asyncio.sleep(0.1)  # 模拟延迟
                         description += chunk
@@ -590,11 +587,16 @@ async def initialize_workflow(websocket: WebSocket):
                 workflow.add_edge(source_label, END)
             else:
                 workflow.add_edge(source_label, target_label)
-        # 将default_config.file_uploaded复原
-        print("图创建成功!!!!!!!!!!!!!!!")
-        default_config.file_uploaded = False
-        default_config.is_role = True
-        await websocket.send_text(json.dumps({"success": default_config.is_role}, ensure_ascii=False))
+
+    # 将default_config.file_uploaded复原
+    print("图创建成功!!!!!!!!!!!!!!!")
+    default_config.file_uploaded = False
+    default_config.is_role = True
+    await websocket.send_text(
+        json.dumps({"success": default_config.is_role}, ensure_ascii=False)
+    )
+    print("default_config.is_role:", default_config.is_role)
+    print("initial_workflow 角色生成完成")
 
 
 @app.websocket("/ws/run_workflow")
@@ -658,9 +660,16 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
 
         ### Bot02: 留下释放的时间, 给用户进行输入
         await websocket.send_text(
-            json.dumps({"message": "随时提出修改意见"}, ensure_ascii=False)
+            json.dumps(
+                {
+                    "sender": "kuangweihua",
+                    "progress": "userRequest",
+                    "message": "随时提出修改意见",
+                },
+                ensure_ascii=False,
+            )
         )
-        await asyncio.sleep(10)
+        await asyncio.sleep(10)  # Add 3-second delay
 
 
 class ButtonClick(BaseModel):
@@ -678,8 +687,8 @@ async def handle_button_click(button_click: ButtonClick):
 
         default_config.initial_question = HumanMessage(
             content="请你根据以下需求说明书完成你的工作并向下属分配工作"
-                    + default_config.answer,
-            name="user"
+            + default_config.answer,
+            name="user",
         )
 
         # 返回成功的响应
