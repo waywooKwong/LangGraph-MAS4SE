@@ -138,14 +138,12 @@ class RobotAgent:
             template=self.prompt_template_str,
             partial_variables={"format_instructions": self.format_instructions}
         )
-
     def detect_encoding(self, file_path):
         import chardet
         with open(file_path, 'rb') as f:
             raw_data = f.read(10000)  # 读取文件的一部分来检测编码
         result = chardet.detect(raw_data)
         return result['encoding']
-
     def load_documents(self):
         docs = []
         for filename in os.listdir(self.base_dir):
@@ -268,40 +266,3 @@ class RobotAgent:
         self.chat_history.append(AIMessage(content=response["output"]))
 
         return response["output"]
-
-
-# import json
-# import re
-#
-#
-#
-# agent = RobotAgent()
-#
-# while True:
-#     user_input = input("请输入问题：")
-#     response = agent.invoke(user_input)
-#
-#     # 清理 JSON 字符串
-#     cleaned_json_string = response.strip('`')
-#     cleaned_json_string=cleaned_json_string.strip("json")
-#
-#
-#     # 打印格式化后的 JSON 字符串以调试
-#
-#
-#     try:
-#         # 解析 JSON 字符串
-#         response_dict = json.loads(cleaned_json_string)
-#
-#         # 提取字段示例
-#         sender = response_dict.get("sender", "字段不存在")
-#         progress = response_dict.get("progress", "字段不存在")
-#         answer = response_dict.get("answer", "字段不存在")
-#
-#         print("\n解析结果：")
-#         print(f"Sender: {sender}")
-#         print(f"Progress: {progress}")
-#         print(f"Answer: {answer}")
-#
-#     except json.JSONDecodeError as e:
-#         print(f"JSON 解析失败: {e}")

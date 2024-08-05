@@ -17,7 +17,11 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate, MessagesPlaceholder, ChatPromptTemplate
+from langchain_core.prompts import (
+    PromptTemplate,
+    MessagesPlaceholder,
+    ChatPromptTemplate,
+)
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 
 from langchain_community.chat_models import ChatOllama
@@ -80,6 +84,7 @@ class BuildChainAgent:
         self.retriever_chain = self.create_retriever_chain()
         self.chat_history = []
         self.description = description
+        # 下述字符串删除 {format_instructions}
         self.prompt_template_str = """
                     您的描述如下{description}\n
                     您有时候是单独一个人解决用户提出的问题\n
@@ -93,7 +98,7 @@ class BuildChainAgent:
                     格式按需输出，可以是字符串，也可以是jason\n
                     回答均使用中文,回答口吻必须用“我”来回答,生成答案必须按需7换行\n
                     (警告！！！)回答时禁止重复上一轮的答案!!!
-                    {format_instructions}"""
+                    """
         response_schemas = [
             # ResponseSchema(name="description", description="用户问题"),
             ResponseSchema(
@@ -106,15 +111,16 @@ class BuildChainAgent:
         self.format_instructions = self.output_parser.get_format_instructions()
         self.prompt_template = PromptTemplate.from_template(
             template=self.prompt_template_str,
-            partial_variables={"format_instructions": self.format_instructions},
+            # partial_variables={"format_instructions": self.format_instructions},
         )
 
     def detect_encoding(self, file_path):
         import chardet
-        with open(file_path, 'rb') as f:
+
+        with open(file_path, "rb") as f:
             raw_data = f.read(10000)  # 读取文件的一部分来检测编码
         result = chardet.detect(raw_data)
-        return result['encoding']
+        return result["encoding"]
 
     def load_documents(self):
         ### !!! 需要定制角色文本的时候再启动这部分代码，因为一直启动速度过慢
@@ -185,9 +191,9 @@ class BuildChainAgent:
         chain_first = create_retrieval_chain(history_chain, documents_chain)
         ################# system prompt 2(需要个性化定制)
         template_second = (
-                "你的职责是:"
-                + self.duty
-                + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
+            "你的职责是:"
+            + self.duty
+            + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
         )
         prompt_template_second = ChatPromptTemplate.from_template(template_second)
 
@@ -205,10 +211,10 @@ class BuildChainAgent:
         # )
 
         chain_second = (
-                {"role_text": chain_first}
-                | prompt_template_second
-                | self.chat_model
-                | StrOutputParser()
+            {"role_text": chain_first}
+            | prompt_template_second
+            | self.chat_model
+            | StrOutputParser()
         )
 
         return chain_second
