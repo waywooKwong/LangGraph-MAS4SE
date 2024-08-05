@@ -5,6 +5,8 @@
       <div class="toggle-bar">
         <!-- 图标，点击后跳转到AgentMap页面 -->
         <div @click="goToAgentMap()" class="icon go-to-agent" data-tooltip="Go to AgentMap"></div>
+        <!-- 图标，点击后跳转到CaseShow页面 -->
+         <div @click="goToCaseShow()" class="icon go-to-case " data-tooltip="经典案例">1</div>
       </div>
     </div>
 
@@ -65,7 +67,7 @@
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息/ 排除发送者是 'kuangweihua'(我定义发送修改意见的那个 sender 是 'kuangwiehua' :） ) -->
-          <Message v-for="(message, index) in messages" v-if="!(index === messages.length - 1 && message.sender === 'kuangweihua')"  :key="index" :text="message.text" :sender="message.sender" :status="message.status" />
+          <Message v-for="(message, index) in messages"  :key="index" :text="message.text" :sender="message.sender" :status="message.status"  />
           <!-- v-if="(message.sender != 'kuangweihua')" -->
           <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
           <div v-if="messages.length > 0 && messages[messages.length - 1].sender === 'kuangweihua'" class="userRequestDialog">
@@ -204,6 +206,7 @@ export default {
         }
 
         console.log('用户历史记录:', userDialogs);
+        alert('已加载用户历史记录');
       } catch (error) {
         console.error('Error fetching user history records:', error);
         alert('Error fetching user history records');
@@ -398,6 +401,9 @@ export default {
     },
     goToAgentMap() {
       this.$router.push({ name: "AgentMap" });
+    },
+    goToCaseShow(){
+        this.$router.push({ name: "CaseShow" });
     },
     goToGithub() {
       window.open(
