@@ -6,6 +6,7 @@ import StartView from '@/views/StartView.vue';
 import LoadPage from '@/views/LoadPage.vue';
 import LoadPageTest from './views/LoadPageTest.vue';
 import MainSidebar from './components/MainSidebar.vue';
+import CaseSelect from './views/CaseSelect.vue';
 
 Vue.use(VueRouter);
 
@@ -34,6 +35,11 @@ const routes = [
     path: '/loadTest',
     name: 'LoadPageTest',
     component: LoadPageTest,
+  },
+  {
+    path: '/CaseSelect',
+    name: 'CaseSelect',
+    component: CaseSelect,
   },
 ];
 
