@@ -117,7 +117,12 @@ class WebScratchRoleTxt:
         print(f"\nGoogle Serper URL 解析文本已经保存： {self.URL_Scraper_txt_path}")
 
 
+<<<<<<< HEAD
 # role_text_generator = WebScratchRoleTxt(role="辅导员")
 # role_text_generator.DuckDuckGo_search()
+=======
+# role_text_generator = WebScratchRoleTxt(role="Label:ProjectManager")
+# # role_text_generator.DuckDuckGo_search()
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
 # role_text_generator.GoogleSerper_search()
 # role_text_generator.Google_ScrapeUrls()
