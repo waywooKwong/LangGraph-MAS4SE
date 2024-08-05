@@ -104,11 +104,13 @@
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息/ 排除发送者是 'kuangweihua'(我定义发送修改意见的那个 sender 是 'kuangwiehua' :） ) -->
           <Message v-for="(message, index) in messages"  :key="index" :text="message.text" :sender="message.sender" :status="message.status"  />
-          <!-- v-if="(message.sender != 'kuangweihua')" -->
+           
           <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
-          <div v-if="messages.length > 0 && messages[messages.length - 1].sender === 'kuangweihua'" class="userRequestDialog">
+          <!-- 如果 userRequestDialogVisible 是 true， 显示弹框 -->
+          <!-- <div v-if="userRequestDialogVisible" class="userRequestDialog"> -->
+          <div class="userRequestDialog">
             <el-input v-model="feedback" placeholder="输入您的修改意见" type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }"></el-input>
-            <el-button @click="userRequest" class=".sendQueryButton">发送</el-button>
+            <el-button @click="userRequest" class=".sendQueryButton">发送修改意见</el-button>
           </div>
         </div>
       </div>
@@ -327,10 +329,12 @@ export default {
         const message = JSON.parse(event.data);
 
         if (message.message) {
-            this.messages.push({ text: message.message, sender: message.sender, status: message.progress });
-            this.userRequestDialogVisible = false
             if(message.sender=='kuangweihua')
               this.userRequestDialogVisible = true
+            else{
+              this.messages.push({ text: message.message, sender: message.sender, status: message.progress });
+              this.userRequestDialogVisible = false
+            }
         } else {
           console.log("Received JSON without message field:", message);
           this.messages.push({
@@ -368,7 +372,8 @@ export default {
     userRequest() {
       if (this.clientUserRequest && this.clientUserRequest.readyState === WebSocket.OPEN) {
         this.clientUserRequest.send(this.feedback);
-        this.feedback = '已提交完成'; // 清空输入框
+        this.feedback = '已提交修改意见'; // 清空输入框
+        this. userRequestDialogVisible = false;
       }
     },
   
