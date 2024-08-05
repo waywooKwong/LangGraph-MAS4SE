@@ -56,7 +56,6 @@ class AgentState(TypedDict):
     progress: str
     messages: Annotated[List[BaseMessage], operator.add]
 
-
 class default_config:
     """
     函数运行的默认参数类
@@ -393,10 +392,10 @@ async def ask(request: QueryRequest):
 
 @app.post("/upload-agent")
 async def upload_agent(file: UploadFile = File(...)):
-    if not default_config.is_conversation_finished():
-        return JSONResponse(
-            content={"error": "Conversation is not finished yet"}, status_code=400
-        )
+    # if not default_config.is_conversation_finished():
+    #     return JSONResponse(
+    #         content={"error": "Conversation is not finished yet"}, status_code=400
+    #     )
 
     try:
         file_content = await file.read()
