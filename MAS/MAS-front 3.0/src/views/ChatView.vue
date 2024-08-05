@@ -5,6 +5,8 @@
       <div class="toggle-bar">
         <!-- 图标，点击后跳转到AgentMap页面 -->
         <div @click="goToAgentMap()" class="icon go-to-agent" data-tooltip="Go to AgentMap"></div>
+        <!-- 图标，点击后跳转到CaseShow页面 -->
+         <div @click="goToCaseShow()" class="icon go-to-case " data-tooltip="经典案例">1</div>
       </div>
       <div class="move-sidebar">
         <div id="menu" ref="menu" :class="{ expanded: menuExpanded }">
@@ -101,12 +103,14 @@
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息/ 排除发送者是 'kuangweihua'(我定义发送修改意见的那个 sender 是 'kuangwiehua' :） ) -->
-          <Message v-for="(message, index) in messages" v-if="!(index === messages.length - 1 && message.sender === 'kuangweihua')"  :key="index" :text="message.text" :sender="message.sender" :status="message.status" />
-          <!-- v-if="(message.sender != 'kuangweihua')" -->
+          <Message v-for="(message, index) in messages"  :key="index" :text="message.text" :sender="message.sender" :status="message.status"  />
+           
           <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
-          <div v-if="messages.length > 0 && messages[messages.length - 1].sender === 'kuangweihua'" class="userRequestDialog">
+          <!-- 如果 userRequestDialogVisible 是 true， 显示弹框 -->
+          <!-- <div v-if="userRequestDialogVisible" class="userRequestDialog"> -->
+          <div class="userRequestDialog">
             <el-input v-model="feedback" placeholder="输入您的修改意见" type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }"></el-input>
-            <el-button @click="userRequest" class=".sendQueryButton">发送</el-button>
+            <el-button @click="userRequest" class=".sendQueryButton">发送修改意见</el-button>
           </div>
         </div>
       </div>
@@ -312,6 +316,7 @@ export default {
         }
 
         console.log('用户历史记录:', userDialogs);
+        alert('已加载用户历史记录');
       } catch (error) {
         console.error('Error fetching user history records:', error);
         alert('Error fetching user history records');
@@ -324,10 +329,12 @@ export default {
         const message = JSON.parse(event.data);
 
         if (message.message) {
-            this.messages.push({ text: message.message, sender: message.sender, status: message.progress });
-            this.userRequestDialogVisible = false
             if(message.sender=='kuangweihua')
               this.userRequestDialogVisible = true
+            else{
+              this.messages.push({ text: message.message, sender: message.sender, status: message.progress });
+              this.userRequestDialogVisible = false
+            }
         } else {
           console.log("Received JSON without message field:", message);
           this.messages.push({
@@ -365,7 +372,8 @@ export default {
     userRequest() {
       if (this.clientUserRequest && this.clientUserRequest.readyState === WebSocket.OPEN) {
         this.clientUserRequest.send(this.feedback);
-        this.feedback = '已提交完成'; // 清空输入框
+        this.feedback = '已提交修改意见'; // 清空输入框
+        this. userRequestDialogVisible = false;
       }
     },
   
@@ -443,9 +451,9 @@ export default {
       }
 
       try {
-        await apiClient.post("/upload", formData, {
+        await apiClient.post('/upload', formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         });
         this.messages.push({ text: "文件上传成功", sender: "bot" ,status:"false"});
@@ -506,6 +514,11 @@ export default {
     },
     goToAgentMap() {
       this.$router.push({ name: "AgentMap" });
+    },
+    goToCaseShow(){
+        this.$router.push({ name: "CaseShow" }
+          
+        );
     },
     goToGithub() {
       window.open(
@@ -691,14 +704,13 @@ export default {
   align-items: center;
   /* 底部水平对齐 */
 
-  .selectFilesButton {
+  .selectFilesButton{
     height: 30px;
     width: 30px;
     align-items: center;
-    justify-content: center;
+    justify-content: center; 
     display: flex;
   }
-
   .el-input {
     flex: 1;
     margin-right: 10px;
@@ -848,7 +860,7 @@ export default {
     }
 
     .history-header button {
-      width: 150px;
+      width: 278px;
       margin: 3px 0; /* 设置按钮的上下间距 */
       padding: 10px 20px; /* 调整按钮的大小 */
       font-size: 16px; /* 修改按钮文字大小 */
