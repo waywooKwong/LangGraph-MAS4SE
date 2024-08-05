@@ -3,12 +3,15 @@ import VueRouter from 'vue-router';
 import ChatView from '@/views/ChatView.vue';
 import AgentMap from '@/views/AgentMap.vue';
 import StartView from '@/views/StartView.vue';
+<<<<<<< HEAD
 import { component } from 'vue/types/umd';
 import CaseShow from './views/CaseShow.vue';
 import CaseShow01 from './views/CaseShow01.vue';
 import CaseShow02 from './views/CaseShow02.vue';
 import CaseShow03 from './views/CaseShow03.vue';
 import CaseShow04 from './views/CaseShow04.vue';
+=======
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
 
 Vue.use(VueRouter);
 
@@ -28,6 +31,7 @@ const routes = [
     name: 'AgentMap',
     component: AgentMap,
   },
+<<<<<<< HEAD
   {
     path:'/case-show',
     name: 'CaseShow',
@@ -57,6 +61,8 @@ const routes = [
 
 
 
+=======
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
 ];
 
 const router = new VueRouter({
