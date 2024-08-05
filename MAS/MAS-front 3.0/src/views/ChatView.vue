@@ -5,6 +5,11 @@
       <div class="toggle-bar">
         <!-- 图标，点击后跳转到AgentMap页面 -->
         <div @click="goToAgentMap()" class="icon go-to-agent" data-tooltip="Go to AgentMap"></div>
+<<<<<<< HEAD
+        <!-- 图标，点击后跳转到CaseShow页面 -->
+         <div @click="goToCaseShow()" class="icon go-to-case " data-tooltip="经典案例">1</div>
+=======
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
       </div>
       <div class="move-sidebar">
         <div id="menu" ref="menu" :class="{ expanded: menuExpanded }">
@@ -101,7 +106,7 @@
         <!-- 聊天窗口 -->
         <div class="chat-window" ref="chatWindow">
           <!-- 遍历并渲染每条消息/ 排除发送者是 'kuangweihua'(我定义发送修改意见的那个 sender 是 'kuangwiehua' :） ) -->
-          <Message v-for="(message, index) in messages" v-if="!(index === messages.length - 1 && message.sender === 'kuangweihua')"  :key="index" :text="message.text" :sender="message.sender" :status="message.status" />
+          <Message v-for="(message, index) in messages"  :key="index" :text="message.text" :sender="message.sender" :status="message.status"  />
           <!-- v-if="(message.sender != 'kuangweihua')" -->
           <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
           <div v-if="messages.length > 0 && messages[messages.length - 1].sender === 'kuangweihua'" class="userRequestDialog">
@@ -312,6 +317,10 @@ export default {
         }
 
         console.log('用户历史记录:', userDialogs);
+<<<<<<< HEAD
+        alert('已加载用户历史记录');
+=======
+>>>>>>> 030ff2c91c186cce9e9018e47bd7e8a786f97ae3
       } catch (error) {
         console.error('Error fetching user history records:', error);
         alert('Error fetching user history records');
@@ -443,9 +452,9 @@ export default {
       }
 
       try {
-        await apiClient.post("/upload", formData, {
+        await apiClient.post('/upload', formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         });
         this.messages.push({ text: "文件上传成功", sender: "bot" ,status:"false"});
@@ -506,6 +515,9 @@ export default {
     },
     goToAgentMap() {
       this.$router.push({ name: "AgentMap" });
+    },
+    goToCaseShow(){
+        this.$router.push({ name: "CaseShow" });
     },
     goToGithub() {
       window.open(
@@ -691,14 +703,13 @@ export default {
   align-items: center;
   /* 底部水平对齐 */
 
-  .selectFilesButton {
+  .selectFilesButton{
     height: 30px;
     width: 30px;
     align-items: center;
-    justify-content: center;
+    justify-content: center; 
     display: flex;
   }
-
   .el-input {
     flex: 1;
     margin-right: 10px;
