@@ -1,31 +1,39 @@
 <template>
-  <div class="main-case-window">
-    <el-button @click="goToChatView" class="go-chat-button">返回</el-button>
-    <h1>MAS<sup>4</sup>SE</h1>
+  <div class="main">
+    <AnimationBackground />
+    <div class="main-case-window">
+      <el-button @click="goToChatView" class="go-chat-button">返回</el-button>
+      <h1>MAS<sup>4</sup>SE</h1>
 
-    <div class="container">
-      <div class="carousel" :data-slide="currentSlide">
-        <div class="carousel__slide" @click="goToCase01">
-          案例一
+      <div class="container">
+        <div class="carousel" :data-slide="currentSlide">
+          <div class="carousel__slide" @click="goToCase01">
+            案例一
+          </div>
+          <div class="carousel__slide" @click="goToCase02">
+            案例二
+          </div>
+          <div class="carousel__slide" @click="goToCase03">
+            案例三
+          </div>
+          <div class="carousel__slide" @click="goToCase04">
+            案例四
+          </div>
         </div>
-        <div class="carousel__slide" @click="goToCase02">
-          案例二
-        </div>
-        <div class="carousel__slide" @click="goToCase03">
-          案例三
-        </div>
-        <div class="carousel__slide" @click="goToCase04">
-          案例四
-        </div>
+        <div class="next" @click="nextSlide">next</div>
+        <div class="prev" @click="prevSlide">previous</div>
       </div>
-      <div class="next" @click="nextSlide">next</div>
-      <div class="prev" @click="prevSlide">previous</div>
     </div>
   </div>
 </template>
 
 <script>
+import AnimationBackground from '@/components/AnimationBackground.vue'
+
 export default {
+  components: {
+    AnimationBackground
+  },
   data() {
     return {
       currentSlide: 1
@@ -39,34 +47,42 @@ export default {
       this.currentSlide = this.currentSlide === 1 ? 4 : this.currentSlide - 1;
     },
     goToChatView() {
-        this.$router.push({ name: 'ChatView' });
+      this.$router.push({ name: 'ChatView' });
     },
     goToCase01() {
-        this.$router.push({ name: 'CaseShow01' }); 
+      this.$router.push({ name: 'CaseShow01' });
     },
     goToCase02() {
-        this.$router.push({ name: 'CaseShow02' }); 
+      this.$router.push({ name: 'CaseShow02' });
     },
     goToCase03() {
-        this.$router.push({ name: 'CaseShow03' }); 
+      this.$router.push({ name: 'CaseShow03' });
     },
     goToCase04() {
-        this.$router.push({ name: 'CaseShow01' }); 
+      this.$router.push({ name: 'CaseShow01' });
     },
   }
 };
 </script>
 
-<style scoped lang="scss" >
+<style scoped lang="scss">
 @import url('https://fonts.googleapis.com/css?family=Lato:300|Oswald');
 
 $primary-color: hsl(289, 100%, 50%);
-.main-case-window{
-  height: 100%;
-  background-color: $primary-color;
+.main{
+  height: 100vh;
+  position: relative; /* 使子元素能够相对定位 */
+  overflow: hidden; /* 防止背景溢出 */
 }
 
-.go-chat-button{
+.main-case-window {
+  position: relative; /* 使 content 可以使用 z-index */
+  height: 100%;
+  background-color: transparent;
+  z-index: 2; /* 设置一个较高的 z-index 值 */
+}
+
+.go-chat-button {
   margin-top: 20px;
   margin-left: 20px;
   padding: 10px 40px;
@@ -113,9 +129,9 @@ $primary-color: hsl(289, 100%, 50%);
   height: 15em;
   background: white;
 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
 
   img {
@@ -207,7 +223,11 @@ h1 {
   font-size: 4em;
   text-transform: uppercase;
   text-align: center;
-  color: darken($primary-color, 40%);
+  // color: linear-gradient(-225deg, #231557 0%, #44107A 29%, #FF1361 67%, #FFF800 100%);
+  background: linear-gradient(-225deg, #231557 0%, #44107A 29%, #FF1361 67%, #FFF800 100%);
+  background-clip: text; /* 标准属性 */
+  -webkit-background-clip: text; /* WebKit 前缀 */
+  -webkit-text-fill-color: transparent;
 }
 
 .cf:before,
