@@ -63,7 +63,7 @@ const routes = [
     component: CaseSelect,
   },
   {
-    path: '/loadt',
+    path: '/lt',
     name: 'LoadPageTest',
     component: LoadPageTest,
   },

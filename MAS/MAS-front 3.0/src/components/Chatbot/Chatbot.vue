@@ -112,14 +112,7 @@ export default class Chatbot extends Vue {
     public goToChatView() {
         this.$router.push({ name: 'ChatView' }); // 路由跳转到 ChatView
     }
-    // public async sendJsonToServer(): Promise<void> { //将json发送到服务器
-    //     try {
-    //         const response = await apiClient.post('/upload-agent', this.fileJSON);
-    //         console.log('JSON sent successfully:', response.data);
-    //     } catch (error) {
-    //         console.error('Error sending JSON:', error);
-    //     }
-    // }
+    
     public async sendJsonToServer(): Promise<void> {
         if (this.isUploading) return; // 如果正在上传则返回
         
