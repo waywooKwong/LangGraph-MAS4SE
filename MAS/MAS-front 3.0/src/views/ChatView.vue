@@ -511,7 +511,9 @@ export default {
       this.$router.push({ name: "AgentMap" });
     },
     goToCaseShow(){
-        this.$router.push({ name: "CaseShow" });
+        this.$router.push({ name: "CaseShow" }
+          
+        );
     },
     goToGithub() {
       window.open(
@@ -853,7 +855,7 @@ export default {
     }
 
     .history-header button {
-      width: 150px;
+      width: 278px;
       margin: 3px 0; /* 设置按钮的上下间距 */
       padding: 10px 20px; /* 调整按钮的大小 */
       font-size: 16px; /* 修改按钮文字大小 */
