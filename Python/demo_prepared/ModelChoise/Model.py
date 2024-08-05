@@ -14,7 +14,7 @@ def os_setenv():
     os.environ["SERPAPI_API_KEY"] = "167d7c20554da3e8ff4b429f9bb8ab7ac42ac741b07b220552835b7a90053a28"
 
     # zhipu
-    os.environ["ZHIPUAI_API_KEY"] = "6d7fd536c2a665e8194bdcaa5a582476.PERpvVpORuaGxEZP"
+    os.environ["ZHIPUAI_API_KEY"] = "72fea15b5fce38e0a81b2bb01e4903dd.wkhUuC4oAO5otOmY"
 
     # WebBaseLoader --BeautifulSoup4
     os.environ[
