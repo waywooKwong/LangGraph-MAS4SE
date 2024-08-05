@@ -211,12 +211,11 @@ export default {
 .message .avatar {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+  /* border-radius: 50%; 圆角会导致图片显示不全*/
   margin: 0 10px;
 }
 
 .message .sender-name {
-  
   font-size: 12px;
   color: #ffffff;
   text-align: center;
@@ -255,40 +254,41 @@ export default {
 }
 
 .project-manager-bubble {
-  background-color: #87f6da;
+  background-color: #646E78;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .tech-leader-bubble {
-  background-color: #da87f6;
+  background-color: #8D98A7;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .qa1-bubble {
-  background-color: #f687da;
+  background-color: #DCCCBB;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .qa2-bubble {
-  background-color: #87daf6;
+  background-color: #A7754D;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .bot02-bubble {
-  background-color: #87f6da;
+  background-color: #EAB464;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .unknown-bubble {
-  background-color: #f6da87;
+  background-color: #E0E0E0;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
+
 
 .button-container {
   margin-top: 10px; /* 给按钮一个上边距 */
