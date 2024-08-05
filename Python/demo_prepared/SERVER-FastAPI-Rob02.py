@@ -51,6 +51,10 @@ import json
 
 Model.os_setenv()
 
+class AgentState(TypedDict):
+    sender: str
+    progress: str
+    messages: Annotated[List[BaseMessage], operator.add]
 
 class default_config:
     """
@@ -128,12 +132,11 @@ class default_config:
 
     def set_OllamaModelName(self, target_model):
         self.OllamaModelName = target_model
+    
+    def set_state(self, state: AgentState):
+        self.final_state = state
 
 
-class AgentState(TypedDict):
-    sender: str
-    progress: str
-    messages: Annotated[List[BaseMessage], operator.add]
 
 
 default_config = default_config()
@@ -389,10 +392,10 @@ async def ask(request: QueryRequest):
 
 @app.post("/upload-agent")
 async def upload_agent(file: UploadFile = File(...)):
-    if not default_config.is_conversation_finished():
-        return JSONResponse(
-            content={"error": "Conversation is not finished yet"}, status_code=400
-        )
+    # if not default_config.is_conversation_finished():
+    #     return JSONResponse(
+    #         content={"error": "Conversation is not finished yet"}, status_code=400
+    #     )
 
     try:
         file_content = await file.read()
