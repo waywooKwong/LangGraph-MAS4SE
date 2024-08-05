@@ -51,6 +51,10 @@ import json
 
 Model.os_setenv()
 
+class AgentState(TypedDict):
+    sender: str
+    progress: str
+    messages: Annotated[List[BaseMessage], operator.add]
 
 class default_config:
     """
@@ -80,7 +84,7 @@ class default_config:
         # 将提示词生成器单独导出
         self.prompt_creatation = PromptGenerator()
         self.conversation_finished = False  # 标志对话是否完成
-        self.initial_question = HumanMessage(content="")
+        self.initial_question = HumanMessage(content="",name="user")
         # self.showButton = False
         # self.user_is_satisfy = False
         self.file_uploaded = False
@@ -128,12 +132,11 @@ class default_config:
 
     def set_OllamaModelName(self, target_model):
         self.OllamaModelName = target_model
+    
+    #   为生成最终的文本
+    def set_state(self, state:AgentState):
+        self.final_state = state
 
-
-class AgentState(TypedDict):
-    sender: str
-    progress: str
-    messages: Annotated[List[BaseMessage], operator.add]
 
 
 default_config = default_config()
@@ -389,10 +392,10 @@ async def ask(request: QueryRequest):
 
 @app.post("/upload-agent")
 async def upload_agent(file: UploadFile = File(...)):
-    if not default_config.is_conversation_finished():
-        return JSONResponse(
-            content={"error": "Conversation is not finished yet"}, status_code=400
-        )
+    # if not default_config.is_conversation_finished():
+    #     return JSONResponse(
+    #         content={"error": "Conversation is not finished yet"}, status_code=400
+    #     )
 
     try:
         file_content = await file.read()
@@ -670,7 +673,8 @@ async def handle_button_click(button_click: ButtonClick):
 
         default_config.initial_question = HumanMessage(
             content="请你根据以下需求说明书完成你的工作并向下属分配工作"
-            + default_config.answer
+            + default_config.answer,
+            name="user"
         )
 
         # 返回成功的响应
