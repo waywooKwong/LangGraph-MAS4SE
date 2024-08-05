@@ -1,3 +1,4 @@
+<!-- 案例模板二 -->
 <template>
   <div class="chat-main">
     <!-- 侧边栏 -->
