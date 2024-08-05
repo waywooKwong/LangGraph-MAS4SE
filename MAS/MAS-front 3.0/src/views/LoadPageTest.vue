@@ -42,7 +42,8 @@ export default {
       roles: [], // 角色列表
       stepCompleted: [], // 记录每个步骤是否完成
       currentStep: 0, // 当前步骤索引
-      stepCheckInterval: null
+      stepCheckInterval: null,
+      graph_success: false,
     };
   },
   mounted() {
@@ -55,9 +56,9 @@ export default {
   methods: {
     startStepCheck() {
       setInterval(() => {
-        if (this.stepCompleted.every(step => step === true)) {
-          if (this.$route.path !== '/chat') {
-            this.$router.push({ path: '/chat', name: 'ChatView' });
+        if (this.graph_success === true) {
+          if (this.$route.path !== "/chat") {
+            this.$router.push({ path: "/chat", name: "ChatView" });
           }
         }
       }, 1000); // 每秒检查一次
@@ -98,13 +99,13 @@ export default {
                 messageBox.scrollTop = messageBox.scrollHeight;
               }
             });
+          } else {
+            this.graph_success = data.success;
           }
         } catch (error) {
           console.error("处理消息时发生错误", error);
         }
       };
-
-     
 
       this.socket.onopen = () => {
         console.log("WebSocket 连接已打开");
