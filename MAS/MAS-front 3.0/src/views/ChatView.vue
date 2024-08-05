@@ -517,13 +517,11 @@ export default {
     },
     goToCaseShow(){
       // 获取当前页面的参数 aaa
-      const id_v = 'QC';  // 假设当前页面有一个属性 
+      const userId = 'QC';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
-      this.$router.push({ 
-        name: "CaseShow",
-        params: { id: id_v }
-    });
+      this.$router.push({ path: `/case-show` ,query: { id: userId }});
+    
     },
     goToGithub() {
       window.open(
