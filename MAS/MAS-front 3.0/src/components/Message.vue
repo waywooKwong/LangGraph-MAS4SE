@@ -211,7 +211,7 @@ export default {
 .message .avatar {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+  /* border-radius: 50%; 圆角会导致图片显示不全*/
   margin: 0 10px;
 }
 

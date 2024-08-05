@@ -5,7 +5,7 @@
       <!-- 添加 ref 属性 -->
       <div ref="messageBox" class="message-box">{{ messages }}</div>
     </div>
-    <button @click="startWebSocket">开始 WebSocket 连接</button>
+    <!-- <button @click="startWebSocket">开始 WebSocket 连接</button> -->
 
     <div class="progress">
       <div v-for="(step, index) in roles" :key="index" class="step-wrapper">
@@ -42,9 +42,32 @@ export default {
       roles: [], // 角色列表
       stepCompleted: [], // 记录每个步骤是否完成
       currentStep: 0, // 当前步骤索引
+      stepCheckInterval: null
     };
   },
+  mounted() {
+    this.startWebSocket();
+    this.startStepCheck();
+  },
+  beforeDestroy() {
+    this.stopStepCheck();
+  },
   methods: {
+    startStepCheck() {
+      setInterval(() => {
+        if (this.stepCompleted.every(step => step === true)) {
+          if (this.$route.path !== '/chat') {
+            this.$router.push({ path: '/chat', name: 'ChatView' });
+          }
+        }
+      }, 1000); // 每秒检查一次
+    },
+    stopStepCheck() {
+      if (this.stepCheckInterval) {
+        clearInterval(this.stepCheckInterval);
+        this.stepCheckInterval = null;
+      }
+    },
     startWebSocket() {
       this.socket = new WebSocket("ws://localhost:8000/ws/stream");
 
@@ -80,6 +103,8 @@ export default {
           console.error("处理消息时发生错误", error);
         }
       };
+
+     
 
       this.socket.onopen = () => {
         console.log("WebSocket 连接已打开");
