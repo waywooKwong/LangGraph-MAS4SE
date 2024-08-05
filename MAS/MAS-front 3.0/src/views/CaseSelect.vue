@@ -1,20 +1,21 @@
 <template>
-  <div>
+  <div class="main-case-window">
+    <el-button @click="goToChatView" class="go-chat-button">返回</el-button>
     <h1>MAS<sup>4</sup>SE</h1>
 
     <div class="container">
       <div class="carousel" :data-slide="currentSlide">
         <div class="carousel__slide" @click="goToCase01">
-          111
+          案例一
         </div>
         <div class="carousel__slide" @click="goToCase02">
-          222
+          案例二
         </div>
         <div class="carousel__slide" @click="goToCase03">
-          333
+          案例三
         </div>
         <div class="carousel__slide" @click="goToCase04">
-          444
+          案例四
         </div>
       </div>
       <div class="next" @click="nextSlide">next</div>
@@ -56,10 +57,21 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss" >
 @import url('https://fonts.googleapis.com/css?family=Lato:300|Oswald');
 
 $primary-color: hsl(289, 100%, 50%);
+.main-case-window{
+  height: 100%;
+  background-color: $primary-color;
+}
+
+.go-chat-button{
+  margin-top: 20px;
+  margin-left: 20px;
+  padding: 10px 40px;
+  background-color: #7debf8;
+}
 
 .container {
   width: 90%;
@@ -95,11 +107,16 @@ $primary-color: hsl(289, 100%, 50%);
 }
 
 .carousel__slide {
-  margin-top: 20%;
+  margin-top: 50%;
   position: absolute;
   width: 15em;
   height: 15em;
   background: white;
+
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  cursor: pointer;
 
   img {
     width: 100%;
@@ -134,7 +151,7 @@ $primary-color: hsl(289, 100%, 50%);
   top: 50%;
   right: 0;
   width: 7em;
-  margin-top: 0;
+  margin-top: 7%;
   border-radius: 3px;
   background: darken($primary-color, 30%);
   text-align: center;
@@ -145,11 +162,11 @@ $primary-color: hsl(289, 100%, 50%);
 }
 
 .next {
-  right: 10%; // 调整这个值来向中心靠拢
+  right: 15%; // 调整这个值来向中心靠拢
 }
 
 .prev {
-  left: 10%; // 调整这个值来向中心靠拢
+  left: 15%; // 调整这个值来向中心靠拢
 }
 
 
@@ -160,22 +177,22 @@ $primary-color: hsl(289, 100%, 50%);
   box-sizing: border-box;
 }
 
-html,
-body {
-  width: 100%;
-  height: 100%;
-}
+// html,
+// body {
+//   width: 100%;
+//   height: 100%;
+// }
 
-html {
-  font-size: 62.5%;
-}
+// html {
+//   font-size: 62.5%;
+// }
 
-body {
-  background: $primary-color;
-  font-family: 'Lato', sans-serif;
-  font-size: 2em;
-  line-height: 1.5;
-}
+// body {
+//   background: $primary-color;
+//   font-family: 'Lato', sans-serif;
+//   font-size: 2em;
+//   line-height: 1.5;
+// }
 
 .container {
   width: 90%;
