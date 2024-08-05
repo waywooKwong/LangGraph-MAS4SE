@@ -51,6 +51,10 @@ import json
 
 Model.os_setenv()
 
+class AgentState(TypedDict):
+    sender: str
+    progress: str
+    messages: Annotated[List[BaseMessage], operator.add]
 
 class default_config:
     """
@@ -129,11 +133,10 @@ class default_config:
     def set_OllamaModelName(self, target_model):
         self.OllamaModelName = target_model
 
+    def set_state(self, state: AgentState):
+        self.final_state = state
 
-class AgentState(TypedDict):
-    sender: str
-    progress: str
-    messages: Annotated[List[BaseMessage], operator.add]
+
 
 
 default_config = default_config()
@@ -472,9 +475,9 @@ async def initialize_workflow(websocket: WebSocket):
     for message in data["Message"]:
         label_text = message["label_text"]
         if (
-            label_text != "Bot2"
-            and label_text.lower() != "start"
-            and label_text.lower() != "end"
+                label_text != "Bot2"
+                and label_text.lower() != "start"
+                and label_text.lower() != "end"
         ):
             roles.append(label_text)
     # 将roles传给前端
@@ -519,7 +522,7 @@ async def initialize_workflow(websocket: WebSocket):
                     # 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
                     description = ""
                     for chunk in default_config.prompt_creatation.generate_prompt(
-                        role=role, duty=duty
+                            role=role, duty=duty
                     ):
                         await asyncio.sleep(0.1)  # 模拟延迟
                         description += chunk
@@ -670,7 +673,7 @@ async def handle_button_click(button_click: ButtonClick):
 
         default_config.initial_question = HumanMessage(
             content="请你根据以下需求说明书完成你的工作并向下属分配工作"
-            + default_config.answer
+                    + default_config.answer
         )
 
         # 返回成功的响应
