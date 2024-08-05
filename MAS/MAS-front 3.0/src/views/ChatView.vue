@@ -107,8 +107,7 @@
            
           <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
           <!-- 如果 userRequestDialogVisible 是 true， 显示弹框 -->
-          <!-- <div v-if="userRequestDialogVisible" class="userRequestDialog"> -->
-          <div class="userRequestDialog">
+          <div v-if="userRequestDialogVisible" class="userRequestDialog">
             <el-input v-model="feedback"  placeholder="输入您的修改意见" type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }" clearable></el-input>
             <el-button @click="userRequest" class=".sendQueryButton">发送修改意见</el-button>
           </div>
