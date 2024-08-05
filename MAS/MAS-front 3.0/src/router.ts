@@ -62,6 +62,11 @@ const routes = [
     name: 'CaseSelect',
     component: CaseSelect,
   },
+  {
+    path: '/loadt',
+    name: 'LoadPageTest',
+    component: LoadPageTest,
+  },
 ];
 
 const router = new VueRouter({
