@@ -51,10 +51,12 @@ import json
 
 Model.os_setenv()
 
+
 class AgentState(TypedDict):
     sender: str
     progress: str
     messages: Annotated[List[BaseMessage], operator.add]
+
 
 class default_config:
     """
@@ -84,7 +86,7 @@ class default_config:
         # 将提示词生成器单独导出
         self.prompt_creatation = PromptGenerator()
         self.conversation_finished = False  # 标志对话是否完成
-        self.initial_question = HumanMessage(content="",name="user")
+        self.initial_question = HumanMessage(content="", name="user")
         # self.showButton = False
         # self.user_is_satisfy = False
         self.file_uploaded = False
@@ -132,11 +134,13 @@ class default_config:
 
     def set_OllamaModelName(self, target_model):
         self.OllamaModelName = target_model
-    
+
     #   为生成最终的文本
-    def set_state(self, state:AgentState):
+    def set_state(self, state: AgentState):
         self.final_state = state
 
+    def set_state(self, state: AgentState):
+        self.final_state = state
 
 
 default_config = default_config()
@@ -448,9 +452,9 @@ async def receive_model(request: ModelRequest):
 async def initialize_workflow(websocket: WebSocket):
     await websocket.accept()
     # 如果json文件没有上传
-    # if not default_config.file_uploaded:
-    #     print("No json uploaded yet.")
-    #     return
+    if not default_config.file_uploaded:
+        print("No json uploaded yet.")
+        return
 
     json_file_path = default_config.get_path()
     print("----")
@@ -475,9 +479,9 @@ async def initialize_workflow(websocket: WebSocket):
     for message in data["Message"]:
         label_text = message["label_text"]
         if (
-            label_text != "Bot2"
-            and label_text.lower() != "start"
-            and label_text.lower() != "end"
+                label_text != "Bot2"
+                and label_text.lower() != "start"
+                and label_text.lower() != "end"
         ):
             roles.append(label_text)
     # 将roles传给前端
@@ -522,7 +526,7 @@ async def initialize_workflow(websocket: WebSocket):
                     # 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
                     description = ""
                     for chunk in default_config.prompt_creatation.generate_prompt(
-                        role=role, duty=duty
+                            role=role, duty=duty
                     ):
                         await asyncio.sleep(0.1)  # 模拟延迟
                         description += chunk
@@ -535,11 +539,11 @@ async def initialize_workflow(websocket: WebSocket):
                     model_role = BuildChainAgent(
                         role=role, duty=duty, description=description
                     )
-                ###
-                workflow.add_node(
-                    label_text,
-                    partial(func_node, node_name=label_text, chat_model=model_role),
-                )
+                    ###
+                    workflow.add_node(
+                        role,
+                        partial(func_node, node_name=role, chat_model=model_role),
+                    )
 
     for source_label, targets in link_edges.items():
 
@@ -587,9 +591,10 @@ async def initialize_workflow(websocket: WebSocket):
             else:
                 workflow.add_edge(source_label, target_label)
         # 将default_config.file_uploaded复原
+        print("图创建成功!!!!!!!!!!!!!!!")
         default_config.file_uploaded = False
-        # 将角色创建判断置为true
         default_config.is_role = True
+        await websocket.send_text(json.dumps({"success": default_config.is_role}, ensure_ascii=False))
 
 
 @app.websocket("/ws/run_workflow")
@@ -673,7 +678,7 @@ async def handle_button_click(button_click: ButtonClick):
 
         default_config.initial_question = HumanMessage(
             content="请你根据以下需求说明书完成你的工作并向下属分配工作"
-            + default_config.answer,
+                    + default_config.answer,
             name="user"
         )
 

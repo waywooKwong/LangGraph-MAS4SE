@@ -1,244 +1,266 @@
 <template>
-    <div class="container">
-	<div class="boxes">
-		<div class="box-wrapper">
-			<div class="box">
-				<div class="box-content">
-					<svg width="24" height="25" viewBox="0 0 24 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-						<path d="M11.864 5.00089C7.68 5.06989 4.155 8.52689 4.006 12.7059C3.918 15.1339 4.92 17.4389 6.756 19.0319C7.547 19.7189 8 20.7749 8 21.9999C8 23.6539 9.346 24.9999 11 24.9999H13C14.654 24.9999 16 23.6539 16 21.9999V21.6249C16 20.6589 16.455 19.7269 17.282 18.9989C19.01 17.4809 20 15.2949 20 12.9999C20 10.8389 19.151 8.81289 17.61 7.29689C16.069 5.78089 14.027 4.95189 11.864 5.00089ZM14 21.9999C14 22.5519 13.552 22.9999 13 22.9999H11C10.448 22.9999 10 22.5519 10 21.9309C10 21.6149 9.969 21.3049 9.923 20.9999H14.041C14.016 21.2059 14 21.4149 14 21.6249V21.9999ZM15.962 17.4969C15.451 17.9459 15.039 18.4539 14.722 18.9999H13V14.8159C14.161 14.4019 15 13.3019 15 11.9999C15 11.4469 14.553 10.9999 14 10.9999C13.447 10.9999 13 11.4469 13 11.9999C13 12.5529 12.552 12.9999 12 12.9999C11.448 12.9999 11 12.5519 11 11.9999C11 11.4479 10.553 10.9999 10 10.9999C9.447 10.9999 9 11.4469 9 11.9999C9 13.3019 9.839 14.4019 11 14.8159V18.9999H9.254C8.944 18.4419 8.547 17.9399 8.066 17.5219C6.69 16.3269 5.938 14.5979 6.004 12.7779C6.116 9.64389 8.76 7.05189 11.898 7.00089C11.932 7.00089 11.965 7.00089 12 7.00089C13.586 7.00089 15.077 7.60989 16.208 8.72389C17.364 9.86089 18.001 11.3799 18.001 13.0009C18.001 14.7209 17.258 16.3589 15.963 17.4979L15.962 17.4969ZM16.785 3.47389L18.02 1.46389C18.308 0.991886 18.924 0.844886 19.395 1.13589C19.866 1.42489 20.013 2.03989 19.723 2.51089L18.488 4.52089C18.3 4.82889 17.971 4.99789 17.635 4.99789C17.456 4.99789 17.276 4.94989 17.113 4.84989C16.642 4.56089 16.495 3.94489 16.785 3.47389ZM23.413 7.62189L21.48 8.49389C21.347 8.55489 21.207 8.58289 21.07 8.58289C20.688 8.58289 20.325 8.36389 20.158 7.99389C19.93 7.49089 20.154 6.89789 20.658 6.67189L22.591 5.79989C23.097 5.57089 23.687 5.79689 23.913 6.29989C24.141 6.80289 23.917 7.39589 23.413 7.62189ZM4.194 2.50989C3.905 2.03889 4.053 1.42289 4.524 1.13489C4.997 0.846886 5.611 0.994886 5.899 1.46489L7.131 3.47589C7.42 3.94689 7.272 4.56289 6.801 4.85089C6.638 4.95089 6.457 4.99789 6.28 4.99789C5.943 4.99789 5.615 4.82789 5.426 4.51989L4.194 2.50889V2.50989ZM3.711 8.06089C3.54 8.41989 3.182 8.62889 2.809 8.62889C2.664 8.62889 2.517 8.59789 2.378 8.52989L0.580003 7.66889C0.0820034 7.43089 -0.128997 6.83389 0.110003 6.33589C0.347003 5.83689 0.947003 5.62389 1.443 5.86589L3.241 6.72689C3.739 6.96489 3.95 7.56289 3.711 8.06089Z" />
-					</svg>
+  <div class="main">
+    <AnimationBackground />
+    <div class="main-case-window">
+      <el-button @click="goToChatView" class="go-chat-button">返回</el-button>
+      <h1>MAS<sup>4</sup>SE</h1>
 
-					<span>Something #1</span>
-				</div>
+      <div class="container">
+        <div class="carousel" :data-slide="currentSlide">
+          <div class="carousel__slide" @click="goToCase01">
+            案例一
+          </div>
+          <div class="carousel__slide" @click="goToCase02">
+            案例二
+          </div>
+          <div class="carousel__slide" @click="goToCase03">
+            案例三
+          </div>
+          <div class="carousel__slide" @click="goToCase04">
+            案例四
+          </div>
+        </div>
+        <div class="next" @click="nextSlide">next</div>
+        <div class="prev" @click="prevSlide">previous</div>
+      </div>
+    </div>
+  </div>
+</template>
 
-				<div class="box-background"></div>
-			</div>
-		</div>
+<script>
+import AnimationBackground from '@/components/AnimationBackground.vue'
 
-		<div class="box-wrapper active">
-			<div class="box">
-				<div class="box-content">
-					<svg width="24" height="25" viewBox="0 0 24 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-						<path d="M11.864 5.00089C7.68 5.06989 4.155 8.52689 4.006 12.7059C3.918 15.1339 4.92 17.4389 6.756 19.0319C7.547 19.7189 8 20.7749 8 21.9999C8 23.6539 9.346 24.9999 11 24.9999H13C14.654 24.9999 16 23.6539 16 21.9999V21.6249C16 20.6589 16.455 19.7269 17.282 18.9989C19.01 17.4809 20 15.2949 20 12.9999C20 10.8389 19.151 8.81289 17.61 7.29689C16.069 5.78089 14.027 4.95189 11.864 5.00089ZM14 21.9999C14 22.5519 13.552 22.9999 13 22.9999H11C10.448 22.9999 10 22.5519 10 21.9309C10 21.6149 9.969 21.3049 9.923 20.9999H14.041C14.016 21.2059 14 21.4149 14 21.6249V21.9999ZM15.962 17.4969C15.451 17.9459 15.039 18.4539 14.722 18.9999H13V14.8159C14.161 14.4019 15 13.3019 15 11.9999C15 11.4469 14.553 10.9999 14 10.9999C13.447 10.9999 13 11.4469 13 11.9999C13 12.5529 12.552 12.9999 12 12.9999C11.448 12.9999 11 12.5519 11 11.9999C11 11.4479 10.553 10.9999 10 10.9999C9.447 10.9999 9 11.4469 9 11.9999C9 13.3019 9.839 14.4019 11 14.8159V18.9999H9.254C8.944 18.4419 8.547 17.9399 8.066 17.5219C6.69 16.3269 5.938 14.5979 6.004 12.7779C6.116 9.64389 8.76 7.05189 11.898 7.00089C11.932 7.00089 11.965 7.00089 12 7.00089C13.586 7.00089 15.077 7.60989 16.208 8.72389C17.364 9.86089 18.001 11.3799 18.001 13.0009C18.001 14.7209 17.258 16.3589 15.963 17.4979L15.962 17.4969ZM16.785 3.47389L18.02 1.46389C18.308 0.991886 18.924 0.844886 19.395 1.13589C19.866 1.42489 20.013 2.03989 19.723 2.51089L18.488 4.52089C18.3 4.82889 17.971 4.99789 17.635 4.99789C17.456 4.99789 17.276 4.94989 17.113 4.84989C16.642 4.56089 16.495 3.94489 16.785 3.47389ZM23.413 7.62189L21.48 8.49389C21.347 8.55489 21.207 8.58289 21.07 8.58289C20.688 8.58289 20.325 8.36389 20.158 7.99389C19.93 7.49089 20.154 6.89789 20.658 6.67189L22.591 5.79989C23.097 5.57089 23.687 5.79689 23.913 6.29989C24.141 6.80289 23.917 7.39589 23.413 7.62189ZM4.194 2.50989C3.905 2.03889 4.053 1.42289 4.524 1.13489C4.997 0.846886 5.611 0.994886 5.899 1.46489L7.131 3.47589C7.42 3.94689 7.272 4.56289 6.801 4.85089C6.638 4.95089 6.457 4.99789 6.28 4.99789C5.943 4.99789 5.615 4.82789 5.426 4.51989L4.194 2.50889V2.50989ZM3.711 8.06089C3.54 8.41989 3.182 8.62889 2.809 8.62889C2.664 8.62889 2.517 8.59789 2.378 8.52989L0.580003 7.66889C0.0820034 7.43089 -0.128997 6.83389 0.110003 6.33589C0.347003 5.83689 0.947003 5.62389 1.443 5.86589L3.241 6.72689C3.739 6.96489 3.95 7.56289 3.711 8.06089Z" />
-					</svg>
-
-					<span>Something #2</span>
-				</div>
-
-				<div class="box-background"></div>
-			</div>
-		</div>
-
-		<div class="box-wrapper">
-			<div class="box">
-				<div class="box-content">
-					<svg width="24" height="25" viewBox="0 0 24 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-						<path d="M11.864 5.00089C7.68 5.06989 4.155 8.52689 4.006 12.7059C3.918 15.1339 4.92 17.4389 6.756 19.0319C7.547 19.7189 8 20.7749 8 21.9999C8 23.6539 9.346 24.9999 11 24.9999H13C14.654 24.9999 16 23.6539 16 21.9999V21.6249C16 20.6589 16.455 19.7269 17.282 18.9989C19.01 17.4809 20 15.2949 20 12.9999C20 10.8389 19.151 8.81289 17.61 7.29689C16.069 5.78089 14.027 4.95189 11.864 5.00089ZM14 21.9999C14 22.5519 13.552 22.9999 13 22.9999H11C10.448 22.9999 10 22.5519 10 21.9309C10 21.6149 9.969 21.3049 9.923 20.9999H14.041C14.016 21.2059 14 21.4149 14 21.6249V21.9999ZM15.962 17.4969C15.451 17.9459 15.039 18.4539 14.722 18.9999H13V14.8159C14.161 14.4019 15 13.3019 15 11.9999C15 11.4469 14.553 10.9999 14 10.9999C13.447 10.9999 13 11.4469 13 11.9999C13 12.5529 12.552 12.9999 12 12.9999C11.448 12.9999 11 12.5519 11 11.9999C11 11.4479 10.553 10.9999 10 10.9999C9.447 10.9999 9 11.4469 9 11.9999C9 13.3019 9.839 14.4019 11 14.8159V18.9999H9.254C8.944 18.4419 8.547 17.9399 8.066 17.5219C6.69 16.3269 5.938 14.5979 6.004 12.7779C6.116 9.64389 8.76 7.05189 11.898 7.00089C11.932 7.00089 11.965 7.00089 12 7.00089C13.586 7.00089 15.077 7.60989 16.208 8.72389C17.364 9.86089 18.001 11.3799 18.001 13.0009C18.001 14.7209 17.258 16.3589 15.963 17.4979L15.962 17.4969ZM16.785 3.47389L18.02 1.46389C18.308 0.991886 18.924 0.844886 19.395 1.13589C19.866 1.42489 20.013 2.03989 19.723 2.51089L18.488 4.52089C18.3 4.82889 17.971 4.99789 17.635 4.99789C17.456 4.99789 17.276 4.94989 17.113 4.84989C16.642 4.56089 16.495 3.94489 16.785 3.47389ZM23.413 7.62189L21.48 8.49389C21.347 8.55489 21.207 8.58289 21.07 8.58289C20.688 8.58289 20.325 8.36389 20.158 7.99389C19.93 7.49089 20.154 6.89789 20.658 6.67189L22.591 5.79989C23.097 5.57089 23.687 5.79689 23.913 6.29989C24.141 6.80289 23.917 7.39589 23.413 7.62189ZM4.194 2.50989C3.905 2.03889 4.053 1.42289 4.524 1.13489C4.997 0.846886 5.611 0.994886 5.899 1.46489L7.131 3.47589C7.42 3.94689 7.272 4.56289 6.801 4.85089C6.638 4.95089 6.457 4.99789 6.28 4.99789C5.943 4.99789 5.615 4.82789 5.426 4.51989L4.194 2.50889V2.50989ZM3.711 8.06089C3.54 8.41989 3.182 8.62889 2.809 8.62889C2.664 8.62889 2.517 8.59789 2.378 8.52989L0.580003 7.66889C0.0820034 7.43089 -0.128997 6.83389 0.110003 6.33589C0.347003 5.83689 0.947003 5.62389 1.443 5.86589L3.241 6.72689C3.739 6.96489 3.95 7.56289 3.711 8.06089Z" />
-					</svg>
-
-					<span>Something #3</span>
-				</div>
-
-				<div class="box-background"></div>
-			</div>
-		</div>
-
-		<div class="box-wrapper">
-			<div class="box">
-				<div class="box-content">
-					<svg width="24" height="25" viewBox="0 0 24 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-						<path d="M11.864 5.00089C7.68 5.06989 4.155 8.52689 4.006 12.7059C3.918 15.1339 4.92 17.4389 6.756 19.0319C7.547 19.7189 8 20.7749 8 21.9999C8 23.6539 9.346 24.9999 11 24.9999H13C14.654 24.9999 16 23.6539 16 21.9999V21.6249C16 20.6589 16.455 19.7269 17.282 18.9989C19.01 17.4809 20 15.2949 20 12.9999C20 10.8389 19.151 8.81289 17.61 7.29689C16.069 5.78089 14.027 4.95189 11.864 5.00089ZM14 21.9999C14 22.5519 13.552 22.9999 13 22.9999H11C10.448 22.9999 10 22.5519 10 21.9309C10 21.6149 9.969 21.3049 9.923 20.9999H14.041C14.016 21.2059 14 21.4149 14 21.6249V21.9999ZM15.962 17.4969C15.451 17.9459 15.039 18.4539 14.722 18.9999H13V14.8159C14.161 14.4019 15 13.3019 15 11.9999C15 11.4469 14.553 10.9999 14 10.9999C13.447 10.9999 13 11.4469 13 11.9999C13 12.5529 12.552 12.9999 12 12.9999C11.448 12.9999 11 12.5519 11 11.9999C11 11.4479 10.553 10.9999 10 10.9999C9.447 10.9999 9 11.4469 9 11.9999C9 13.3019 9.839 14.4019 11 14.8159V18.9999H9.254C8.944 18.4419 8.547 17.9399 8.066 17.5219C6.69 16.3269 5.938 14.5979 6.004 12.7779C6.116 9.64389 8.76 7.05189 11.898 7.00089C11.932 7.00089 11.965 7.00089 12 7.00089C13.586 7.00089 15.077 7.60989 16.208 8.72389C17.364 9.86089 18.001 11.3799 18.001 13.0009C18.001 14.7209 17.258 16.3589 15.963 17.4979L15.962 17.4969ZM16.785 3.47389L18.02 1.46389C18.308 0.991886 18.924 0.844886 19.395 1.13589C19.866 1.42489 20.013 2.03989 19.723 2.51089L18.488 4.52089C18.3 4.82889 17.971 4.99789 17.635 4.99789C17.456 4.99789 17.276 4.94989 17.113 4.84989C16.642 4.56089 16.495 3.94489 16.785 3.47389ZM23.413 7.62189L21.48 8.49389C21.347 8.55489 21.207 8.58289 21.07 8.58289C20.688 8.58289 20.325 8.36389 20.158 7.99389C19.93 7.49089 20.154 6.89789 20.658 6.67189L22.591 5.79989C23.097 5.57089 23.687 5.79689 23.913 6.29989C24.141 6.80289 23.917 7.39589 23.413 7.62189ZM4.194 2.50989C3.905 2.03889 4.053 1.42289 4.524 1.13489C4.997 0.846886 5.611 0.994886 5.899 1.46489L7.131 3.47589C7.42 3.94689 7.272 4.56289 6.801 4.85089C6.638 4.95089 6.457 4.99789 6.28 4.99789C5.943 4.99789 5.615 4.82789 5.426 4.51989L4.194 2.50889V2.50989ZM3.711 8.06089C3.54 8.41989 3.182 8.62889 2.809 8.62889C2.664 8.62889 2.517 8.59789 2.378 8.52989L0.580003 7.66889C0.0820034 7.43089 -0.128997 6.83389 0.110003 6.33589C0.347003 5.83689 0.947003 5.62389 1.443 5.86589L3.241 6.72689C3.739 6.96489 3.95 7.56289 3.711 8.06089Z" />
-					</svg>
-
-					<span>Something #4</span>
-				</div>
-
-				<div class="box-background"></div>
-			</div>
-		</div>
-	</div>
-</div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        activeIndex: null,
-      };
+export default {
+  components: {
+    AnimationBackground
+  },
+  data() {
+    return {
+      currentSlide: 1
+    };
+  },
+  methods: {
+    nextSlide() {
+      this.currentSlide = this.currentSlide === 4 ? 1 : this.currentSlide + 1;
     },
-    methods: {
-      setActive(index) {
-        this.activeIndex = this.activeIndex === index ? null : index;
-      },
+    prevSlide() {
+      this.currentSlide = this.currentSlide === 1 ? 4 : this.currentSlide - 1;
     },
-    mounted() {
-      this.$nextTick(() => {
-        const boxes = this.$el.querySelectorAll('.box-wrapper');
-  
-        function activateTab(box) {
-          boxes.forEach((t) => t.classList.remove('active'));
-          box.classList.add('active');
-        }
-  
-        boxes.forEach((box) => {
-          box.addEventListener('mouseover', () => {
-            activateTab(box);
-          });
-  
-          box.addEventListener('click', () => {
-            activateTab(box);
-          });
-        });
-      });
+    goToChatView() {
+      this.$router.push({ name: 'ChatView' });
     },
-    beforeDestroy() {
-      const boxes = this.$el.querySelectorAll('.box-wrapper');
-      boxes.forEach((box) => {
-        box.removeEventListener('mouseover', () => {});
-        box.removeEventListener('click', () => {});
-      });
-    },
-  };
-  </script>
-  
+    goToCase01() {
+        // 获取当前页面的参数 aaa
+      const userId = 'QC';  // 假设当前页面有一个属性 
 
-  <style scoped>
-  @import url('https://fonts.googleapis.com/css?family=Lexend');
-  
-  html {
-    font-size: 62.5%;
-    line-height: normal; /* fix normalize.css */
-    position: relative;
-    box-sizing: border-box;
-    min-height: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    --polygon_gap: clamp(1.5rem, 3vw, 3rem);
-    --polygon_gap-neg: calc(var(--polygon_gap) * -1);
+      // 跳转并传递参数
+      this.$router.push({ path: `/case-show` ,query: { id: userId }});
+
+    },
+    goToCase02() {
+        // 获取当前页面的参数 aaa
+      const userId = 'QC';  // 假设当前页面有一个属性 
+
+      // 跳转并传递参数
+      this.$router.push({ path: `/case-show` ,query: { id: userId }});
+
+    },
+    goToCase03() {
+       // 获取当前页面的参数 aaa
+      const userId = 'QC';  // 假设当前页面有一个属性 
+
+      // 跳转并传递参数
+      this.$router.push({ path: `/case-show` ,query: { id: userId }});
+
+    },
+    goToCase04() {
+        // 获取当前页面的参数 aaa
+      const userId = 'QC';  // 假设当前页面有一个属性 
+
+      // 跳转并传递参数
+      this.$router.push({ path: `/case-show` ,query: { id: userId }});
+
+    },
   }
-  
-  body {
-    font-family: 'Lexend', sans-serif;
+};
+</script>
+
+<style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css?family=Lato:300|Oswald');
+
+$primary-color: hsl(289, 100%, 50%);
+.main{
+  height: 100vh;
+  position: relative; /* 使子元素能够相对定位 */
+  overflow: hidden; /* 防止背景溢出 */
+}
+
+.main-case-window {
+  position: relative; /* 使 content 可以使用 z-index */
+  height: 100%;
+  background-color: transparent;
+  z-index: 2; /* 设置一个较高的 z-index 值 */
+}
+
+.go-chat-button {
+  margin-top: 20px;
+  margin-left: 20px;
+  padding: 10px 40px;
+  background-color: #7debf8;
+}
+
+.container {
+  width: 90%;
+  max-width: 60em;
+  margin: 0 auto;
+  padding-bottom: 5em;
+  perspective: 100em;
+}
+
+.carousel {
+  position: relative;
+  width: 15em;
+  height: 15em;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+
+  &[data-slide="1"] {
+    transform: rotateY(0deg);
   }
-  
-  .container {
+
+  &[data-slide="2"] {
+    transform: rotateY(-90deg);
+  }
+
+  &[data-slide="3"] {
+    transform: rotateY(-180deg);
+  }
+
+  &[data-slide="4"] {
+    transform: rotateY(-270deg);
+  }
+}
+
+.carousel__slide {
+  margin-top: 50%;
+  position: absolute;
+  width: 15em;
+  height: 15em;
+  background: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  img {
     width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: calc(var(--polygon_gap) + 10px);
   }
-  
-  .boxes {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    aspect-ratio: 8 / 6;
-  }
-  
-  .box-wrapper {
-    width: 100%;
-    height: 100%;
-    transition: filter 0.5s, transform 0.5s;
-  }
-  
-  .box-wrapper.active,
-  .box-wrapper:has(.box:hover) {
-    filter: drop-shadow(0px 15px 4px #d9d9d9);
-  }
-  
-  .box {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background-color: black;
-    color: black;
-    clip-path: polygon(0 50%, 50% 100%, 100% 50%, 50% 0);
-    transition: color 0.5s;
-    cursor: pointer;
-  }
-  
-  .box-wrapper.active .box,
-  .box:hover {
-    color: white;
-  }
-  
-  .box-wrapper:nth-child(1) {
-    transform: translateY(50%) translateX(var(--polygon_gap-neg));
-  }
-  
-  .box-wrapper.active:nth-child(1),
-  .box-wrapper:nth-child(1):hover {
-    transform: translateY(50%) translateX(calc(var(--polygon_gap-neg) - 10px));
-  }
-  
-  .box-wrapper:nth-child(2) {
-    transform: translateX(-50%) translateY(var(--polygon_gap-neg));
-  }
-  
-  .box-wrapper.active:nth-child(2),
-  .box-wrapper:nth-child(2):hover {
-    transform: translateX(-50%) translateY(calc(var(--polygon_gap-neg) - 10px));
-  }
-  
-  .box-wrapper:nth-child(3) {
-    transform: translateX(50%) translateY(var(--polygon_gap));
-  }
-  
-  .box-wrapper.active:nth-child(3),
-  .box-wrapper:nth-child(3):hover {
-    transform: translateX(50%) translateY(calc(var(--polygon_gap) + 10px));
-  }
-  
-  .box-wrapper:nth-child(4) {
-    transform: translateY(-50%) translateX(var(--polygon_gap));
-  }
-  
-  .box-wrapper.active:nth-child(4),
-  .box-wrapper:nth-child(4):hover {
-    transform: translateY(-50%) translateX(calc(var(--polygon_gap) + 10px));
-  }
-  
-  .box-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    background-color: white;
-    clip-path: polygon(
-      1px 50%,
-      50% calc(100% - 1px),
-      calc(100% - 1px) 50%,
-      50% 1px
-    );
-    transition: background-color 0.5s;
-  }
-  
-  .box-wrapper.active .box-background,
-  .box:hover .box-background {
-    background-color: black;
-  }
-  
-  .box-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    font-size: clamp(1.6rem, 2.4vw, 2.4rem);
-    font-weight: 300;
-  }
-  
-  .box-content svg {
-    height: clamp(1.6rem, 2.5vw, 2.5rem);
-    width: auto;
-  }
-  </style>
-  
+}
+
+.back,
+.carousel__slide:nth-child(3) {
+  transform: translateZ(-7.5em) rotateY(180deg);
+}
+
+.right,
+.carousel__slide:nth-child(2) {
+  transform: rotateY(-270deg) translateX(7.5em);
+  transform-origin: top right;
+}
+
+.left,
+.carousel__slide:nth-child(4) {
+  transform: rotateY(270deg) translateX(-7.5em);
+  transform-origin: center left;
+}
+
+.front,
+.carousel__slide:nth-child(1) {
+  transform: translateZ(7.5em);
+}
+
+.next,
+.prev {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 7em;
+  margin-top: 7%;
+  border-radius: 3px;
+  background: darken($primary-color, 30%);
+  text-align: center;
+  line-height: 3;
+  color: white;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.next {
+  right: 15%; // 调整这个值来向中心靠拢
+}
+
+.prev {
+  left: 15%; // 调整这个值来向中心靠拢
+}
+
+
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+// html,
+// body {
+//   width: 100%;
+//   height: 100%;
+// }
+
+// html {
+//   font-size: 62.5%;
+// }
+
+// body {
+//   background: $primary-color;
+//   font-family: 'Lato', sans-serif;
+//   font-size: 2em;
+//   line-height: 1.5;
+// }
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin: 0;
+  padding: 0.5em;
+  font-family: 'Oswald', sans-serif;
+  font-size: 4em;
+  text-transform: uppercase;
+  text-align: center;
+  // color: linear-gradient(-225deg, #231557 0%, #44107A 29%, #FF1361 67%, #FFF800 100%);
+  background: linear-gradient(-225deg, #231557 0%, #44107A 29%, #FF1361 67%, #FFF800 100%);
+  background-clip: text; /* 标准属性 */
+  -webkit-background-clip: text; /* WebKit 前缀 */
+  -webkit-text-fill-color: transparent;
+}
+
+.cf:before,
+.cf:after {
+  content: " ";
+  display: table;
+}
+
+.cf:after {
+  clear: both;
+}
+
+.cf {
+  *zoom: 1;
+}
+</style>
