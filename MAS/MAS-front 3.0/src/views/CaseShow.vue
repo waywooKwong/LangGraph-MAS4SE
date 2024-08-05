@@ -73,15 +73,20 @@ export default {
   },
   methods: {
     
-    id() {
-        // 通过 this.$route.params 获取 params 参数
-        return this.$route.params.id_v;
-    },
+    mounted() {
+    const userId = this.$route.query.id;
+    console.log(`User ID: ${userId}`);
+    this.userId=userId;
+    alert()
+  },
     
     // 保存用户ID
     async saveUserId() {
       
-      console.log('用户ID:', this.userId);
+      //console.log('用户ID:', this.userId);
+      const userId = this.$route.query.id;
+      console.log(`User ID: ${userId}`);
+      this.userId=userId;
       this.userIdDialogVisible = false;
       // 在这里进一步处理用户ID的逻辑，连接数据库，检查用户id下是否含有历史记录，如果有历史记录，则取出放到历史记录框中
       try {
