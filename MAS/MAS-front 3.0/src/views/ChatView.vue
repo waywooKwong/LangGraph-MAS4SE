@@ -301,7 +301,7 @@ export default {
       // 在这里进一步处理用户ID的逻辑，连接数据库，检查用户id下是否含有历史记录，如果有历史记录，则取出放到历史记录框中
       try {
         // 发送请求以获取用户ID下的历史记录
-        const response = await axios.get(`http://localhost:3000/dialogs?user=${this.userId}`);
+        const response = await axios.get(`http://localhost:3000/get-dialogs?user=${this.userId}`);
         const userDialogs = response.data;
 
         if (userDialogs.length > 0) {

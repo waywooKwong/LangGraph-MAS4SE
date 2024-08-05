@@ -39,26 +39,6 @@ const routes = [
     component:CaseShow,
   },
   {
-    path:'/case-show01',
-    name: 'CaseShow01',
-    component:CaseShow01,
-  },
-  {
-    path:'/case-show02',
-    name: 'CaseShow02',
-    component:CaseShow02,
-  },
-  {
-    path:'/case-show03',
-    name: 'CaseShow03',
-    component:CaseShow03,
-  },
-  {
-    path:'/case-show04',
-    name: 'CaseShow04',
-    component:CaseShow04,
-  },
-  {
     path: '/CaseSelect',
     name: 'CaseSelect',
     component: CaseSelect,
