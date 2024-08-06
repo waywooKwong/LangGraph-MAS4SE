@@ -1,33 +1,43 @@
+<!-- src/views/LoadPageTest.vue -->
 <template>
-  <div>
-    <h1>实时消息流</h1>
-    <div class="message-container">
-      <!-- 添加 ref 属性 -->
-      <div ref="messageBox" class="message-box">{{ messages }}</div>
-    </div>
-    <!-- <button @click="startWebSocket">开始 WebSocket 连接</button> -->
+  <div class="load-main-window">
+    <PromptDialog class="background" />
+    <div class="load-main-content">
+      <h1>实时消息流</h1>
+      <div class="message-container">
+        <!-- 添加 ref 属性 -->
+        <div ref="messageBox" class="message-box">{{ messages }}</div>
+      </div>
+      <!-- <button @click="startWebSocket">开始 WebSocket 连接</button> -->
 
-    <div class="progress">
-      <div v-for="(step, index) in roles" :key="index" class="step-wrapper">
-        <div class="circle" :class="{
-          done: stepCompleted[index],
-          active: index === currentStep - 1,
-        }">
-          <span class="label">{{ index + 1 }}</span>
-          <span class="title">{{ step }}</span>
+      <div class="progress">
+        <div v-for="(step, index) in roles" :key="index" class="step-wrapper">
+          <div class="circle" :class="{
+            done: stepCompleted[index],
+            active: index === currentStep - 1,
+          }">
+            <span class="label">{{ index + 1 }}</span>
+            <span class="title">{{ step }}</span>
+          </div>
+          <!-- 进度条 -->
+          <span v-if="index < roles.length - 1" class="bar" :class="{
+            done: index < currentStep - 1,
+            active: index === currentStep - 2,
+          }"></span>
         </div>
-        <!-- 进度条 -->
-        <span v-if="index < roles.length - 1" class="bar" :class="{
-          done: index < currentStep - 1,
-          active: index === currentStep - 2,
-        }"></span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import PromptDialog from '@/components/PromptDialog.vue';
+
 export default {
+  components: {
+    PromptDialog,
+  },
+
   data() {
     return {
       messages: "", // 用于存储和显示流式消息
@@ -54,7 +64,6 @@ export default {
             this.stopStepCheck(); // 条件满足时停止定时器
             this.$router.push({ path: "/chat", name: "ChatView" });
           }
-
         }
       }, 1000); // 每秒检查一次
     },
@@ -119,6 +128,41 @@ export default {
 </script>
 
 <style scoped>
+.load-main-window {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background {
+  position: absolute;
+  top: -15%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.load-main-content {
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+}
+
+
+/* 其他样式保持不变 */
+
+h1 {
+  margin-top: 2.5vmin;
+  text-align: center;
+  color: #fd6969;
+}
+
 *,
 *:after,
 *:before {
@@ -155,8 +199,6 @@ export default {
   border-radius: 50%;
   border: 1px solid #d5d5da;
   position: relative;
-
-
 }
 
 .bar {
@@ -166,7 +208,6 @@ export default {
   border: none;
   border-radius: 0;
   background: #f7f7f7;
-  /* 底色黄色 */
 }
 
 .circle .label {
@@ -191,13 +232,11 @@ export default {
 .bar.done,
 .circle.done {
   background: #f0f0f0;
-  /* 浅黄色 */
 }
 
 .bar.active {
   background: linear-gradient(to right,
       #f0f0d6 40%,
-      /* 黄色渐变 */
       #f7f7c8 60%);
 }
 
@@ -214,30 +253,26 @@ export default {
 .circle.active .label {
   color: #fff;
   background: #ffa500;
-  /* 橙黄色 */
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
 }
 
 .circle.active .title {
   color: #ffa500;
-  /* 橙黄色 */
 }
 
 /* Message Container */
 .message-container {
-  width: 100%;
-  height: 300px;
-  /* 你可以根据需要调整高度 */
+  width: 160vmin;
+  height: 60vmin;
   overflow-y: auto;
-  /* 启用垂直滚动条 */
   border: 1px solid #ddd;
   padding: 10px;
-  background-color: #f9f9f9;
+  background-color: transparent;
 }
 
 .message-box {
+  color: white;
   white-space: pre-wrap;
-  /* 保留空格和换行 */
   word-break: break-word;
 }
 </style>

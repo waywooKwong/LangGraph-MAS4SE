@@ -10,7 +10,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* 全屏高度 */
+  /* height: 100vh; 全屏高度 */
+  z-index: -1;
 }
 
 /* Message Box */
@@ -18,7 +19,7 @@
   --border-size: 3px;
   --border-angle: 0turn;
   /* 调整框的大小 */
-  width: 100vmin;
+  width: 160vmin;
   height: 60vmin;
   background-image: conic-gradient(from var(--border-angle), #213, #112 50%, #213), conic-gradient(from var(--border-angle), transparent 20%, #08f, #f03);
   background-size: calc(100% - (var(--border-size) * 2)) calc(100% - (var(--border-size) * 2)), cover;
