@@ -22,7 +22,8 @@
             <div class="menu-inner" ref="menuInner">
               <div class="history-header">
 
-                <button @click="saveDialog">上传数据库</button>
+                <button @click="saveDialog">上传数
+                  据库</button>
                 <!-- 新建聊天按钮 -->
                 <button class="new-chat-button" @click="createNewChat">新建对话</button>
                 <!-- 手动保存历史记录按钮 -->
@@ -64,11 +65,11 @@
           </el-dialog>
 
           <!-- 打开抽屉按钮 -->
-          <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
+          <!-- <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
             <el-button :disabled="isSending" class="chat-history-button" type="text" @click="toggleDrawer">
               历史记录
             </el-button>
-          </el-tooltip>
+          </el-tooltip> -->
           <!--  下拉选择模型菜单 -->
           <el-dropdown @command="selectOllamaModel" class="model-select-bottom-dropdown">
             <el-button type="primary" class="model-select-bottom">
@@ -88,7 +89,7 @@
           <!-- 头像按钮，点击后弹出用户ID输入框 -->
           <el-tooltip effect="dark" content="输入用户ID" placement="bottom" class="userID-input">
             <el-button :disabled="isSending" class="avatar-button" type="text" @click="openUserIdDialog">
-              <i class="el-icon-user"></i>{{ userId }}
+              <i class="el-icon-user user-icon" ></i><span class="user-id-text">{{ userId }}</span>
             </el-button>
           </el-tooltip>
           <!-- "关于"按钮，点击后跳转到GitHub -->
@@ -557,7 +558,6 @@ export default {
   height: 100%;
   position: relative; /* 使 content 可以使用 z-index */
   background-color: transparent;
-  z-index: 1; /* 设置一个较高的 z-index 值 */
 }
 
 .avatar-button {
@@ -608,7 +608,7 @@ export default {
 
   .model-select-bottom-dropdown {
     position: absolute;
-    left: 110px;
+    left: 30px;
     top: 50%;
     transform: translateY(-50%);
 
@@ -633,6 +633,13 @@ export default {
   .userID-input {
     position: relative;
     right: 80px;
+
+    .user-icon {
+      color: white;
+    }
+    .user-id-text {
+      color: white;
+    }
   }
 
 
@@ -861,7 +868,7 @@ export default {
       height: 100%;
       position: fixed;
       background-color: #222222;
-      width: 400px;
+      width: 375px;
       transition: 1000ms all cubic-bezier(0.19, 1, 0.22, 1);
       transform: translateX(-100%);
       left: 110px;
@@ -891,7 +898,7 @@ export default {
       }
 
       .history-header button {
-        width: 278px;
+        width: 255px;
         margin: 3px 0;
         /* 设置按钮的上下间距 */
         padding: 10px 20px;
@@ -1114,5 +1121,9 @@ export default {
   /* 鼠标悬停时显示手型指针 */
   transition: background-color 0.3s;
   /* 背景色过渡效果 */
+}
+
+.el-dialog{
+  z-index: 5000;
 }
 </style>
