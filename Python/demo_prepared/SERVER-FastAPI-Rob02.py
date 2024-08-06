@@ -203,7 +203,7 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     ###
     # print("response:",response)
     # ai_message_content = response.content
-    print("ai_message_content:", ai_message_content)
+    # print("ai_message_content:", ai_message_content)
 
     print(node_name, "func_node answer:", ai_message_content)
     result = AIMessage(name=node_name, content=ai_message_content)
@@ -398,10 +398,10 @@ async def ask(request: QueryRequest):
 
 @app.post("/upload-agent")
 async def upload_agent(file: UploadFile = File(...)):
-    # if not default_config.is_conversation_finished():
-    #     return JSONResponse(
-    #         content={"error": "Conversation is not finished yet"}, status_code=400
-    #     )
+    if not default_config.is_conversation_finished():
+        return JSONResponse(
+            content={"error": "Conversation is not finished yet"}, status_code=400
+        )
 
     try:
         file_content = await file.read()
@@ -711,8 +711,9 @@ async def handle_button_click(button_click: ButtonClick):
         default_config.initial_question = HumanMessage(
             content="请你根据以下需求说明书完成你的工作并向下属分配工作"
             + default_config.answer,
-            name="user",
+            name="bot",
         )
+        print(default_config.initial_question)
 
         # 返回成功的响应
         return {"status": "success", "received_message": button_click.message}

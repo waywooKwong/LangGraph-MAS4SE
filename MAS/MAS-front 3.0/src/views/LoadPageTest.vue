@@ -171,7 +171,9 @@ h1 {
   box-sizing: border-box;
   font-family: "Open Sans";
 }
-
+h1{
+  text-align: center;
+}
 /* Progress Steps */
 .progress {
   width: 1000px;

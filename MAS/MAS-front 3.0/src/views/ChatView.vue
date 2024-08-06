@@ -111,7 +111,8 @@
             <div v-if="userRequestDialogVisible" class="userRequestDialog">
               <el-input v-model="feedback" placeholder="输入您的修改意见" type="textarea" :rows="1"
                 :autosize="{ minRows: 1, maxRows: 2 }" clearable></el-input>
-              <el-button @click="userRequest" class=".sendQueryButton">发送修改意见</el-button>
+              <!-- <el-button @click="userRequest" class="sendQueryButton">发送修改意见</el-button> -->
+              <FlyButton text="发送修改意见" nexttext="已发送修改意见" :onClick="userRequest"  class="sendQueryButton2" />
             </div>
           </div>
         </div>
@@ -139,7 +140,8 @@
           <el-input v-model="query" placeholder="Type a message" @keyup.enter.native="sendQuery" :disabled="isSending"
             type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }"></el-input>
           <!-- 发送按钮 -->
-          <el-button @click="sendQuery" :disabled="isSending" class="sendQueryButton">发送</el-button>
+          <!-- <el-button @click="sendQuery" :disabled="isSending" class="sendQueryButton">发送</el-button> -->
+          <FlyButton text="发送" nexttext="已发送" :onClick="sendQuery" :disabled="isSending" class="sendQueryButton2" />
           <!-- 上传文件按钮 -->
           <el-button @click="uploadFiles" :disabled="isSending || files.length === 0"
             class="uploadFilesButton">上传文件</el-button>
@@ -179,12 +181,14 @@ import apiClient from '@/axios';
 import axios from 'axios';
 import MainSidebar from '@/components/MainSidebar.vue';
 import AnimationBackground from '@/components/AnimationBackground.vue';
+import FlyButton from '@/components/FlyButton.vue';
 
 export default {
   components: {
     Message,
     MainSidebar,
     AnimationBackground,
+    FlyButton,
   },
   data() {
     return {
@@ -400,10 +404,18 @@ export default {
 
       this.messages.push({ text: this.query, sender: "user", status: "false" });
       this.scrollToBottom();
+      
+
 
       this.isSending = true;
 
+
       try {
+        this.messages.push({
+          text: "waiting",
+          sender: "智能客服机器人",
+          status: "loading",
+        });
         const res = await apiClient.post("/ask", {
           query: this.query,
         });
@@ -411,20 +423,13 @@ export default {
         console.log(response.message)
         console.log(response.sender)
         console.log(response.progress)
-        if (response.message) {
-          this.messages.push({
-            text: response.message,
-            sender: response.sender,
-            status: String(response.progress)
-
-          });
-        } else {
-          this.messages.push({
-            text: JSON.stringify(response, null, 2),
-            sender: "bot",
-            status: "false"
-          });
-        }
+        this.messages = this.messages.map(msg => 
+          msg.status === "loading" ? {
+            text: response.message || JSON.stringify(response, null, 2),
+            sender: response.sender || "bot",
+            status: String(response.progress || "false")
+          } : msg
+        );
         // this.messages.push({ text: response, sender: response.sender });
       } catch (error) {
         console.error(error);
@@ -746,6 +751,10 @@ export default {
     background-color: #dbd3e4;
     color: #000;
     font-weight: bold;
+  }
+  .sendQueryButton2 {
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .uploadFilesButton {

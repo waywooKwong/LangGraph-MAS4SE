@@ -15,6 +15,7 @@ import MainSidebar from './components/MainSidebar.vue';
 import CaseSelect from './views/CaseSelect.vue';
 import AnimationBackground from './components/AnimationBackground.vue';
 import PromptDialog from './components/PromptDialog.vue';
+import FlyButton from './components/FlyButton.vue';
 
 Vue.use(VueRouter);
 
@@ -58,6 +59,11 @@ const routes = [
     path: '/PD',
     name: 'PromptDialog',
     component: PromptDialog,
+  },
+  {
+    path: '/FB',
+    name: 'FlyButton',
+    component: FlyButton,
   },
 ];
 
