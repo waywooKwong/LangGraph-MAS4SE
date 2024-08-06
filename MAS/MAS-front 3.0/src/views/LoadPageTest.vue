@@ -9,25 +9,18 @@
 
     <div class="progress">
       <div v-for="(step, index) in roles" :key="index" class="step-wrapper">
-        <div
-          class="circle"
-          :class="{
-            done: stepCompleted[index],
-            active: index === currentStep - 1,
-          }"
-        >
+        <div class="circle" :class="{
+          done: stepCompleted[index],
+          active: index === currentStep - 1,
+        }">
           <span class="label">{{ index + 1 }}</span>
           <span class="title">{{ step }}</span>
         </div>
         <!-- 进度条 -->
-        <span
-          v-if="index < roles.length - 1"
-          class="bar"
-          :class="{
-            done: index < currentStep - 1,
-            active: index === currentStep - 2,
-          }"
-        ></span>
+        <span v-if="index < roles.length - 1" class="bar" :class="{
+          done: index < currentStep - 1,
+          active: index === currentStep - 2,
+        }"></span>
       </div>
     </div>
   </div>
@@ -55,18 +48,20 @@ export default {
   },
   methods: {
     startStepCheck() {
-      setInterval(() => {
+      this.intervalId = setInterval(() => {
         if (this.graph_success === true) {
           if (this.$route.path !== "/chat") {
+            this.stopStepCheck(); // 条件满足时停止定时器
             this.$router.push({ path: "/chat", name: "ChatView" });
           }
+
         }
       }, 1000); // 每秒检查一次
     },
     stopStepCheck() {
-      if (this.stepCheckInterval) {
-        clearInterval(this.stepCheckInterval);
-        this.stepCheckInterval = null;
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
       }
     },
     startWebSocket() {
@@ -142,31 +137,40 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 .step-wrapper {
   display: flex;
   align-items: center;
 }
+
 .circle,
 .bar {
   display: inline-block;
   background: #fff;
 }
+
 .circle {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   border: 1px solid #d5d5da;
   position: relative;
+
+
 }
+
 .bar {
-  width: 80px;
+  width: 130px;
   height: 6px;
   margin: 0 -5px;
   border: none;
   border-radius: 0;
-  background: #f7f7f7; /* 底色黄色 */
+  background: #f7f7f7;
+  /* 底色黄色 */
 }
+
 .circle .label {
+  margin-top: 3px;
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -175,6 +179,7 @@ export default {
   color: #b5b5ba;
   font-size: 17px;
 }
+
 .circle .title {
   color: #b5b5ba;
   font-size: 13px;
@@ -185,43 +190,54 @@ export default {
 /* Done / Active */
 .bar.done,
 .circle.done {
-  background: #f0f0f0; /* 浅黄色 */
+  background: #f0f0f0;
+  /* 浅黄色 */
 }
+
 .bar.active {
-  background: linear-gradient(
-    to right,
-    #f0f0d6 40%,
-    /* 黄色渐变 */ #f7f7c8 60%
-  );
+  background: linear-gradient(to right,
+      #f0f0d6 40%,
+      /* 黄色渐变 */
+      #f7f7c8 60%);
 }
+
 .circle.done .label {
   color: #fff;
-  background: #ffd700; /* 金黄色 */
+  background: #00ff11;
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
 }
+
 .circle.done .title {
   color: #444;
 }
+
 .circle.active .label {
   color: #fff;
-  background: #ffa500; /* 橙黄色 */
+  background: #ffa500;
+  /* 橙黄色 */
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
 }
+
 .circle.active .title {
-  color: #ffa500; /* 橙黄色 */
+  color: #ffa500;
+  /* 橙黄色 */
 }
 
 /* Message Container */
 .message-container {
   width: 100%;
-  height: 300px; /* 你可以根据需要调整高度 */
-  overflow-y: auto; /* 启用垂直滚动条 */
+  height: 300px;
+  /* 你可以根据需要调整高度 */
+  overflow-y: auto;
+  /* 启用垂直滚动条 */
   border: 1px solid #ddd;
   padding: 10px;
   background-color: #f9f9f9;
 }
+
 .message-box {
-  white-space: pre-wrap; /* 保留空格和换行 */
+  white-space: pre-wrap;
+  /* 保留空格和换行 */
   word-break: break-word;
 }
 </style>
