@@ -47,9 +47,9 @@ from Class_01_PromptGenerator import PromptGenerator
 from langchain_core.prompts import PromptTemplate
 from typing import Dict, Any
 
-# 禁用并行处理
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+# from Python.demo_prepared.Class01_PromptGenerator import PromptGenerator
 Model.os_setenv()
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 # def generate_prompt(role: str, duty: str) -> str:
@@ -102,16 +102,14 @@ class BuildChainAgent:
                     您有时候是单独一个人解决用户提出的问题\n
                     (重要)但是，大多数时候，您需要与伙伴合作解决问题\n
                     (非常重要)您需要清楚自身的职责与伙伴的技能与特长，相互提问，获得对方的回答或者提问{input}后，给出相应的提问或者最佳回答\n
-                    (最重要!!!):在一次对话中，你只能扮演（提问方）与（回答方）其中一个角色！！！！\n
-                    (重要)生成的答案中尽可能不要包含‘#’等特殊字符，如果需要分点作答，用markdown格式中的x标题来标注!!!!\n
-                    (重要)你与其他角色对话时要符合现实世界中团队开发交流时的口吻！！！\n
-                    (非常重要)您必须时时刻刻明确自身的角色{role},杜绝出现角色错乱的现象发生!!!!!!!!!!!!!!!!!!!!!\n
+                    (最重要!!!)如果你作为提问方:你必须且只能生成要分配的任务问题题干，其他多余的一切回答均不能生成!!!\n
+                              如果你作为回答方:不要重复提问方发布的任务，也不要生成分析过程，直接逐个生成解决方案\n
+                    (非常重要)您必须时时刻刻明确自身的角色{role},杜绝出现角色错乱的现象发生!!!!!!!!!!!!!!!!!!!!!
                     您能通过分析外界提供的基础信息\n
                     对于用户或者其他角色提出的需求 ‘{input}’ 做出最完美的回答\n
-                    格式按照严格的markdown格式输出\n
-                    回答均使用中文,回答口吻必须用“我”来回答,生成答案必须按需换行\n
-                    回答必须严格按照软件开发流程来回答，回答字数尽可能在2000字左右\n
-                    (警告！！！)回答时禁止重复上一轮的答案!!!\n
+                    格式必须按照字符串格式输出\n
+                    回答均使用中文,回答口吻必须用“我”来回答,生成答案必须按需7换行\n
+                    (警告！！！)回答时禁止重复上一轮的答案!!!
                     """
         response_schemas = [
             # ResponseSchema(name="description", description="用户问题"),
@@ -205,9 +203,9 @@ class BuildChainAgent:
         chain_first = create_retrieval_chain(history_chain, documents_chain)
         ################# system prompt 2(需要个性化定制)
         template_second = (
-            "你的职责是:"
-            + self.duty
-            + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
+                "你的职责是:"
+                + self.duty
+                + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
         )
         prompt_template_second = ChatPromptTemplate.from_template(template_second)
 
@@ -225,10 +223,10 @@ class BuildChainAgent:
         # )
 
         chain_second = (
-            {"role_text": chain_first}
-            | prompt_template_second
-            | self.chat_model
-            | StrOutputParser()
+                {"role_text": chain_first}
+                | prompt_template_second
+                | self.chat_model
+                | StrOutputParser()
         )
 
         return chain_second
@@ -257,32 +255,40 @@ class BuildChainAgent:
         #     verbose=True,
         #     handle_parsing_errors=True
         # )
-
         return agent_executor
 
     def invoke(self, user_input: str) -> str:
         # Invoke the retriever chain
-        response = self.agent.invoke(
-            {
-                "input": user_input,
-                "chat_history": self.chat_history,
-            }
-        )
-
-        # Update chat history
-        self.chat_history.append(HumanMessage(content=user_input))
-        self.chat_history.append(AIMessage(content=response["output"]))
-
-        return response["output"]
-
-    def process(self, input: str) -> str:
         prompt_str_input = self.prompt_template.format(
-            description=self.description, input=input, role=self.role
-        )
-        # print("输入的提示词字符串：", prompt_str_input)
-        # output_completion: AIMessage = self.chat_model.invoke(input=prompt_str_input)
-        # print("chatModel输出内容：", output_completion.content.strip())
-        result = self.invoke(user_input=prompt_str_input)
-        # print("retriever_chain输出内容：", result.strip())
-        # 返回retriever链结果
-        return result
+            description=self.description, input=input, role=self.role)
+
+        # 使用流式输出
+        for chunk in self.retriever_chain.stream(
+                {
+                    "input": prompt_str_input,
+                    "chat_history": self.chat_history,
+                }
+        ):
+            # print(chunk.content, end="|", flush=True)
+            # print(chunk.content.strip())
+            yield chunk.strip()
+
+        # # Update chat history
+        # self.chat_history.append(HumanMessage(content=user_input))
+        # self.chat_history.append(AIMessage(content=response["output"]))
+        #
+        # return response["output"]
+
+
+role = "项目经理"
+duty = "生成需求说明书"
+description = ""
+model = BuildChainAgent(role=role, duty=duty, description=description)
+user_input = "请你根据以下任务完成你的工作并向下属分配工作：开发一款抖音"
+# response = model.invoke(user_input)
+# print(response)
+description = ""
+for chunk in model.invoke(user_input):
+    description += chunk
+
+    print(chunk, end="|", flush=True)

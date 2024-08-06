@@ -1,177 +1,176 @@
 <template>
-  <div class="chat-main">
-    <!-- 侧边栏 -->
-    <div class="side-bar">
-      <div class="toggle-bar">
-        <!-- 图标，点击后跳转到AgentMap页面 -->
-        <div @click="goToAgentMap()" class="icon go-to-agent" data-tooltip="Go to AgentMap"></div>
-        <!-- 图标，点击后跳转到CaseShow页面 -->
-         <div @click="goToCaseShow()" class="icon go-to-case " data-tooltip="经典案例"></div>
-      </div>
-      <div class="move-sidebar">
-        <div id="menu" ref="menu" :class="{ expanded: menuExpanded }">
-          <!-- 汉堡按钮 -->
-          <div class="hamburger" ref="hamburger">
-            <div class="line"></div>
-            <div class="line"></div>
-            <div class="line"></div>
-          </div>
-          <!-- 菜单内容 -->
-          <div class="menu-inner" ref="menuInner">
-            <div class="history-header">
-        
-              <button @click="saveDialog">上传数据库</button>
-              <!-- 新建聊天按钮 -->
-              <button class="new-chat-button" @click="createNewChat">新建对话</button>
-              <!-- 手动保存历史记录按钮 -->
-              <button :disabled="messages.length === 0" class="save-history-button" @click="saveHistory">保存对话</button>
-              <!-- 清除历史记录按钮 -->
-              <button class="clear-history-button" @click="clearHistory">清除记录</button>
+  <div class="main">
+    <AnimationBackground />
+    <div class="chat-main">
+      <!-- 侧边栏 -->
+      <div class="side-bar">
+        <div class="toggle-bar">
+          <!-- 图标，点击后跳转到AgentMap页面 -->
+          <div @click="goToAgentMap()" class="icon go-to-agent" data-tooltip="Go to AgentMap"></div>
+          <!-- 图标，点击后跳转到CaseShow页面 -->
+          <div @click="goToCaseShow()" class="icon go-to-case " data-tooltip="经典案例"></div>
+        </div>
+        <div class="move-sidebar">
+          <div id="menu" ref="menu" :class="{ expanded: menuExpanded }">
+            <!-- 汉堡按钮 -->
+            <div class="hamburger" ref="hamburger">
+              <div class="line"></div>
+              <div class="line"></div>
+              <div class="line"></div>
             </div>
-            <!-- 历史聊天记录 -->
-            <div class="chat-history">
-              <div v-for="(history, index) in chatHistory" :key="index" class="chat-history-message"
-                @click="continueChat(history)">
-                <span>{{ history.summary }}</span>
+            <!-- 菜单内容 -->
+            <div class="menu-inner" ref="menuInner">
+              <div class="history-header">
+
+                <button @click="saveDialog">上传数据库</button>
+                <!-- 新建聊天按钮 -->
+                <button class="new-chat-button" @click="createNewChat">新建对话</button>
+                <!-- 手动保存历史记录按钮 -->
+                <button :disabled="messages.length === 0" class="save-history-button" @click="saveHistory">保存对话</button>
+                <!-- 清除历史记录按钮 -->
+                <button class="clear-history-button" @click="clearHistory">清除记录</button>
+              </div>
+              <!-- 历史聊天记录 -->
+              <div class="chat-history">
+                <div v-for="(history, index) in chatHistory" :key="index" class="chat-history-message"
+                  @click="continueChat(history)">
+                  <span>{{ history.summary }}</span>
+                </div>
               </div>
             </div>
+            <!-- SVG 背景 -->
+            <svg version="1.1" id="blob" ref="blob" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+              <path id="blob-path" ref="blobPath" d="M60,500H0V0h60c0,0,20,172,20,250S60,900,60,500z" />
+            </svg>
           </div>
-          <!-- SVG 背景 -->
-          <svg version="1.1" id="blob" ref="blob" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <path id="blob-path" ref="blobPath" d="M60,500H0V0h60c0,0,20,172,20,250S60,900,60,500z"/>
-          </svg>
         </div>
       </div>
+
+      <div class="main-content">
+        <!-- 聊天窗口头部 -->
+        <div class="chat-header">
+          <h2>智能对话客服</h2>
+
+
+
+          <!-- 用户ID输入对话框 -->
+          <el-dialog title="输入用户ID" :visible.sync="userIdDialogVisible">
+            <el-input v-model="userId" placeholder="请输入用户ID"></el-input>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="userIdDialogVisible = false">取消</el-button>
+              <el-button type="primary" @click="saveUserId()">保存</el-button>
+            </span>
+          </el-dialog>
+
+          <!-- 打开抽屉按钮 -->
+          <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
+            <el-button :disabled="isSending" class="chat-history-button" type="text" @click="toggleDrawer">
+              历史记录
+            </el-button>
+          </el-tooltip>
+          <!--  下拉选择模型菜单 -->
+          <el-dropdown @command="selectOllamaModel" class="model-select-bottom-dropdown">
+            <el-button type="primary" class="model-select-bottom">
+              Ollama Custom-Made: {{ ModelSelectText }}<i class="model-select"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="gemma2">gemma2</el-dropdown-item>
+              <el-dropdown-item command="llama3.1">llama3.1</el-dropdown-item>
+              <el-dropdown-item command="llama3">llama3</el-dropdown-item>
+              <el-dropdown-item command="qwen2">qwen2</el-dropdown-item>
+              <el-dropdown-item command="glm4">glm4</el-dropdown-item>
+              <el-dropdown-item command="phi3">phi3</el-dropdown-item>
+              <el-dropdown-item command="yi">yi</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
+          <!-- 头像按钮，点击后弹出用户ID输入框 -->
+          <el-tooltip effect="dark" content="输入用户ID" placement="bottom" class="userID-input">
+            <el-button :disabled="isSending" class="avatar-button" type="text" @click="openUserIdDialog">
+              <i class="el-icon-user"></i>{{ userId }}
+            </el-button>
+          </el-tooltip>
+          <!-- "关于"按钮，点击后跳转到GitHub -->
+          <el-tooltip effect="dark" content="跳转到 GitHub 页面" placement="bottom">
+            <el-button :disabled="isSending" class="about-button" type="text" @click="goToGithub">
+              Github
+            </el-button>
+          </el-tooltip>
+        </div>
+
+        <div class="main-window">
+          <!-- 聊天窗口 -->
+          <div class="chat-window" ref="chatWindow">
+            <!-- 遍历并渲染每条消息/ 排除发送者是 'kuangweihua'(我定义发送修改意见的那个 sender 是 'kuangwiehua' :） ) -->
+            <Message v-for="(message, index) in messages" :key="index" :text="message.text" :sender="message.sender"
+              :status="message.status" />
+
+            <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
+            <!-- 如果 userRequestDialogVisible 是 true， 显示弹框 -->
+            <div v-if="userRequestDialogVisible" class="userRequestDialog">
+              <el-input v-model="feedback" placeholder="输入您的修改意见" type="textarea" :rows="1"
+                :autosize="{ minRows: 1, maxRows: 2 }" clearable></el-input>
+              <el-button @click="userRequest" class=".sendQueryButton">发送修改意见</el-button>
+            </div>
+          </div>
+        </div>
+        <el-footer class="footer">
+          <!-- 文件上传组件 -->
+          <el-upload class="upload-demo" ref="upload" action="" :file-list="fileList" :show-file-list="false"
+            :before-upload="handleFileUpload" :disabled="isSending" multiple>
+            <!-- 自定义上传按钮 -->
+            <template v-slot:trigger>
+              <el-tooltip effect="dark" content="选择文件" placement="top">
+                <el-button :disabled="isSending" class="selectFilesButton">
+                  <i class="el-icon-paperclip" size: small></i>
+                </el-button>
+              </el-tooltip>
+            </template>
+          </el-upload>
+          <!-- 文件列表 -->
+          <ul class="file-list">
+            <li v-for="(file, index) in files" :key="index">
+              {{ file.name }}
+              <el-button type="text" @click="removeFile(index)">删除</el-button>
+            </li>
+          </ul>
+          <!-- 消息输入框 -->
+          <el-input v-model="query" placeholder="Type a message" @keyup.enter.native="sendQuery" :disabled="isSending"
+            type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }"></el-input>
+          <!-- 发送按钮 -->
+          <el-button @click="sendQuery" :disabled="isSending" class="sendQueryButton">发送</el-button>
+          <!-- 上传文件按钮 -->
+          <el-button @click="uploadFiles" :disabled="isSending || files.length === 0"
+            class="uploadFilesButton">上传文件</el-button>
+
+        </el-footer>
+      </div>
+
+      <!-- 抽屉组件 -->
+      <el-drawer class="history-drawer-contain" title="历史记录" :visible.sync="drawerVisible" direction="ltr" size="20%">
+        <div class="history-contain">
+          <div class="history-header">
+
+            <button @click="saveDialog">上传数据库</button>
+            <!-- 新建聊天按钮 -->
+            <button class="new-chat-button" @click="createNewChat">新建对话</button>
+            <!-- 手动保存历史记录按钮 -->
+            <button :disabled="messages.length === 0" class="save-history-button" @click="saveHistory">保存对话</button>
+            <!-- 清除历史记录按钮 -->
+            <button class="clear-history-button" @click="clearHistory">清除记录</button>
+          </div>
+          <!-- 历史聊天记录 -->
+          <div class="chat-history">
+            <div v-for="(history, index) in chatHistory" :key="index" class="chat-history-message"
+              @click="continueChat(history)">
+              <span>{{ history.summary }}</span>
+            </div>
+          </div>
+        </div>
+      </el-drawer>
     </div>
-
-    <div class="main-content">
-      <!-- 聊天窗口头部 -->
-      <div class="chat-header">
-        <h2>智能对话客服</h2>
-
-       
-
-        <!-- 用户ID输入对话框 -->
-        <el-dialog
-          title="输入用户ID"
-          :visible.sync="userIdDialogVisible" 
-          >
-          <el-input v-model="userId" placeholder="请输入用户ID"></el-input>
-          <span slot="footer" class="dialog-footer">
-            <el-button @click="userIdDialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="saveUserId()">保存</el-button>
-          </span>
-        </el-dialog>
-
-        <!-- 打开抽屉按钮 -->
-        <el-tooltip effect="dark" content="打开历史记录" placement="bottom">
-          <el-button :disabled="isSending" class="chat-history-button" type="text" @click="toggleDrawer">
-            历史记录
-          </el-button>
-        </el-tooltip>
-        <!--  下拉选择模型菜单 -->
-        <el-dropdown @command="selectOllamaModel" class="model-select-bottom-dropdown">
-          <el-button type="primary" class="model-select-bottom">
-            Ollama Custom-Made: {{ ModelSelectText }}<i class="model-select"></i>
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="gemma2">gemma2</el-dropdown-item>
-            <el-dropdown-item command="llama3.1">llama3.1</el-dropdown-item>
-            <el-dropdown-item command="llama3">llama3</el-dropdown-item>
-            <el-dropdown-item command="qwen2">qwen2</el-dropdown-item>
-            <el-dropdown-item command="glm4">glm4</el-dropdown-item>
-            <el-dropdown-item command="phi3">phi3</el-dropdown-item>
-            <el-dropdown-item command="yi">yi</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
- 
-        <!-- 头像按钮，点击后弹出用户ID输入框 -->
-        <el-tooltip effect="dark" content="输入用户ID" placement="bottom" class="userID-input">
-          <el-button :disabled="isSending" class="avatar-button" type="text" @click="openUserIdDialog">
-            <i class="el-icon-user"></i>{{ userId }}
-          </el-button>
-        </el-tooltip>
-        <!-- "关于"按钮，点击后跳转到GitHub -->
-        <el-tooltip effect="dark" content="跳转到 GitHub 页面" placement="bottom">
-          <el-button :disabled="isSending" class="about-button" type="text" @click="goToGithub">
-            Github
-          </el-button>
-        </el-tooltip>
-      </div>
-
-      <div class="main-window">
-        <!-- 聊天窗口 -->
-        <div class="chat-window" ref="chatWindow">
-          <!-- 遍历并渲染每条消息/ 排除发送者是 'kuangweihua'(我定义发送修改意见的那个 sender 是 'kuangwiehua' :） ) -->
-          <Message v-for="(message, index) in messages"  :key="index" :text="message.text" :sender="message.sender" :status="message.status"  />
-           
-          <!-- 如果 sender 是 'kuangwiehua'， 蹦出来提交修改意见的弹框 :） -->
-          <!-- 如果 userRequestDialogVisible 是 true， 显示弹框 -->
-          <div v-if="userRequestDialogVisible" class="userRequestDialog">
-            <el-input v-model="feedback"  placeholder="输入您的修改意见" type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }" clearable></el-input>
-            <el-button @click="userRequest" class=".sendQueryButton">发送修改意见</el-button>
-          </div>
-        </div>
-      </div>
-      <el-footer class="footer">
-        <!-- 文件上传组件 -->
-        <el-upload class="upload-demo" ref="upload" action="" :file-list="fileList" :show-file-list="false"
-          :before-upload="handleFileUpload" :disabled="isSending" multiple>
-          <!-- 自定义上传按钮 -->
-          <template v-slot:trigger>
-            <el-tooltip effect="dark" content="选择文件" placement="top">
-              <el-button :disabled="isSending" class="selectFilesButton">
-                <i class="el-icon-paperclip" size: small></i>
-              </el-button>
-            </el-tooltip>
-          </template>
-        </el-upload>
-        <!-- 文件列表 -->
-        <ul class="file-list">
-          <li v-for="(file, index) in files" :key="index">
-            {{ file.name }}
-            <el-button type="text" @click="removeFile(index)">删除</el-button>
-          </li>
-        </ul>
-        <!-- 消息输入框 -->
-        <el-input v-model="query" placeholder="Type a message" @keyup.enter.native="sendQuery" :disabled="isSending"
-          type="textarea" :rows="1" :autosize="{ minRows: 1, maxRows: 2 }"></el-input>
-        <!-- 发送按钮 -->
-        <el-button @click="sendQuery" :disabled="isSending" class="sendQueryButton">发送</el-button>
-        <!-- 上传文件按钮 -->
-        <el-button @click="uploadFiles" :disabled="isSending || files.length === 0"
-          class="uploadFilesButton">上传文件</el-button>
-
-      </el-footer>
-    </div>
-
-    <!-- 抽屉组件 -->
-    <el-drawer class="history-drawer-contain"
-      title="历史记录"
-      :visible.sync="drawerVisible"
-      direction="ltr"
-      size="20%">
-      <div class="history-contain">
-        <div class="history-header">
-        
-          <button @click="saveDialog">上传数据库</button>
-          <!-- 新建聊天按钮 -->
-          <button class="new-chat-button" @click="createNewChat">新建对话</button>
-          <!-- 手动保存历史记录按钮 -->
-          <button :disabled="messages.length === 0" class="save-history-button" @click="saveHistory">保存对话</button>
-          <!-- 清除历史记录按钮 -->
-          <button class="clear-history-button" @click="clearHistory">清除记录</button>
-        </div>
-        <!-- 历史聊天记录 -->
-        <div class="chat-history">
-          <div v-for="(history, index) in chatHistory" :key="index" class="chat-history-message"
-            @click="continueChat(history)">
-            <span>{{ history.summary }}</span>
-          </div>
-        </div>
-      </div>
-    </el-drawer>
-  </div> 
+  </div>
 </template>
 
 <script>
@@ -179,11 +178,13 @@ import Message from '@/components/Message.vue';
 import apiClient from '@/axios';
 import axios from 'axios';
 import MainSidebar from '@/components/MainSidebar.vue';
+import AnimationBackground from '@/components/AnimationBackground.vue';
 
 export default {
   components: {
     Message,
     MainSidebar,
+    AnimationBackground,
   },
   data() {
     return {
@@ -199,7 +200,7 @@ export default {
       userIdDialogVisible: false, // 用户ID输入对话框可见性
       userRequestDialogVisible: false, //用户反馈意见可见性
       userId: '',// 用户ID
-      feedback:'',
+      feedback: '',
       userId: '', // 用户ID
       //以下为动画侧边栏参数
       height: window.innerHeight,
@@ -293,20 +294,20 @@ export default {
       }
     },
 
-     // 保存用户ID
+    // 保存用户ID
     async saveUserId() {
       console.log('用户ID:', this.userId);
       this.userIdDialogVisible = false;
       // 在这里进一步处理用户ID的逻辑，连接数据库，检查用户id下是否含有历史记录，如果有历史记录，则取出放到历史记录框中
-         try {
+      try {
         // 发送请求以获取用户ID下的历史记录
-        const response = await axios.get(`http://localhost:3000/dialogs?user=${this.userId}`);
+        const response = await axios.get(`http://localhost:3000/get-dialogs?user=${this.userId}`);
         const userDialogs = response.data;
 
         if (userDialogs.length > 0) {
           // 按时间戳排序，获取最新的历史记录
           const latestDialog = userDialogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
-          
+
           // 将最新的历史记录里的消息放到历史记录框中
           this.chatHistory = latestDialog.message;
         } else {
@@ -328,12 +329,12 @@ export default {
         const message = JSON.parse(event.data);
 
         if (message.message) {
-            if(message.sender=='kuangweihua')
-              this.userRequestDialogVisible = true
-            else{
-              this.messages.push({ text: message.message, sender: message.sender, status: message.progress });
-              this.userRequestDialogVisible = false
-            }
+          if (message.sender == 'kuangweihua')
+            this.userRequestDialogVisible = true
+          else {
+            this.messages.push({ text: message.message, sender: message.sender, status: message.progress });
+            this.userRequestDialogVisible = false
+          }
         } else {
           console.log("Received JSON without message field:", message);
           this.messages.push({
@@ -367,22 +368,22 @@ export default {
         console.error('WebSocket error (userRequest):', error);
       };
     },
-    
+
     userRequest() {
       if (this.clientUserRequest && this.clientUserRequest.readyState === WebSocket.OPEN) {
         this.clientUserRequest.send(this.feedback);
         this.feedback = '已提交修改意见'; // 清空输入框
-        this. userRequestDialogVisible = false;
+        this.userRequestDialogVisible = false;
       }
     },
-  
+
     // 打开用户ID输入对话框
     openUserIdDialog() {
       this.userIdDialogVisible = true;
     },
 
-   
-    
+
+
     toggleDrawer() {
       this.drawerVisible = !this.drawerVisible;
     },
@@ -397,12 +398,20 @@ export default {
     async sendQuery() {
       if (this.query.trim() === "") return;
 
-      this.messages.push({ text: this.query, sender: "user" ,status:"false"});
+      this.messages.push({ text: this.query, sender: "user", status: "false" });
       this.scrollToBottom();
+      
+
 
       this.isSending = true;
 
+
       try {
+        this.messages.push({
+          text: "waiting",
+          sender: "智能客服机器人",
+          status: "loading",
+        });
         const res = await apiClient.post("/ask", {
           query: this.query,
         });
@@ -410,24 +419,17 @@ export default {
         console.log(response.message)
         console.log(response.sender)
         console.log(response.progress)
-        if (response.message) {
-          this.messages.push({
-            text: response.message,
-            sender: response.sender,
-            status: String(response.progress)
-            
-          });
-        } else {
-          this.messages.push({
-            text: JSON.stringify(response, null, 2),
-            sender: "bot",
-            status: "false"
-          });
-        }
+        this.messages = this.messages.map(msg => 
+          msg.status === "loading" ? {
+            text: response.message || JSON.stringify(response, null, 2),
+            sender: response.sender || "bot",
+            status: String(response.progress || "false")
+          } : msg
+        );
         // this.messages.push({ text: response, sender: response.sender });
       } catch (error) {
         console.error(error);
-        this.messages.push({ text: "请求失败，请稍后再试。", sender: "bot" ,status:"false"});
+        this.messages.push({ text: "请求失败，请稍后再试。", sender: "bot", status: "false" });
       } finally {
         this.saveMessages();
         this.query = "";
@@ -455,16 +457,15 @@ export default {
             'Content-Type': 'multipart/form-data',
           },
         });
-        this.messages.push({ text: "文件上传成功", sender: "bot" ,status:"false"});
+        this.messages.push({ text: "文件上传成功", sender: "bot", status: "false" });
         this.files = [];
       } catch (error) {
         console.error(error);
         this.messages.push({
-          text: `文件上传失败，请稍后再试。错误信息: ${
-            error.response ? error.response.data : error.message
-          }`,
+          text: `文件上传失败，请稍后再试。错误信息: ${error.response ? error.response.data : error.message
+            }`,
           sender: "bot",
-          status:"false"
+          status: "false"
         });
       } finally {
         this.isSending = false;
@@ -514,11 +515,11 @@ export default {
     goToAgentMap() {
       this.$router.push({ name: "AgentMap" });
     },
-    goToCaseShow(){
+    goToCaseShow() {
 
 
       // 跳转并传递参数
-      this.$router.push({ 
+      this.$router.push({
         name: "CaseSelect",
 
       });
@@ -532,7 +533,7 @@ export default {
     async selectOllamaModel(command) {
       try {
         const res = await apiClient.post("/OllamaMade", { model: command });
-        this.$message("已选择 " + command +" 进行模型层级 ( Model SystemPrompt ) 的角色定制");
+        this.$message("已选择 " + command + " 进行模型层级 ( Model SystemPrompt ) 的角色定制");
         this.ModelSelectText = command;
       } catch (error) {
         this.$message.error("请求失败: " + error.message);
@@ -545,14 +546,22 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/assets/fonts/index";
+.main{
+  height: 100vh;
+  position: relative; /* 使子元素能够相对定位 */
+  overflow: hidden; /* 防止背景溢出 */
+}
+
 
 .chat-main {
   display: flex;
   height: 100%;
+  position: relative; /* 使 content 可以使用 z-index */
+  background-color: transparent;
 }
 
-.avatar-button{
- color: #000;
+.avatar-button {
+  color: #000;
 }
 
 .main-content {
@@ -596,6 +605,7 @@ export default {
     color: #394398;
     padding: 0;
   }
+
   .model-select-bottom-dropdown {
     position: absolute;
     left: 110px;
@@ -619,12 +629,13 @@ export default {
       font-size: 12px;
     }
   }
-  .userID-input{
+
+  .userID-input {
     position: relative;
     right: 80px;
   }
 
-  
+
 
   .about-button {
     position: absolute;
@@ -650,7 +661,7 @@ export default {
   overflow: hidden;
   /* 避免整个窗口的滚动条 */
   justify-content: center;
- 
+
   background-size: cover;
   background-position: center;
 }
@@ -662,8 +673,9 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1; /* 使背景图片在内容下方 */
-  background-image: linear-gradient(-225deg, #231557 0%, #44107A 29%, #FF1361 67%, #FFF800 100%);
+  z-index: -1;
+  /* 使背景图片在内容下方 */
+  // background-image: linear-gradient(-225deg, #231557 0%, #44107A 29%, #FF1361 67%, #FFF800 100%);
 }
 
 .chat-window {
@@ -703,17 +715,18 @@ export default {
   height: 80px;
   display: flex;
   // padding: 10px;
-  background-color: #dce2fa;
+  background-color: transparent;
   align-items: center;
   /* 底部水平对齐 */
 
-  .selectFilesButton{
+  .selectFilesButton {
     height: 30px;
     width: 30px;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
     display: flex;
   }
+
   .el-input {
     flex: 1;
     margin-right: 10px;
@@ -768,7 +781,8 @@ export default {
   z-index: 2;
   background: none;
   display: flex;
-  flex: 0 0 100px; /* 固定宽度，可以根据需要调整 */
+  flex: 0 0 100px;
+  /* 固定宽度，可以根据需要调整 */
 
   .toggle-bar {
     height: 100%;
@@ -779,7 +793,8 @@ export default {
     flex-flow: column;
     align-items: center;
     padding: 13px;
-    flex: 0 0 50px; /* 固定宽度，可以根据需要调整 */
+    flex: 0 0 50px;
+    /* 固定宽度，可以根据需要调整 */
 
     .icon {
       margin-bottom: 26px;
@@ -825,6 +840,7 @@ export default {
         /* 请确保这个内容与您的字体图标设置相匹配 */
       }
     }
+
     .go-to-case {
       &:before {
         content: "\e94c";
@@ -836,121 +852,145 @@ export default {
       opacity: 0.35;
     }
   }
+
   .move-sidebar {
-  flex: 1; /* 占据剩余空间 */
-  #menu {
-    height: 100%;
-    position: fixed;
-    background-color: #222222;
-    width: 400px;
-    transition: 1000ms all cubic-bezier(0.19, 1, 0.22, 1);
-    transform: translateX(-100%);
-    left: 110px;
+    flex: 1;
 
-    
-  }
+    /* 占据剩余空间 */
+    #menu {
+      height: 100%;
+      position: fixed;
+      background-color: #222222;
+      width: 400px;
+      transition: 1000ms all cubic-bezier(0.19, 1, 0.22, 1);
+      transform: translateX(-100%);
+      left: 110px;
 
-  #menu.expanded {
-    transform: translateX(0%);
-    left: 0;
-  }
 
-  .menu-inner {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* 从上到下排列 */
-    .history-header {
-      display: flex;
-      flex-direction: column; /* 垂直排列按钮 */
-      align-items: center 
     }
 
-    .history-header button {
-      width: 278px;
-      margin: 3px 0; /* 设置按钮的上下间距 */
-      padding: 10px 20px; /* 调整按钮的大小 */
-      font-size: 16px; /* 修改按钮文字大小 */
-      background-color: transparent; /* 背景透明 */
-      color: white; /* 文字白色 */
-      
-      border-radius: 5px; /* 圆角 */
-      cursor: pointer; /* 鼠标悬停时显示手型 */
-      transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+    #menu.expanded {
+      transform: translateX(0%);
+      left: 0;
     }
-    .chat-history {
+
+    .menu-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
       display: flex;
       flex-direction: column;
-      /* 垂直排列历史记录 */
-      gap: 5px;
-      /* 增加历史记录之间的间距 */
-      margin: 0 51px; /* 增加左右间距 */
-    }
+      justify-content: flex-start;
 
-    .chat-history-message {
-      // background-color: #fff;
-      padding: 5px;
-      border-radius: 5px; /* 圆角边框 */
-      color: white; /* 文字白色 */
-      cursor: pointer;
-      transition: background-color 0.3s;
-      white-space: nowrap; /* 防止换行 */
-      overflow: hidden; /* 隐藏溢出内容 */
-      text-overflow: ellipsis; /* 使用省略号表示溢出的文本 */
-      &:hover {
-        background-color: #adadad;
+      /* 从上到下排列 */
+      .history-header {
+        display: flex;
+        flex-direction: column;
+        /* 垂直排列按钮 */
+        align-items: center
+      }
+
+      .history-header button {
+        width: 278px;
+        margin: 3px 0;
+        /* 设置按钮的上下间距 */
+        padding: 10px 20px;
+        /* 调整按钮的大小 */
+        font-size: 16px;
+        /* 修改按钮文字大小 */
+        background-color: transparent;
+        /* 背景透明 */
+        color: white;
+        /* 文字白色 */
+
+        border-radius: 5px;
+        /* 圆角 */
+        cursor: pointer;
+        /* 鼠标悬停时显示手型 */
+        transition: background-color 0.3s, color 0.3s;
+        /* 添加过渡效果 */
+      }
+
+      .chat-history {
+        display: flex;
+        flex-direction: column;
+        /* 垂直排列历史记录 */
+        gap: 5px;
+        /* 增加历史记录之间的间距 */
+        margin: 0 51px;
+        /* 增加左右间距 */
+      }
+
+      .chat-history-message {
+        // background-color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+        /* 圆角边框 */
+        color: white;
+        /* 文字白色 */
+        cursor: pointer;
+        transition: background-color 0.3s;
+        white-space: nowrap;
+        /* 防止换行 */
+        overflow: hidden;
+        /* 隐藏溢出内容 */
+        text-overflow: ellipsis;
+
+        /* 使用省略号表示溢出的文本 */
+        &:hover {
+          background-color: #adadad;
+        }
       }
     }
-  }
 
-  
 
-  .menu-inner button:hover {
-    background-color: rgba(0, 0, 0, 0.1); /* 鼠标悬停时的背景色 */
-    color: #000;
-  }
 
-  #blob {
-    top: 0;
-    z-index: -1;
-    right: 60px;
-    transform: translateX(100%);
-    height: 100%;
-    position: absolute;
-  }
+    .menu-inner button:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      /* 鼠标悬停时的背景色 */
+      color: #000;
+    }
 
-  #blob-path {
-    height: 100%;
-    fill: #222222;
-  }
+    #blob {
+      top: 0;
+      z-index: -1;
+      right: 60px;
+      transform: translateX(100%);
+      height: 100%;
+      position: absolute;
+    }
 
-  .hamburger {
-    right: 20px;
-    position: absolute;
-    width: 15px;
-    height: 20px;
-    margin-top: -10px;
-  }
+    #blob-path {
+      height: 100%;
+      fill: #222222;
+    }
 
-  .hamburger .line {
-    width: 100%;
-    height: 4px;
-    background-color: #fff;
-    position: absolute;
-  }
+    .hamburger {
+      right: 20px;
+      position: absolute;
+      width: 15px;
+      height: 20px;
+      margin-top: -10px;
+    }
 
-  .hamburger .line:nth-child(2) {
-    top: 50%;
-    margin-top: -2px;
-  }
+    .hamburger .line {
+      width: 100%;
+      height: 4px;
+      background-color: #fff;
+      position: absolute;
+    }
 
-  .hamburger .line:nth-child(3) {
-    bottom: 0;
-  }
+    .hamburger .line:nth-child(2) {
+      top: 50%;
+      margin-top: -2px;
+    }
+
+    .hamburger .line:nth-child(3) {
+      bottom: 0;
+    }
   }
 }
+
 ::v-deep .el-drawer {
   background-image: url('@/background/floral-6475479_1920.png');
   background-size: cover;
@@ -958,8 +998,9 @@ export default {
 }
 
 .history-contain {
-  padding: 10px; /* 增加内边距 */
-  
+  padding: 10px;
+  /* 增加内边距 */
+
   h3 {
     text-align: center;
     margin-bottom: 10px;
@@ -999,13 +1040,18 @@ export default {
   .chat-history-message {
     background-color: #fff;
     padding: 5px;
-    border-radius: 5px; /* 圆角边框 */
+    border-radius: 5px;
+    /* 圆角边框 */
 
     cursor: pointer;
     transition: background-color 0.3s;
-    white-space: nowrap; /* 防止换行 */
-    overflow: hidden; /* 隐藏溢出内容 */
-    text-overflow: ellipsis; /* 使用省略号表示溢出的文本 */
+    white-space: nowrap;
+    /* 防止换行 */
+    overflow: hidden;
+    /* 隐藏溢出内容 */
+    text-overflow: ellipsis;
+
+    /* 使用省略号表示溢出的文本 */
     &:hover {
       background-color: #f5f5f5;
     }
@@ -1020,39 +1066,53 @@ export default {
 }
 
 .userRequestDialog {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* 使内容居中对齐 */
-    padding: 10px; /* 增加内边距 */
-   
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 使内容居中对齐 */
+  padding: 10px;
+  /* 增加内边距 */
+
 }
 
 .userRequestDialog input {
-    flex: 1;
-    margin-top: 15px;
-    margin-right: 10px; /* 使按钮和输入框之间有间距 */
-    height: 40px;
-    padding: 0 10px; /* 输入框内边距 */
-    font-size: 16px; /* 字体大小 */
-    border: 1px solid #ccc; /* 边框 */
-    border-radius: 5px; /* 圆角 */
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 内阴影 */
+  flex: 1;
+  margin-top: 15px;
+  margin-right: 10px;
+  /* 使按钮和输入框之间有间距 */
+  height: 40px;
+  padding: 0 10px;
+  /* 输入框内边距 */
+  font-size: 16px;
+  /* 字体大小 */
+  border: 1px solid #ccc;
+  /* 边框 */
+  border-radius: 5px;
+  /* 圆角 */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  /* 内阴影 */
 }
 
 .userRequestDialog button {
-    font-size: 16px; 
-    height: 40px;
-    width: 150px; /* 增加按钮宽度 */
-    margin-left: 10px; /* 按钮左侧间距 */
-    background-color: #d5d4d9; /* 按钮背景色 */
-    color: #000000; /* 按钮文字颜色 */
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    text-align: center;
-    border: none; /* 移除默认边框 */
-    border-radius: 5px; /* 圆角 */
-    cursor: pointer; /* 鼠标悬停时显示手型指针 */
-    transition: background-color 0.3s; /* 背景色过渡效果 */
+  font-size: 16px;
+  height: 40px;
+  width: 150px;
+  /* 增加按钮宽度 */
+  margin-left: 10px;
+  /* 按钮左侧间距 */
+  background-color: #d5d4d9;
+  /* 按钮背景色 */
+  color: #000000;
+  /* 按钮文字颜色 */
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  text-align: center;
+  border: none;
+  /* 移除默认边框 */
+  border-radius: 5px;
+  /* 圆角 */
+  cursor: pointer;
+  /* 鼠标悬停时显示手型指针 */
+  transition: background-color 0.3s;
+  /* 背景色过渡效果 */
 }
-
-
 </style>

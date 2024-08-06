@@ -7,6 +7,7 @@
     </div>
     <div class="message-bubble" :class="bubbleClass">
       {{ text }}
+
       <!-- 仅当发送者是智能客服机器人时显示按钮 -->
       <div
         v-if="sender === '智能客服机器人' && status === 'true'"
@@ -23,7 +24,8 @@
 </template>
 
 <script>
-import { MessageBox } from "element-ui";
+import apiClient from "@/axios";
+
 export default {
   name: "ChatMessage",
   props: {
@@ -99,7 +101,6 @@ export default {
           console.log("跳转成功");
 
           this.$router.push({ name: "AgentMap" });
-
           this.handleButtonClick();
           this.$message({
             type: "success",
@@ -254,41 +255,40 @@ export default {
 }
 
 .project-manager-bubble {
-  background-color: #646E78;
+  background-color: #646e78;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .tech-leader-bubble {
-  background-color: #8D98A7;
+  background-color: #8d98a7;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .qa1-bubble {
-  background-color: #DCCCBB;
+  background-color: #dcccbb;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .qa2-bubble {
-  background-color: #A7754D;
+  background-color: #a7754d;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .bot02-bubble {
-  background-color: #EAB464;
+  background-color: #eab464;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
 
 .unknown-bubble {
-  background-color: #E0E0E0;
+  background-color: #e0e0e0;
   color: #07050b;
   border-bottom-left-radius: 0;
 }
-
 
 .button-container {
   margin-top: 10px; /* 给按钮一个上边距 */

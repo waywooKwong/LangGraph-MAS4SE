@@ -5,14 +5,14 @@
     <div class="side-bar">
       <div class="toggle-bar">
         <!-- 图标，点击后跳转到chatview页面 -->
-         <div @click="goToChatView()" class="icon go-to-case " data-tooltip="ChatView">2</div>
+         <div @click="goToChatView()" class="icon go-to-case " data-tooltip="返回案例选择界面">返回</div>
       </div>
     </div>
 
     <div class="main-content">
       <!-- 聊天窗口头部 -->
       <div class="chat-header">
-        <p>参数 id: {{ id }}</p>
+       
         <h2>智能对话客服-案例</h2>
         
       </div>
@@ -73,20 +73,25 @@ export default {
   },
   methods: {
     
-    id() {
-        // 通过 this.$route.params 获取 params 参数
-        return this.$route.params.id_v;
-    },
+    mounted() {
+    const userId = this.$route.query.id;
+    console.log(`User ID: ${userId}`);
+    this.userId=userId;
+    alert()
+  },
     
     // 保存用户ID
     async saveUserId() {
       
-      console.log('用户ID:', this.userId);
+      //console.log('用户ID:', this.userId);
+      const userId = this.$route.query.id;
+      console.log(`User ID: ${userId}`);
+      this.userId=userId;
       this.userIdDialogVisible = false;
       // 在这里进一步处理用户ID的逻辑，连接数据库，检查用户id下是否含有历史记录，如果有历史记录，则取出放到历史记录框中
       try {
         // 发送请求以获取用户ID下的历史记录
-        const response = await axios.get(`http://localhost:3000/dialogs?user=${this.userId}`);
+        const response = await axios.get(`http://localhost:3000/get-casedialogs?user=${this.userId}`);
         const userDialogs = response.data;
 
         if (userDialogs.length > 0) {
