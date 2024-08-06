@@ -3,21 +3,19 @@
     <div v-if="avatar === 'text'" class="avatar-text">{{ sender }}</div>
     <div v-else class="avatar-container">
       <img :src="avatar" class="avatar" />
-      <div class="sender-name">{{ sender }}</div>
     </div>
-    <div class="message-bubble" :class="bubbleClass">
-      {{ text }}
-
-      <!-- 仅当发送者是智能客服机器人时显示按钮 -->
-      <div
-        v-if="sender === '智能客服机器人' && status === 'true'"
-        class="button-container"
-      >
-        <!-- <button @click="handleButtonClick" class="action-button">满意</button> -->
-        <!-- 弹窗 -->
-        <el-button type="text" @click="open"
-          >如果您对这个方案满意，请点击此处</el-button
+    <div class="message-content">
+      <div class="sender-name">{{ sender }}</div>
+      <div class="message-bubble" :class="bubbleClass">
+        {{ text }}
+        <div
+          v-if="sender === '智能客服机器人' && status === 'true'"
+          class="button-container"
         >
+          <el-button type="text" @click="open"
+            >如果您对这个方案满意，请点击此处</el-button
+          >
+        </div>
       </div>
     </div>
   </div>
@@ -35,7 +33,7 @@ export default {
   },
   data() {
     return {
-      showModal: false, // 控制弹窗显示与隐藏
+      showModal: false,
     };
   },
   computed: {
@@ -57,7 +55,7 @@ export default {
       } else if (this.sender === "bot") {
         return "bot";
       } else {
-        return "unknown"; // 处理未知发送者
+        return "unknown";
       }
     },
     bubbleClass() {
@@ -78,7 +76,7 @@ export default {
       } else if (this.sender === "bot") {
         return "bot-bubble";
       } else {
-        return "unknown-bubble"; // 处理未知发送者
+        return "unknown-bubble";
       }
     },
     avatar() {
@@ -99,7 +97,6 @@ export default {
       )
         .then(() => {
           console.log("跳转成功");
-
           this.$router.push({ name: "AgentMap" });
           this.handleButtonClick();
           this.$message({
@@ -132,7 +129,7 @@ export default {
       } else if (sender === "bot") {
         return "/icons/Bot.png";
       } else {
-        return "text"; // 显示发送者文字
+        return "text";
       }
     },
     async handleButtonClick() {
@@ -140,7 +137,6 @@ export default {
         const response = await apiClient.post("/button-clicked", {
           message: "按钮被点击了",
         });
-
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -157,7 +153,7 @@ export default {
 <style scoped>
 .message {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* 将消息对齐到上边 */
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 5px;
@@ -168,36 +164,12 @@ export default {
   text-align: right;
 }
 
-.message.bot {
-  flex-direction: row;
-  text-align: left;
-}
-
-.message.project-manager {
-  flex-direction: row;
-  text-align: left;
-}
-
-.message.tech-leader {
-  flex-direction: row;
-  text-align: left;
-}
-
-.message.qa1 {
-  flex-direction: row;
-  text-align: left;
-}
-
-.message.qa2 {
-  flex-direction: row;
-  text-align: left;
-}
-
-.message.bot02 {
-  flex-direction: row;
-  text-align: left;
-}
-
+.message.bot,
+.message.project-manager,
+.message.tech-leader,
+.message.qa1,
+.message.qa2,
+.message.bot02,
 .message.unknown {
   flex-direction: row;
   text-align: left;
@@ -205,21 +177,24 @@ export default {
 
 .avatar-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: flex-start; /* 将头像对齐到上边 */
+  margin-right: 10px;
 }
 
 .message .avatar {
   width: 30px;
   height: 30px;
-  /* border-radius: 50%; 圆角会导致图片显示不全*/
-  margin: 0 10px;
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
 }
 
 .message .sender-name {
   font-size: 12px;
   color: #ffffff;
-  text-align: center;
+  margin-bottom: 5px;
 }
 
 .message .avatar-text {
@@ -237,9 +212,10 @@ export default {
 }
 
 .message-bubble {
-  max-width: 60%;
   padding: 10px;
   border-radius: 10px;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .user-bubble {
@@ -248,7 +224,13 @@ export default {
   border-bottom-right-radius: 0;
 }
 
-.bot-bubble {
+.bot-bubble,
+.project-manager-bubble,
+.tech-leader-bubble,
+.qa1-bubble,
+.qa2-bubble,
+.bot02-bubble,
+.unknown-bubble {
   background-color: #f6da87;
   color: #07050b;
   border-bottom-left-radius: 0;
@@ -291,7 +273,7 @@ export default {
 }
 
 .button-container {
-  margin-top: 10px; /* 给按钮一个上边距 */
+  margin-top: 10px;
 }
 
 .action-button {
