@@ -186,10 +186,15 @@ def save_graph_image(graph, file_path):
 # 结点内部函数
 def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     last_message = state["messages"][-1]
-    # print("last_message:",last_message)
-    # print("type of last_message",type(last_message))
-    prompt = last_message.content
-    print("prompt:", prompt)
+    ### Bot02 反馈进来之后, 模型的生成效果 - 20240806 - weihua
+    if state["sender"] == "Bot2":
+        prompt = f"""请根据用户反馈的修改意见:{default_config.userRequest}, 
+                    修改你最近的一次反馈内容:{state["messages"]}"""
+        print("prompt 是根据用户的反馈内容对最近一次反馈进行修改")
+    ###
+    else:
+        prompt = last_message.content
+        print("prompt:", prompt)
     response = chat_model.process(input=prompt)
     ai_message_content = response
     ### Rob02
@@ -481,7 +486,7 @@ async def initialize_workflow(websocket: WebSocket):
             and label_text.lower() != "end"
         ):
             roles.append(label_text)
-    # 将roles传给前端
+
     await websocket.send_text(json.dumps({"roles": roles}, ensure_ascii=False))
     # 提取 message 部分信息并添加结点
     for message in data["Message"]:
@@ -491,7 +496,7 @@ async def initialize_workflow(websocket: WebSocket):
         if label_text.lower() != "start" and label_text.lower() != "end":
 
             # 如果 label_text == "Bot2"，构造 conditional_map
-            if label_text == "Bot2":
+            if label_text == "Bot2" or label_text == "Bot02":
                 # 找到 Bot2 对应的 targets
                 bot2_targets = link_edges.get(label_text, [])
                 print("----")
@@ -506,18 +511,25 @@ async def initialize_workflow(websocket: WebSocket):
                         del conditional_map["End"]
                     workflow.add_node("Bot2", func_node_Bot02)
             else:
-
                 role = label_text
                 duty = description_text
+                print("default_config.is_OllamaCustonMade:",default_config.is_OllamaCustonMade)
 
                 ### 角色定制逻辑在这里实现:
                 ## 1. Ollama 直接 model system prompt 进行模型级的定制
-                if default_config.is_OllamaCustonMade == True:
+                if default_config.is_OllamaCustonMade() == True:
                     # "/OllamaMade" 响应触发 Ollama 定制运行
                     OllamaBuild = OllamaCustomMade(
                         model_name=default_config.OllamaModelName, role=role, duty=duty
                     )
                     model_role = OllamaBuild.get_ChatOllama()
+                    ollama_message = f"Ollama is auto-generating {role} by {default_config.OllamaModelName}, please waiting ~"
+                    await websocket.send_text(
+                        json.dumps(
+                            {"message": ollama_message, "role": role},
+                            ensure_ascii=False,
+                        )
+                    )
                 else:
                     ## 2. BuildChainAgent 常规流程
                     # 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
@@ -536,15 +548,19 @@ async def initialize_workflow(websocket: WebSocket):
                     model_role = BuildChainAgent(
                         role=role, duty=duty, description=description
                     )
-                    ###
-                    workflow.add_node(
-                        role,
-                        partial(func_node, node_name=role, chat_model=model_role),
-                    )
+                ###
+                workflow.add_node(
+                    role,
+                    partial(func_node, node_name=role, chat_model=model_role),
+                )
 
     for source_label, targets in link_edges.items():
-
+        print("====")
+        print('source_label: ',source_label)
+        print('targets: ',targets)
+        print('====')
         if source_label.lower() == "start":
+            print(f"add edge: START, {targets[0]}")
             workflow.add_edge(START, targets[0])
 
         elif len(targets) > 1:
@@ -567,7 +583,7 @@ async def initialize_workflow(websocket: WebSocket):
                 )
             else:
                 # 20240801 含Bot2的示例删除反馈边的添加逻辑
-                members = [value for value in conditional_map.values() if value != END]
+                # members = [value for value in conditional_map.values() if value != END]
                 # for member in members:
                 #     workflow.add_edge(member, source_label)
                 print("----")
@@ -585,8 +601,10 @@ async def initialize_workflow(websocket: WebSocket):
             target_label = targets[0]
             if target_label.lower() == "end":
                 workflow.add_edge(source_label, END)
+                print(f"add edge: {source_label}, END")
             else:
                 workflow.add_edge(source_label, target_label)
+                print(f"add edge:{source_label}, {target_label}")
 
     # 将default_config.file_uploaded复原
     print("图创建成功!!!!!!!!!!!!!!!")
@@ -615,6 +633,11 @@ async def websocket_run_workflow(websocket: WebSocket):
         messageSum = MessagesSum()
         messageSum.sum_message_to_file(messages=final_state_messages)
         print("workflow run end!")
+        await websocket.send_text(
+                            json.dumps(
+                                {"message": "Work Finished! Please checkout ", "role": "Bot2"}, ensure_ascii=False
+                            )
+                        )
 
     except WebSocketDisconnect:
         print("Client disconnected")
