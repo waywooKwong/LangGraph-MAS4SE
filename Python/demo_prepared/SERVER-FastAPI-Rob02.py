@@ -591,10 +591,10 @@ async def initialize_workflow(websocket: WebSocket):
             else:
                 workflow.add_edge(source_label, target_label)
         # 将default_config.file_uploaded复原
-        print("图创建成功!!!!!!!!!!!!!!!")
-        default_config.file_uploaded = False
-        default_config.is_role = True
-        await websocket.send_text(json.dumps({"success": default_config.is_role}, ensure_ascii=False))
+    print("图创建成功!!!!!!!!!!!!!!!")
+    default_config.file_uploaded = False
+    default_config.is_role = True
+    await websocket.send_text(json.dumps({"success": default_config.is_role}, ensure_ascii=False))
 
 
 @app.websocket("/ws/run_workflow")
