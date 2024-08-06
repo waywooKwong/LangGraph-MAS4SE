@@ -101,6 +101,11 @@ class default_config:
 
         # 收集最终的 state 总结获得文档(.md)
         self.final_state: AgentState = None
+        # 文件保存
+        self.messageSum = MessagesSum()
+
+        #角色定制模板
+        self.promptList=[]
 
     def set_path(self, new_path):
         self.path = new_path
@@ -533,14 +538,16 @@ async def initialize_workflow(websocket: WebSocket):
                             )
                         )
                     # print(description)
+                    default_config.promptList.append(description)
+
                     model_role = BuildChainAgent(
                         role=role, duty=duty, description=description
                     )
-                    ###
-                    workflow.add_node(
-                        role,
-                        partial(func_node, node_name=role, chat_model=model_role),
-                    )
+                ###
+                workflow.add_node(
+                    role,
+                    partial(func_node, node_name=role, chat_model=model_role),
+                )
 
     for source_label, targets in link_edges.items():
 
@@ -597,6 +604,9 @@ async def initialize_workflow(websocket: WebSocket):
     )
     print("default_config.is_role:", default_config.is_role)
     print("initial_workflow 角色生成完成")
+    #保存模板
+    default_config.messageSum.sum_prompt_to_file(default_config.promptList)
+    print("模板保存成功")
 
 
 @app.websocket("/ws/run_workflow")
@@ -612,8 +622,8 @@ async def websocket_run_workflow(websocket: WebSocket):
         await run_workflow_and_send_updates(websocket)
         final_state = default_config.final_state
         final_state_messages = final_state["messages"]
-        messageSum = MessagesSum()
-        messageSum.sum_message_to_file(messages=final_state_messages)
+
+        default_config.messageSum.sum_message_to_file(messages=final_state_messages)
         print("workflow run end!")
 
     except WebSocketDisconnect:
