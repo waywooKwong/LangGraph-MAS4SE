@@ -8,8 +8,8 @@
     </div>
     <!-- 菜单内容 -->
     <div class="menu-inner" ref="menuInner">
-      <button @click="navigateTo('/chat')"style="color: #f9f9f9;">对话</button>
-      <button @click="navigateTo('/agent-map')"style="color: #f9f9f9;">定制</button>
+      <button @click="navigateTo('/chat') " style="color: #f9f9f9;">对话</button>
+      <button @click="navigateTo('/agent-map')" style="color: #f9f9f9;">定制</button>
     </div>
     <!-- SVG 背景 -->
     <svg version="1.1" id="blob" ref="blob" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
