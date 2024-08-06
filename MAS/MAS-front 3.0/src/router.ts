@@ -14,6 +14,7 @@ import LoadPageTest from './views/LoadPageTest.vue';
 import MainSidebar from './components/MainSidebar.vue';
 import CaseSelect from './views/CaseSelect.vue';
 import AnimationBackground from './components/AnimationBackground.vue';
+import PromptDialog from './components/PromptDialog.vue';
 
 Vue.use(VueRouter);
 
@@ -44,7 +45,7 @@ const routes = [
     component: CaseSelect,
   },
   {
-    path: '/lt',
+    path: '/Load',
     name: 'LoadPageTest',
     component: LoadPageTest,
   },
@@ -52,6 +53,11 @@ const routes = [
     path: '/AB',
     name: 'AnimationBackground',
     component: AnimationBackground,
+  },
+  {
+    path: '/PD',
+    name: 'PromptDialog',
+    component: PromptDialog,
   },
 ];
 
