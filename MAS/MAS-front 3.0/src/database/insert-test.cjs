@@ -13,7 +13,7 @@ client.on('error', (err) => console.error('Redis Client Error', err));
   async function saveMessage(user, message) {
     try {
       const dialog = { user, message, timestamp: new Date().toISOString() };
-      await client.rPush('chat dialog 0801', JSON.stringify(dialog));
+      await client.rPush('CaseDialog', JSON.stringify(dialog));
       console.log('Dialog saved:', dialog);
     } catch (err) {
       console.error('Error saving dialog:', err);
