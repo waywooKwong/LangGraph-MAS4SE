@@ -8,6 +8,10 @@
       <div class="sender-name">{{ sender }}</div>
       <div class="message-bubble" :class="bubbleClass">
         {{ text }}
+        <div id="app">
+          <LoadingSpinner v-if="text === ' ' && sender === '智能客服机器人'" />
+          <!-- 其他内容 -->
+        </div>
         <div
           v-if="sender === '智能客服机器人' && status === 'true'"
           class="button-container"
@@ -23,9 +27,12 @@
 
 <script>
 import apiClient from "@/axios";
-
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 export default {
   name: "ChatMessage",
+  components: {
+    LoadingSpinner,
+  },
   props: {
     text: String,
     sender: String,
