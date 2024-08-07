@@ -2,7 +2,7 @@
   <div class="main">
     <AnimationBackground />
     <div class="main-case-window">
-      <el-button @click="goToChatView" class="go-chat-button">返回</el-button>
+      <el-button @click="goToChatView" class="go-chat-button">进入智能对话系统</el-button>
       <h1>MAS<sup>4</sup>SE</h1>
 
       <div class="container">
@@ -59,7 +59,7 @@ export default {
     },
     goToCase02() {
         // 获取当前页面的参数 aaa
-      const userId = 'QC';  // 假设当前页面有一个属性 
+      const userId = '微信点餐小程序';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
@@ -67,7 +67,7 @@ export default {
     },
     goToCase03() {
        // 获取当前页面的参数 aaa
-      const userId = 'QC';  // 假设当前页面有一个属性 
+      const userId = '得物';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
@@ -75,7 +75,7 @@ export default {
     },
     goToCase04() {
         // 获取当前页面的参数 aaa
-      const userId = 'QC';  // 假设当前页面有一个属性 
+      const userId = '成绩管理';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
@@ -107,6 +107,7 @@ $primary-color: hsl(289, 100%, 50%);
   margin-left: 20px;
   padding: 10px 40px;
   background-color: #7debf8;
+  border-color: #000000;
 }
 
 .container {

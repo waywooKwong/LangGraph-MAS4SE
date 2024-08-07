@@ -9,7 +9,6 @@ import CaseShow01 from './views/CaseShow01.vue';
 import CaseShow02 from './views/CaseShow02.vue';
 import CaseShow03 from './views/CaseShow03.vue';
 import CaseShow04 from './views/CaseShow04.vue';
-import LoadPage from '@/views/LoadPage.vue';
 import LoadPageTest from './views/LoadPageTest.vue';
 import MainSidebar from './components/MainSidebar.vue';
 import CaseSelect from './views/CaseSelect.vue';
