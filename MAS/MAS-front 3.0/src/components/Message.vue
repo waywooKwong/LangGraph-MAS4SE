@@ -120,7 +120,7 @@ export default {
       )
         .then(() => {
           console.log("跳转成功");
-          this.$emit('disable-dropdown');
+          this.$emit("disable-dropdown");
           this.$router.push({ name: "AgentMap" });
           this.handleButtonClick();
           this.$message({
