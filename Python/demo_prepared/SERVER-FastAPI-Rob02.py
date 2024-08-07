@@ -35,6 +35,7 @@ from ModelChoise import modelchoise
 from Class_02_BuildChainAgent import BuildChainAgent
 
 # Ollama model 接入
+from langchain_community.chat_models import ChatOllama
 from Class_04_OllamaCustomMade import OllamaCustomMade
 
 # 文档总结
@@ -569,10 +570,17 @@ async def initialize_workflow(websocket: WebSocket):
                 ## 1. Ollama 直接 model system prompt 进行模型级的定制
                 if default_config.is_OllamaCustonMade() == True:
                     # "/OllamaMade" 响应触发 Ollama 定制运行
-                    OllamaBuild = OllamaCustomMade(
-                        model_name=default_config.OllamaModelName, role=role, duty=duty
-                    )
-                    model_role = OllamaBuild.get_ChatOllama()
+                    # 01. 这是从零生成 定制 Ollama 开源模型
+                    # OllamaBuild = OllamaCustomMade(
+                    #     model_name=default_config.OllamaModelName, role=role, duty=duty
+                    # )
+                    # model_role = OllamaBuild.get_ChatOllama()
+                    
+                    # 02. 这是已经生成好 Ollama 直接拿模型运行的规程
+                    custom_model_name = role + '-' + default_config.OllamaModelName
+                    print(f"make sure custom model:{custom_model_name} exists")
+                    model_role = ChatOllama(model=custom_model_name)
+                    #
                     ollama_message = f"Ollama is auto-generating {role} by {default_config.OllamaModelName}, please waiting ~"
                     await websocket.send_text(
                         json.dumps(
@@ -601,6 +609,7 @@ async def initialize_workflow(websocket: WebSocket):
                         role=role, duty=duty, description=description
                     )
                 ###
+                print(f"{role} for model_role:\n{model_role}")
                 workflow.add_node(
                     role,
                     partial(func_node, node_name=role, chat_model=model_role),
@@ -677,6 +686,7 @@ async def initialize_workflow(websocket: WebSocket):
 @app.websocket("/ws/run_workflow")
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
+    print("如果需要 Ollama 定制, 请使用按钮选择源模型")
     try:
         # 如果所有角色没有创建成功
         if not default_config.is_role:

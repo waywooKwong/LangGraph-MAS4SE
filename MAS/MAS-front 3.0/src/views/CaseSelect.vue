@@ -2,16 +2,16 @@
   <div class="main">
     <AnimationBackground />
     <div class="main-case-window">
-      <el-button @click="goToChatView" class="go-chat-button">进入智能对话系统</el-button>
+      <el-button @click="goToChatView" class="go-chat-button">MAS4SE HomePage</el-button>
       <h1>MAS<sup>4</sup>SE</h1>
 
       <div class="container">
         <div class="carousel" :data-slide="currentSlide">
           <div class="carousel__slide" @click="goToCase01">
-            案例一
+            案例一-balabala
           </div>
           <div class="carousel__slide" @click="goToCase02">
-            案例二
+            案例二-代码监管软件
           </div>
           <div class="carousel__slide" @click="goToCase03">
             案例三-英文单词学习软件
@@ -51,7 +51,7 @@ export default {
     },
     goToCase01() {
         // 获取当前页面的参数 aaa
-      const userId = 'QC';  // 假设当前页面有一个属性 
+      const userId = 'balabala';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
@@ -59,7 +59,7 @@ export default {
     },
     goToCase02() {
         // 获取当前页面的参数 aaa
-      const userId = '微信点餐小程序';  // 假设当前页面有一个属性 
+      const userId = '代码监管软件';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
@@ -106,8 +106,9 @@ $primary-color: hsl(289, 100%, 50%);
   margin-top: 20px;
   margin-left: 20px;
   padding: 10px 40px;
-  background-color: #7debf8;
+  background-color: #dce2fa;;
   border-color: #000000;
+  color: #394398;
 }
 
 .container {
@@ -148,7 +149,13 @@ $primary-color: hsl(289, 100%, 50%);
   position: absolute;
   width: 15em;
   height: 15em;
-  background: white;
+  color: #27273c;
+  font-weight: bold;
+  // background: white;
+  background-image: url('@/assets/history_case/case_cover/with_3QA.png');
+
+  background-size: cover; /* Ensures the background image covers the entire element */
+  background-position: center; /* Centers the background image */
 
   display: flex;
   justify-content: center;
