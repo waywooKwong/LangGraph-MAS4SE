@@ -59,7 +59,7 @@ export default {
     },
     goToCase02() {
         // 获取当前页面的参数 aaa
-      const userId = 'QC';  // 假设当前页面有一个属性 
+      const userId = '微信点餐小程序';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
@@ -67,7 +67,7 @@ export default {
     },
     goToCase03() {
        // 获取当前页面的参数 aaa
-      const userId = 'QC';  // 假设当前页面有一个属性 
+      const userId = '得物';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
