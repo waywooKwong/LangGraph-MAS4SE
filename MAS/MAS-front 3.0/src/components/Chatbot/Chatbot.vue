@@ -134,6 +134,7 @@ export default class Chatbot extends Vue {
             });
             this.openSuccess();
             console.log('JSON file sent successfully:', response.data);
+            this.$router.push({ name: "LoadPageTest" });
         } catch (error) {
             if (error.code === 'ECONNABORTED') {
                 this.openTimeout();
@@ -144,7 +145,7 @@ export default class Chatbot extends Vue {
         }
         finally {
             this.isUploading = false; // 上传完成后设置为 false
-            this.$router.push({ name: "LoadPageTest" });
+            
         }
         
     }
