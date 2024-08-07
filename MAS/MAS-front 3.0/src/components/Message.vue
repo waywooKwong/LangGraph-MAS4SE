@@ -7,7 +7,10 @@
     <div class="message-content">
       <div class="sender-name">{{ sender }}</div>
       <div class="message-bubble" :class="bubbleClass">
-        {{ text }}
+        <div>
+          <!-- 如果是 Markdown 文本，则渲染为 HTML，否则显示错误消息 -->
+          <vue-markdown :source="text"></vue-markdown>
+        </div>
         <div id="app">
           <LoadingSpinner v-if="text === ' ' && sender === '智能客服机器人'" />
           <!-- 其他内容 -->
@@ -26,12 +29,15 @@
 </template>
 
 <script>
+import VueMarkdown from "vue-markdown";
 import apiClient from "@/axios";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
+
 export default {
   name: "ChatMessage",
   components: {
     LoadingSpinner,
+    VueMarkdown,
   },
   props: {
     text: String,
@@ -91,6 +97,16 @@ export default {
     },
   },
   methods: {
+    checkIfMarkdown(text) {
+      // 简单的 Markdown 检测规则
+      const markdownPatterns = [
+        /#\s/, // 标题
+        /\*\*/, // 粗体
+        /```\n/, // 代码块
+        /!\[.*\]\(.*\)/, // 图片
+      ];
+      return markdownPatterns.some((pattern) => pattern.test(text));
+    },
     open() {
       this.$confirm(
         "此操作将跳转到定制角色界面，你可以私人定制你的开发团队，是否继续?",
