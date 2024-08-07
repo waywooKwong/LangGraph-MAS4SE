@@ -10,7 +10,7 @@
     mounted() {
       this.initChart();
       setTimeout(() => {
-        this.$router.push({ name: 'ChatView' });
+        this.$router.push({ name: 'CaseSelect' });
       }, 3000);
     },
     methods: {
@@ -56,7 +56,7 @@
                     {
                       percent: 1,
                       style: {
-                        fill: 'black',
+                        fill: 'rgb(126,12,100)',
                       },
                     },
                   ],

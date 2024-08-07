@@ -9,7 +9,19 @@
 5. question node 里还有一个model
 """
 import os
+import json
+import functools
+from typing import Dict, List, TypedDict
+from langgraph.graph import END, StateGraph, START
 from langchain.agents import initialize_agent, AgentType, Tool
+from langchain_community.agent_toolkits.load_tools import load_tools
+from langchain import hub
+from langchain.agents import (
+    create_openai_functions_agent,
+    initialize_agent,
+    AgentType,
+    AgentExecutor,
+)
 
 from langchain.chains import create_history_aware_retriever
 from langchain.chains.retrieval import create_retrieval_chain
@@ -17,9 +29,10 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate, MessagesPlaceholder, ChatPromptTemplate
+from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 
+from langchain_community.chat_models import ChatOllama
 from langchain_community.chat_models import ChatOllama
 from langchain_community.vectorstores import FAISS, Qdrant
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, TextLoader
@@ -28,13 +41,15 @@ from langchain_community.agent_toolkits.load_tools import load_tools
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-from ModelChoise import modelchoise
+from ModelChoise import Model
+from ModelChoise.modelchoise import get_tongyi_chat_model
 from Class_01_PromptGenerator import PromptGenerator
-from Class_03_WebScratchRoleTxt import WebScratchRoleTxt
+from langchain_core.prompts import PromptTemplate
+from typing import Dict, Any
 
-# from Python.demo_prepared.Class01_PromptGenerator import PromptGenerator
-
+# 禁用并行处理
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+Model.os_setenv()
 
 
 # def generate_prompt(role: str, duty: str) -> str:
@@ -71,7 +86,7 @@ class BuildChainAgent:
         self.role = role
         self.duty = duty
         self.object = ""
-        self.chat_model = modelchoise.get_zhipuai_chat_model()
+        self.chat_model = Model.get_zhupuai_model()
 
         self.docs = self.load_documents()
 
@@ -80,20 +95,24 @@ class BuildChainAgent:
         self.retriever_chain = self.create_retriever_chain()
         self.chat_history = []
         self.description = description
+        self.agent = self.initialize_agent()
+        # 下述字符串删除 {format_instructions}
         self.prompt_template_str = """
                     您的描述如下{description}\n
                     您有时候是单独一个人解决用户提出的问题\n
                     (重要)但是，大多数时候，您需要与伙伴合作解决问题\n
                     (非常重要)您需要清楚自身的职责与伙伴的技能与特长，相互提问，获得对方的回答或者提问{input}后，给出相应的提问或者最佳回答\n
-                    (最重要!!!)如果你作为提问方:你必须且只能生成要分配的任务问题题干，其他多余的一切回答均不能生成!!!\n
-                              如果你作为回答方:不要重复提问方发布的任务，也不要生成分析过程，直接逐个生成解决方案\n
-                    (非常重要)您必须时时刻刻明确自身的角色{role},杜绝出现角色错乱的现象发生!!!!!!!!!!!!!!!!!!!!!
+                    (最重要!!!):在一次对话中，你只能扮演（提问方）与（回答方）其中一个角色！！！！\n
+                    (重要)生成的答案中尽可能不要包含‘#’等特殊字符，如果需要分点作答，用markdown格式中的x标题来标注!!!!\n
+                    (重要)你与其他角色对话时要符合现实世界中团队开发交流时的口吻！！！\n
+                    (非常重要)您必须时时刻刻明确自身的角色{role},杜绝出现角色错乱的现象发生!!!!!!!!!!!!!!!!!!!!!\n
                     您能通过分析外界提供的基础信息\n
                     对于用户或者其他角色提出的需求 ‘{input}’ 做出最完美的回答\n
-                    格式按需输出，可以是字符串，也可以是jason\n
-                    回答均使用中文,回答口吻必须用“我”来回答,生成答案必须按需7换行\n
-                    (警告！！！)回答时禁止重复上一轮的答案!!!
-                    {format_instructions}"""
+                    格式按照严格的markdown格式输出\n
+                    回答均使用中文,回答口吻必须用“我”来回答,生成答案必须按需换行\n
+                    回答必须严格按照软件开发流程来回答，回答字数尽可能在2000字左右\n
+                    (警告！！！)回答时禁止重复上一轮的回答!!!\n
+                    """
         response_schemas = [
             # ResponseSchema(name="description", description="用户问题"),
             ResponseSchema(
@@ -106,15 +125,16 @@ class BuildChainAgent:
         self.format_instructions = self.output_parser.get_format_instructions()
         self.prompt_template = PromptTemplate.from_template(
             template=self.prompt_template_str,
-            partial_variables={"format_instructions": self.format_instructions},
+            # partial_variables={"format_instructions": self.format_instructions},
         )
 
     def detect_encoding(self, file_path):
         import chardet
-        with open(file_path, 'rb') as f:
+
+        with open(file_path, "rb") as f:
             raw_data = f.read(10000)  # 读取文件的一部分来检测编码
         result = chardet.detect(raw_data)
-        return result['encoding']
+        return result["encoding"]
 
     def load_documents(self):
         ### !!! 需要定制角色文本的时候再启动这部分代码，因为一直启动速度过慢
@@ -185,9 +205,9 @@ class BuildChainAgent:
         chain_first = create_retrieval_chain(history_chain, documents_chain)
         ################# system prompt 2(需要个性化定制)
         template_second = (
-                "你的职责是:"
-                + self.duty
-                + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
+            "你的职责是:"
+            + self.duty
+            + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
         )
         prompt_template_second = ChatPromptTemplate.from_template(template_second)
 
@@ -205,10 +225,10 @@ class BuildChainAgent:
         # )
 
         chain_second = (
-                {"role_text": chain_first}
-                | prompt_template_second
-                | self.chat_model
-                | StrOutputParser()
+            {"role_text": chain_first}
+            | prompt_template_second
+            | self.chat_model
+            | StrOutputParser()
         )
 
         return chain_second
@@ -226,19 +246,23 @@ class BuildChainAgent:
             description="This tool handles document retrieval and question answering based on context history.",
             func=self.retriever_tool,
         )
+        prompt = hub.pull("hwchase17/openai-functions-agent")
         tools.append(retriever_tool_instance)
+        agent = create_openai_functions_agent(self.chat_model, tools, prompt)
+        agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+        # return initialize_agent(
+        #     tools=tools,
+        #     llm=self.chat_model,
+        #     agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
+        #     verbose=True,
+        #     handle_parsing_errors=True
+        # )
 
-        return initialize_agent(
-            tools=tools,
-            llm=self.chat_model,
-            agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
-            verbose=True,
-            handle_parsing_errors=True,
-        )
+        return agent_executor
 
     def invoke(self, user_input: str) -> str:
         # Invoke the retriever chain
-        response = self.retriever_chain.invoke(
+        response = self.agent.invoke(
             {
                 "input": user_input,
                 "chat_history": self.chat_history,
@@ -247,9 +271,9 @@ class BuildChainAgent:
 
         # Update chat history
         self.chat_history.append(HumanMessage(content=user_input))
-        self.chat_history.append(AIMessage(content=response))
+        self.chat_history.append(AIMessage(content=response["output"]))
 
-        return response
+        return response["output"]
 
     def process(self, input: str) -> str:
         prompt_str_input = self.prompt_template.format(
