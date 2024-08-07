@@ -14,10 +14,10 @@
             案例二
           </div>
           <div class="carousel__slide" @click="goToCase03">
-            案例三
+            案例三-英文单词学习软件
           </div>
           <div class="carousel__slide" @click="goToCase04">
-            案例四
+            案例四-成绩管理
           </div>
         </div>
         <div class="next" @click="nextSlide">next</div>
@@ -67,7 +67,7 @@ export default {
     },
     goToCase03() {
        // 获取当前页面的参数 aaa
-      const userId = '得物';  // 假设当前页面有一个属性 
+      const userId = '英文单词学习软件';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
