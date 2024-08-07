@@ -53,9 +53,9 @@ export default {
         return "project-manager";
       } else if (this.sender === "TechLeader") {
         return "tech-leader";
-      } else if (this.sender === "QA1") {
+      } else if (this.sender === "CodeFormat_QA1") {
         return "qa1";
-      } else if (this.sender === "QA2") {
+      } else if (this.sender === "SchedulePlan_QA2") {
         return "qa2";
       } else if (this.sender === "Bot02") {
         return "bot02";
@@ -74,9 +74,9 @@ export default {
         return "project-manager-bubble";
       } else if (this.sender === "TechLeader") {
         return "tech-leader-bubble";
-      } else if (this.sender === "QA1") {
+      } else if (this.sender === "CodeFormat_QA1") {
         return "qa1-bubble";
-      } else if (this.sender === "QA2") {
+      } else if (this.sender === "SchedulePlan_QA2") {
         return "qa2-bubble";
       } else if (this.sender === "Bot02") {
         return "bot02-bubble";
@@ -91,33 +91,33 @@ export default {
     },
   },
   methods: {
-    open() {
-      this.$confirm(
-        "此操作将跳转到定制角色界面，你可以私人定制你的开发团队，是否继续?",
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-          center: true,
-        }
-      )
-        .then(() => {
-          console.log("跳转成功");
-          this.$router.push({ name: "AgentMap" });
-          this.handleButtonClick();
-          this.$message({
-            type: "success",
-            message: "跳转成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消",
-          });
-        });
-    },
+    // open() {
+    //   this.$confirm(
+    //     "此操作将跳转到定制角色界面，你可以私人定制你的开发团队，是否继续?",
+    //     "提示",
+    //     {
+    //       confirmButtonText: "确定",
+    //       cancelButtonText: "取消",
+    //       type: "warning",
+    //       center: true,
+    //     }
+    //   )
+    //     .then(() => {
+    //       console.log("跳转成功");
+    //       this.$router.push({ name: "AgentMap" });
+    //       this.handleButtonClick();
+    //       this.$message({
+    //         type: "success",
+    //         message: "跳转成功!",
+    //       });
+    //     })
+    //     .catch(() => {
+    //       this.$message({
+    //         type: "info",
+    //         message: "已取消",
+    //       });
+    //     });
+    // },
     getAvatar(sender) {
       if (sender === "user") {
         return "/icons/用户.png";
@@ -127,16 +127,16 @@ export default {
         return "/icons/ProjectManager.png";
       } else if (sender === "TechLeader") {
         return "/icons/TechLeader.png";
-      } else if (sender === "QA1") {
+      } else if (sender === "CodeFormat_QA1") {
         return "/icons/QA1.png";
-      } else if (sender === "QA2") {
+      } else if (sender === "SchedulePlan_QA2") {
         return "/icons/QA2.png";
       } else if (sender === "Bot02") {
         return "/icons/Bot02.png";
       } else if (sender === "bot") {
         return "/icons/Bot.png";
       } else {
-        return "text";
+        return "/icons/默认.png";
       }
     },
     async handleButtonClick() {
