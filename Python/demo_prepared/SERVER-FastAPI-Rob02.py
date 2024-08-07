@@ -105,8 +105,10 @@ class default_config:
         # 文件保存
         self.messageSum = MessagesSum()
 
-        #角色定制模板
-        self.promptList=[]
+        # 角色定制模板
+        self.promptList = []
+
+        self.agent = RobotAgent()
 
     def set_path(self, new_path):
         self.path = new_path
@@ -201,7 +203,7 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     else:
         prompt = last_message.content
         print("prompt:", prompt)
-    
+
     ### 两种构建的选择
     if default_config.is_OllamaCustonMade() == True:
         response = chat_model.invoke(prompt)
@@ -385,15 +387,14 @@ class QueryRequest(BaseModel):
     query: str
 
 
-agent = RobotAgent()
-
 import re
 
 
+# 多模态对话
 @app.post("/ask")
 async def ask(request: QueryRequest):
     try:
-        response = agent.invoke(input=request.query)
+        response = default_config.agent.invoke(input=request.query)
         print(response)
         cleaned_json_string = response.strip()
         cleaned_json_string = cleaned_json_string.strip("`")
@@ -416,6 +417,7 @@ async def ask(request: QueryRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# 接收json
 @app.post("/upload-agent")
 async def upload_agent(file: UploadFile = File(...)):
     if not default_config.is_conversation_finished():
@@ -498,9 +500,9 @@ async def initialize_workflow(websocket: WebSocket):
     for message in data["Message"]:
         label_text = message["label_text"]
         if (
-            label_text != "Bot2"
-            and label_text.lower() != "start"
-            and label_text.lower() != "end"
+                label_text != "Bot2"
+                and label_text.lower() != "start"
+                and label_text.lower() != "end"
         ):
             roles.append(label_text)
 
@@ -530,7 +532,7 @@ async def initialize_workflow(websocket: WebSocket):
             else:
                 role = label_text
                 duty = description_text
-                print("OllamaCustonMade? ",default_config.is_OllamaCustonMade())
+                print("OllamaCustonMade? ", default_config.is_OllamaCustonMade())
 
                 ### 角色定制逻辑在这里实现:
                 ## 1. Ollama 直接 model system prompt 进行模型级的定制
@@ -559,7 +561,7 @@ async def initialize_workflow(websocket: WebSocket):
                     # 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
                     description = ""
                     for chunk in default_config.prompt_creatation.generate_prompt(
-                        role=role, duty=duty
+                            role=role, duty=duty
                     ):
                         await asyncio.sleep(0.1)  # 模拟延迟
                         description += chunk
@@ -583,8 +585,8 @@ async def initialize_workflow(websocket: WebSocket):
 
     for source_label, targets in link_edges.items():
         print("====")
-        print('source_label: ',source_label)
-        print('targets: ',targets)
+        print('source_label: ', source_label)
+        print('targets: ', targets)
         print('====')
         if source_label.lower() == "start":
             print(f"add edge: START, {targets[0]}")
@@ -644,7 +646,7 @@ async def initialize_workflow(websocket: WebSocket):
     )
     print("default_config.is_role:", default_config.is_role)
     print("initial_workflow 角色生成完成")
-    #保存模板
+    # 保存模板
     default_config.messageSum.sum_prompt_to_file(default_config.promptList)
     print("模板保存成功")
 
@@ -667,10 +669,10 @@ async def websocket_run_workflow(websocket: WebSocket):
         default_config.messageSum.sum_message_to_file(messages=final_state_messages)
         print("workflow run end!")
         await websocket.send_text(
-                            json.dumps(
-                                {"message": "Work Finished! Please checkout ", "role": "Bot2"}, ensure_ascii=False
-                            )
-                        )
+            json.dumps(
+                {"message": "Work Finished! Please checkout ", "role": "Bot2"}, ensure_ascii=False
+            )
+        )
 
     except WebSocketDisconnect:
         print("Client disconnected")
@@ -732,6 +734,7 @@ class ButtonClick(BaseModel):
     message: str
 
 
+# 用户确认
 @app.post("/button-clicked")
 async def handle_button_click(button_click: ButtonClick):
     try:
@@ -743,13 +746,61 @@ async def handle_button_click(button_click: ButtonClick):
 
         default_config.initial_question = HumanMessage(
             content="请你根据以下需求说明书完成你的工作并向下属分配工作"
-            + default_config.answer,
+                    + default_config.answer,
             name="bot",
         )
         print(default_config.initial_question)
 
         # 返回成功的响应
         return {"status": "success", "received_message": button_click.message}
+    except Exception as e:
+        # 捕获异常并返回错误响应
+        print(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+class NewChat(BaseModel):
+    message: str
+
+
+# 新建对话
+@app.post("/create_newChat")
+async def handle_button_click(create_newchat: NewChat):
+    try:
+        # 打印接收到的消息
+        print(f"/create_newChat Received message from client: {create_newchat.message}")
+
+        # 可以根据需要进行更多处理
+        default_config.OllamaCustomMade = False
+        default_config.OllamaModelName = None
+        default_config.conversation_finished = False  # 标志对话是否完成
+        default_config.initial_question = HumanMessage(content="", name="user")
+        # self.showButton = False
+        # self.user_is_satisfy = False
+        default_config.file_uploaded = False
+        # 客服机器人的回答
+        default_config.answer = ""
+        # 是否完成角色创建
+        default_config.is_role = False
+
+        # Rob02: hasRequest, userRequest
+        default_config.hasRequest = False
+        default_config.userRequest = "我的需求已满足, 请直接退出, 返回 'Finish'"
+
+        # 收集最终的 state 总结获得文档(.md)
+        default_config.final_state = None
+        # 文件保存
+        default_config.messageSum = MessagesSum()
+
+        default_config.agent = RobotAgent()
+
+        # 角色定制模板
+        default_config.promptList = []
+        print("=====================================================")
+        print("新建对话成功!!!!!")
+
+        # 返回成功的响应
+        return {"status": "success", "received_message": create_newchat.message}
     except Exception as e:
         # 捕获异常并返回错误响应
         print(f"An error occurred: {e}")
