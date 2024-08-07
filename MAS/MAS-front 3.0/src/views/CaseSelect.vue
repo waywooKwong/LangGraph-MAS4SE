@@ -2,7 +2,7 @@
   <div class="main">
     <AnimationBackground />
     <div class="main-case-window">
-      <el-button @click="goToChatView" class="go-chat-button">返回</el-button>
+      <el-button @click="goToChatView" class="go-chat-button">进入智能对话系统</el-button>
       <h1>MAS<sup>4</sup>SE</h1>
 
       <div class="container">
@@ -107,6 +107,7 @@ $primary-color: hsl(289, 100%, 50%);
   margin-left: 20px;
   padding: 10px 40px;
   background-color: #7debf8;
+  border-color: #000000;
 }
 
 .container {
