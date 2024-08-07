@@ -15,6 +15,11 @@
 -Robot01: 获取项目需求说明书
 -Bot02: 对话一轮结束后根据用户反馈进行职责划分
 """
+"""
+20240807 王璞
+添加to_strict_json和convert_newline_escape规范json格式的函数
+在/ask中添加一条语句     answer = convert_newline_escape(answer)保证markdown格式可以正确传入前端
+"""
 import asyncio
 import operator
 import os
@@ -389,20 +394,47 @@ class QueryRequest(BaseModel):
 import re
 
 
+# 处理部分json格式解析错误
+def to_strict_json(json_str):
+    json_str = json_str.strip()
+    json_str = json_str.strip("`")
+    json_str = json_str.strip("json")
+    # 替换换行符和回车符为 JSON 兼容的转义字符
+    json_str = json_str.replace('\r\n', "\\n").replace('\n', "\\n")
+    json_str = json_str.strip("\\n")
+    json_str = json_str.strip("{")
+    json_str = json_str.strip("}")
+    json_str = json_str.strip("\\n")
+    json_str = json_str.strip()
+    json_str = f"{{{json_str}}}"
+    json_str = json_str.replace('\\', "\\\\")
+    json_str = re.sub(r'\\\\n', '\\n', json_str, count=2)
+
+    # 确保 JSON 字符串有效
+
+    # 转换为严格的 JSON 格式
+    return json_str
+
+
+def convert_newline_escape(json_str):
+    """将字符串中的 '\\n' 转换为实际的换行符 '\n'"""
+    # 替换字符串中的 '\\n' 为 '\n'
+    return json_str.replace('\\n', '\n')
+
+
 # 多模态对话
 @app.post("/ask")
 async def ask(request: QueryRequest):
     try:
         response = default_config.agent.invoke(input=request.query)
         print(response)
-        cleaned_json_string = response.strip()
-        cleaned_json_string = cleaned_json_string.strip("`")
-        cleaned_json_string = cleaned_json_string.strip("json")
+        cleaned_json_string = to_strict_json(response)
 
         response_dict = json.loads(cleaned_json_string)
         sender = response_dict.get("sender", "字段不存在")
         progress = response_dict.get("progress", "字段不存在")
         answer = response_dict.get("answer", "字段不存在")
+        answer = convert_newline_escape(answer)
         default_config.answer = answer
         print("\n解析结果:")
         print(f"sender: {sender}")
