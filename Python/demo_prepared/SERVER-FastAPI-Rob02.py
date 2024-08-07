@@ -195,7 +195,13 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     else:
         prompt = last_message.content
         print("prompt:", prompt)
-    response = chat_model.process(input=prompt)
+    
+    ### 两种构建的选择
+    if default_config.is_OllamaCustonMade() == True:
+        response = chat_model.invoke(prompt)
+        response = response.content
+    else:
+        response = chat_model.process(input=prompt)
     ai_message_content = response
     ### Rob02
     # test_model = default_config.chat_model
@@ -255,7 +261,10 @@ def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
     )
 
     # 创建成员列表，并移除发送者
+    ### 20240806 LangGraph 底层逻辑的缺陷？自动补齐
     members = list(conditional_map.keys())
+    if "ProjectManager" in members:
+        members.remove("ProjectManager")
     if sender in members:
         members.remove(sender)
     print("next members:", members)
@@ -282,7 +291,10 @@ def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
     # print("json_data:", json_data)
     next_value = json_data["next"]
     print("next value:", next_value)
-    next_key = {v: k for k, v in conditional_map.items()}.get(next_value, "Finish")
+    if next_value in conditional_map.values():
+        next_key = list(conditional_map.keys())[list(conditional_map.values()).index(next_value)]
+    else:
+        next_key = "Finish"
     print("next key:", next_key)
     return next_key
 
@@ -352,8 +364,10 @@ def supervisor_chain_Bot02(state: AgentState, conditional_map: Dict[str, Any]):
     )
     classifier_result = classifier_bot.topic_classifier(input_request)
     next_value = classifier_result["classifier"]
-    print("Bot2 router next", next_value)
-    next_key = {v: k for k, v in conditional_map.items()}.get(next_value, "Finish")
+    if next_value in conditional_map.values():
+        next_key = list(conditional_map.keys())[list(conditional_map.values()).index(next_value)]
+    else:
+        next_key = "Finish"
     print("Bot2 next key:", next_key)
     # 恢复默认
     default_config.set_userRequest("我的需求已满足, 请直接退出, 返回 'Finish'")
@@ -430,16 +444,13 @@ class ModelRequest(BaseModel):
 @app.post("/OllamaMade")
 async def receive_model(request: ModelRequest):
     try:
-        print("====")
-        print("before config OllamaCustomMade:", default_config.OllamaCustomMade)
-        print("before config OllamaModelName:", default_config.OllamaModelName)
-        print("====")
         model_name = request.model
         default_config.set_OllamaCustomMade(tnf=True)
         default_config.set_OllamaModelName(target_model=model_name)
         print("config OllamaCustomMade:", default_config.OllamaCustomMade)
         print("config OllamaModelName:", default_config.OllamaModelName)
         print("====")
+        print("notice: 请确保已经启动 ollama serve !")
 
         # 返回响应给前端
         return JSONResponse(
@@ -513,7 +524,7 @@ async def initialize_workflow(websocket: WebSocket):
             else:
                 role = label_text
                 duty = description_text
-                print("default_config.is_OllamaCustonMade:",default_config.is_OllamaCustonMade)
+                print("OllamaCustonMade? ",default_config.is_OllamaCustonMade())
 
                 ### 角色定制逻辑在这里实现:
                 ## 1. Ollama 直接 model system prompt 进行模型级的定制
@@ -574,13 +585,14 @@ async def initialize_workflow(websocket: WebSocket):
                 print("----")
                 print("func_node_Bot2 chain: Bot2")
                 print("source label:", source_label)
-                print("conditional_map:", conditional_map)
+                print("Bot2 conditional_map:", conditional_map)
                 print("----")
                 workflow.add_conditional_edges(
                     source_label,
                     lambda state: supervisor_chain_Bot02(state, conditional_map),
                     conditional_map,
                 )
+                print("Bot2 conditional_map(after):", conditional_map)
             else:
                 # 20240801 含Bot2的示例删除反馈边的添加逻辑
                 # members = [value for value in conditional_map.values() if value != END]
@@ -589,13 +601,14 @@ async def initialize_workflow(websocket: WebSocket):
                 print("----")
                 print("supervisor chain:", source_label)
                 print("source label:", source_label)
-                print("conditional_map:", conditional_map)
+                print("supervisor chain conditional_map:", conditional_map)
                 print("----")
                 workflow.add_conditional_edges(
                     source_label,
                     lambda state: supervisor_chain(state, conditional_map),
                     conditional_map,
                 )
+                print("supervisor chain conditional_map(after):", conditional_map)
 
         else:
             target_label = targets[0]
