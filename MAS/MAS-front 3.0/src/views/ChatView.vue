@@ -70,7 +70,7 @@
             </el-button>
           </el-tooltip> -->
           <!--  下拉选择模型菜单 -->
-          <el-dropdown @command="selectOllamaModel" class="model-select-bottom-dropdown">
+          <el-dropdown @command="selectOllamaModel" class="model-select-bottom-dropdown" :disabled="isDropdownDisabled">
             <el-button type="primary" class="model-select-bottom">
               Ollama Custom-Made: {{ ModelSelectText }}<i class="model-select"></i>
             </el-button>
@@ -206,6 +206,7 @@ export default {
       userId: '',// 用户ID
       feedback: '',
       userId: '', // 用户ID
+      isDropdownDisabled: false, // 下拉选择模型菜单是否禁用
       //以下为动画侧边栏参数
       height: window.innerHeight,
       x: 0,
@@ -566,6 +567,9 @@ export default {
       } catch (error) {
         this.$message.error("请求失败: " + error.message);
       }
+    },
+    disableDropdown() {
+      this.isDropdownDisabled = true;
     },
   },
 };
