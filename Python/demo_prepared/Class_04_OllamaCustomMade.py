@@ -47,3 +47,6 @@ class OllamaCustomMade:
 # model = OllamaBuild.get_ChatOllama()
 # result = model.invoke("hello?")
 # print("result:",result.content)
+model = ChatOllama(model="ProjectManager-phi3")
+result = model.invoke("introduce yourself")
+print("result:\n",result)

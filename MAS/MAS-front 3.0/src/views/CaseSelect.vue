@@ -17,7 +17,7 @@
             案例三
           </div>
           <div class="carousel__slide" @click="goToCase04">
-            案例四
+            案例四-成绩管理
           </div>
         </div>
         <div class="next" @click="nextSlide">next</div>
@@ -75,7 +75,7 @@ export default {
     },
     goToCase04() {
         // 获取当前页面的参数 aaa
-      const userId = 'QC';  // 假设当前页面有一个属性 
+      const userId = '成绩管理';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
