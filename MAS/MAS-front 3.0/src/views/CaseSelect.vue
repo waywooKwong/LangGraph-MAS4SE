@@ -2,23 +2,26 @@
   <div class="main">
     <AnimationBackground />
     <div class="main-case-window">
-      <el-button @click="goToChatView" class="go-chat-button">MAS4SE HomePage</el-button>
+      <el-button @click="goToChatView" class="go-chat-button">
+        MAS4SE HomePage
+      </el-button>
       <h1>MAS<sup>4</sup>SE</h1>
+      <div class="external-link">
+        <el-button @click="goToExternalLink" class="external-link-button">
+          Go to AI drawing Page
+        </el-button>
+      </div>
 
       <div class="container">
         <div class="carousel" :data-slide="currentSlide">
-          <div class="carousel__slide" @click="goToCase01">
-            案例一-balabala
-          </div>
+          <div class="carousel__slide" @click="goToCase01">案例一-balabala</div>
           <div class="carousel__slide" @click="goToCase02">
             案例二-代码监管软件
           </div>
           <div class="carousel__slide" @click="goToCase03">
             案例三-英文单词学习软件
           </div>
-          <div class="carousel__slide" @click="goToCase04">
-            案例四-成绩管理
-          </div>
+          <div class="carousel__slide" @click="goToCase04">案例四-成绩管理</div>
         </div>
         <div class="next" @click="nextSlide">next</div>
         <div class="prev" @click="prevSlide">previous</div>
@@ -28,15 +31,15 @@
 </template>
 
 <script>
-import AnimationBackground from '@/components/AnimationBackground.vue'
+import AnimationBackground from "@/components/AnimationBackground.vue";
 
 export default {
   components: {
-    AnimationBackground
+    AnimationBackground,
   },
   data() {
     return {
-      currentSlide: 1
+      currentSlide: 1,
     };
   },
   methods: {
@@ -47,49 +50,48 @@ export default {
       this.currentSlide = this.currentSlide === 1 ? 4 : this.currentSlide - 1;
     },
     goToChatView() {
-      this.$router.push({ name: 'ChatView' });
+      this.$router.push({ name: "ChatView" });
     },
     goToCase01() {
-        // 获取当前页面的参数 aaa
-      const userId = 'balabala';  // 假设当前页面有一个属性 
+      // 获取当前页面的参数 aaa
+      const userId = "balabala"; // 假设当前页面有一个属性
 
       // 跳转并传递参数
-      this.$router.push({ path: `/case-show` ,query: { id: userId }});
-
+      this.$router.push({ path: `/case-show`, query: { id: userId } });
     },
     goToCase02() {
-        // 获取当前页面的参数 aaa
-      const userId = '代码监管软件';  // 假设当前页面有一个属性 
+      // 获取当前页面的参数 aaa
+      const userId = "代码监管软件"; // 假设当前页面有一个属性
 
       // 跳转并传递参数
-      this.$router.push({ path: `/case-show` ,query: { id: userId }});
-
+      this.$router.push({ path: `/case-show`, query: { id: userId } });
     },
     goToCase03() {
-       // 获取当前页面的参数 aaa
-      const userId = '英文单词学习软件';  // 假设当前页面有一个属性 
+      // 获取当前页面的参数 aaa
+      const userId = "英文单词学习软件"; // 假设当前页面有一个属性
 
       // 跳转并传递参数
-      this.$router.push({ path: `/case-show` ,query: { id: userId }});
-
+      this.$router.push({ path: `/case-show`, query: { id: userId } });
     },
     goToCase04() {
-        // 获取当前页面的参数 aaa
-      const userId = '成绩管理';  // 假设当前页面有一个属性 
+      // 获取当前页面的参数 aaa
+      const userId = "成绩管理"; // 假设当前页面有一个属性
 
       // 跳转并传递参数
-      this.$router.push({ path: `/case-show` ,query: { id: userId }});
-
+      this.$router.push({ path: `/case-show`, query: { id: userId } });
     },
-  }
+    goToExternalLink() {
+      window.open("http://127.0.0.1:7860", "_blank");
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Lato:300|Oswald');
+@import url("https://fonts.googleapis.com/css?family=Lato:300|Oswald");
 
 $primary-color: hsl(289, 100%, 50%);
-.main{
+.main {
   height: 100vh;
   position: relative; /* 使子元素能够相对定位 */
   overflow: hidden; /* 防止背景溢出 */
@@ -106,7 +108,7 @@ $primary-color: hsl(289, 100%, 50%);
   margin-top: 20px;
   margin-left: 20px;
   padding: 10px 40px;
-  background-color: #dce2fa;;
+  background-color: #dce2fa;
   border-color: #000000;
   color: #394398;
 }
@@ -151,8 +153,7 @@ $primary-color: hsl(289, 100%, 50%);
   height: 15em;
   color: #27273c;
   font-weight: bold;
-  // background: white;
-  background-image: url('@/assets/history_case/case_cover/with_3QA.png');
+  background-image: url("@/assets/history_case/case_cover/with_3QA.png");
 
   background-size: cover; /* Ensures the background image covers the entire element */
   background-position: center; /* Centers the background image */
@@ -213,30 +214,11 @@ $primary-color: hsl(289, 100%, 50%);
   left: 15%; // 调整这个值来向中心靠拢
 }
 
-
-
 *,
 *:before,
 *:after {
   box-sizing: border-box;
 }
-
-// html,
-// body {
-//   width: 100%;
-//   height: 100%;
-// }
-
-// html {
-//   font-size: 62.5%;
-// }
-
-// body {
-//   background: $primary-color;
-//   font-family: 'Lato', sans-serif;
-//   font-size: 2em;
-//   line-height: 1.5;
-// }
 
 .container {
   width: 90%;
@@ -247,12 +229,17 @@ $primary-color: hsl(289, 100%, 50%);
 h1 {
   margin: 0;
   padding: 0.5em;
-  font-family: 'Oswald', sans-serif;
+  font-family: "Oswald", sans-serif;
   font-size: 4em;
   text-transform: uppercase;
   text-align: center;
-  // color: linear-gradient(-225deg, #231557 0%, #44107A 29%, #FF1361 67%, #FFF800 100%);
-  background: linear-gradient(-225deg, #231557 0%, #44107A 29%, #FF1361 67%, #FFF800 100%);
+  background: linear-gradient(
+    -225deg,
+    #231557 0%,
+    #44107a 29%,
+    #ff1361 67%,
+    #fff800 100%
+  );
   background-clip: text; /* 标准属性 */
   -webkit-background-clip: text; /* WebKit 前缀 */
   -webkit-text-fill-color: transparent;
@@ -270,5 +257,24 @@ h1 {
 
 .cf {
   *zoom: 1;
+}
+
+.external-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.external-link-button {
+  padding: 10px 20px;
+  background-color: #9212dc;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+.external-link-button:hover {
+  background-color: darken(#9613e2, 10%);
 }
 </style>
