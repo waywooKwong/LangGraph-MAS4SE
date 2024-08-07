@@ -2,7 +2,7 @@
 20240801 代码说明-邝伟华
 
 这次我加入 Bot02 进行 Duty_Classfier 的测试，
-为了提高测试效率，我暂时注释掉了 Robot001 以及 role_model 的相关生成
+为了提高测试效率，我暂时注释掉了 Robot001 以及 model_role 的相关生成
 请留意
 """
 
@@ -29,6 +29,12 @@ from langchain_core.prompts import PromptTemplate
 from ModelChoise import modelchoise
 from Class_02_BuildChainAgent import BuildChainAgent
 
+# Ollama model 接入
+from Class_04_OllamaCustomMade import OllamaCustomMade
+
+# 文档总结
+from Class_06_MessagesSum import MessagesSum
+
 # Robot001 与客户经理对接需求文档说明书
 from Robot001 import RobotAgent
 
@@ -44,6 +50,12 @@ from Class_01_PromptGenerator import PromptGenerator
 import json
 
 Model.os_setenv()
+
+
+class AgentState(TypedDict):
+    sender: str
+    progress: str
+    messages: Annotated[List[BaseMessage], operator.add]
 
 
 class default_config:
@@ -64,11 +76,17 @@ class default_config:
     def __init__(self):
         self.path = "frontend_json_process/json_simplified_with_bot02.json"
         self.json_file_path = "frontend_json_process/json_simplified_with_bot02.json"
+
         self.chat_model = Model.get_zhupuai_model()
+        # Ollama 角色定制是否启动, 图节点对于角色定制的添加
+        ## 关联line: model_role = BuildChainAgent(role=role, duty=duty)
+        self.OllamaCustomMade = False
+        self.OllamaModelName = None
+
         # 将提示词生成器单独导出
         self.prompt_creatation = PromptGenerator()
         self.conversation_finished = False  # 标志对话是否完成
-        self.initial_question = HumanMessage(content="")
+        self.initial_question = HumanMessage(content="", name="user")
         # self.showButton = False
         # self.user_is_satisfy = False
         self.file_uploaded = False
@@ -80,6 +98,14 @@ class default_config:
         # Rob02: hasRequest, userRequest
         self.hasRequest = False
         self.userRequest = "我的需求已满足, 请直接退出, 返回 'Finish'"
+
+        # 收集最终的 state 总结获得文档(.md)
+        self.final_state: AgentState = None
+        # 文件保存
+        self.messageSum = MessagesSum()
+
+        #角色定制模板
+        self.promptList=[]
 
     def set_path(self, new_path):
         self.path = new_path
@@ -93,6 +119,7 @@ class default_config:
     def is_conversation_finished(self):
         return self.conversation_finished
 
+    ### Bot02
     def set_hasRequest(self, tnf: bool):
         self.hasRequest = tnf
 
@@ -102,11 +129,23 @@ class default_config:
     def set_userRequest(self, request):
         self.userRequest = request
 
+    ###
 
-class AgentState(TypedDict):
-    sender: str
-    progress: str
-    messages: Annotated[List[BaseMessage], operator.add]
+    def is_OllamaCustonMade(self) -> bool:
+        return self.OllamaCustomMade
+
+    def set_OllamaCustomMade(self, tnf: bool):
+        self.OllamaCustomMade = tnf
+
+    def set_OllamaModelName(self, target_model):
+        self.OllamaModelName = target_model
+
+    #   为生成最终的文本
+    def set_state(self, state: AgentState):
+        self.final_state = state
+
+    def set_state(self, state: AgentState):
+        self.final_state = state
 
 
 default_config = default_config()
@@ -152,11 +191,22 @@ def save_graph_image(graph, file_path):
 # 结点内部函数
 def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     last_message = state["messages"][-1]
-    # print("last_message:",last_message)
-    # print("type of last_message",type(last_message))
-    prompt = last_message.content
-    print("prompt:", prompt)
-    response = chat_model.process(input=prompt)
+    ### Bot02 反馈进来之后, 模型的生成效果 - 20240806 - weihua
+    if state["sender"] == "Bot2":
+        prompt = f"""请根据用户反馈的修改意见:{default_config.userRequest}, 
+                    修改你最近的一次反馈内容:{state["messages"]}"""
+        print("prompt 是根据用户的反馈内容对最近一次反馈进行修改")
+    ###
+    else:
+        prompt = last_message.content
+        print("prompt:", prompt)
+    
+    ### 两种构建的选择
+    if default_config.is_OllamaCustonMade() == True:
+        response = chat_model.invoke(prompt)
+        response = response.content
+    else:
+        response = chat_model.process(input=prompt)
     ai_message_content = response
     ### Rob02
     # test_model = default_config.chat_model
@@ -164,15 +214,18 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     ###
     # print("response:",response)
     # ai_message_content = response.content
-    print("ai_message_content:", ai_message_content)
+    # print("ai_message_content:", ai_message_content)
 
     print(node_name, "func_node answer:", ai_message_content)
     result = AIMessage(name=node_name, content=ai_message_content)
-    return {
+    # fun_node 中及时存储 state
+    state: AgentState = {
         "sender": node_name,
         "progress": state["progress"],
         "messages": state["messages"] + [result],
     }
+    default_config.set_state(state=state)
+    return state
 
 
 # 多边连接顺序遍历的 router 函数
@@ -190,8 +243,6 @@ def router_concurrent_choice(state: AgentState, members: Dict[str, Any]) -> str:
 # 通用的多边连接多选一 router 选择函数
 def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
     print("enter supervisor_chain")
-    # sender = state["messages"][-1]
-    # sender = sender.name
     sender = state["sender"]
     print("sender before:", sender)
     system_prompt = (
@@ -215,8 +266,10 @@ def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
     )
 
     # 创建成员列表，并移除发送者
+    ### 20240806 LangGraph 底层逻辑的缺陷？自动补齐
     members = list(conditional_map.keys())
-    print("members before removing sender:", members)
+    if "ProjectManager" in members:
+        members.remove("ProjectManager")
     if sender in members:
         members.remove(sender)
     print("next members:", members)
@@ -243,7 +296,10 @@ def supervisor_chain(state: AgentState, conditional_map: Dict[str, Any]):
     # print("json_data:", json_data)
     next_value = json_data["next"]
     print("next value:", next_value)
-    next_key = {v: k for k, v in conditional_map.items()}.get(next_value, "Finish")
+    if next_value in conditional_map.values():
+        next_key = list(conditional_map.keys())[list(conditional_map.values()).index(next_value)]
+    else:
+        next_key = "Finish"
     print("next key:", next_key)
     return next_key
 
@@ -254,11 +310,14 @@ def func_node_Bot02(state: AgentState) -> AgentState:
         name="Bot02",
         content="您好, 我是客服机器人Bot2, 我已将您的意见反馈, 请等待反馈结果",
     )
-    return {
+    # 及时存储 state
+    state: AgentState = {
         "sender": "Bot02",
         "progress": state["progress"],
         "messages": state["messages"] + [result],
     }
+    default_config.set_state(state=state)
+    return state
 
 
 # 前端定义 ChatView 中定义的新的 clientUserRequest
@@ -310,41 +369,15 @@ def supervisor_chain_Bot02(state: AgentState, conditional_map: Dict[str, Any]):
     )
     classifier_result = classifier_bot.topic_classifier(input_request)
     next_value = classifier_result["classifier"]
-    print("Bot2 router next", next_value)
-    next_key = {v: k for k, v in conditional_map.items()}.get(next_value, "Finish")
+    if next_value in conditional_map.values():
+        next_key = list(conditional_map.keys())[list(conditional_map.values()).index(next_value)]
+    else:
+        next_key = "Finish"
     print("Bot2 next key:", next_key)
     # 恢复默认
     default_config.set_userRequest("我的需求已满足, 请直接退出, 返回 'Finish'")
     default_config.set_hasRequest(tnf=False)
     return next_key
-
-
-# 定义 POST 路由来接收 /model 请求，实现选择模型
-# 定义请求体模型
-class ModelRequest(BaseModel):
-    model: str
-
-
-@app.post("/model")
-async def receive_model(request: ModelRequest):
-    try:
-        # 从请求体中提取 model 数据
-        model_data = request.model
-        print("Received model:", model_data)
-
-        # 处理 model 数据（这里可以根据需要进行处理）
-        # ...
-
-        # 返回响应给前端
-        return JSONResponse(
-            content={"message": "Model received successfully", "model": model_data}
-        )
-    except Exception as e:
-        print("Error:", e)
-        raise HTTPException(status_code=500, detail="An error occurred")
-
-
-# Global variable to track if the file has been uploaded
 
 
 class QueryRequest(BaseModel):
@@ -408,13 +441,38 @@ async def upload_agent(file: UploadFile = File(...)):
         return JSONResponse(content={"error": "An error occurred"}, status_code=500)
 
 
+# 定义 POST 路由来接收 /OllamaMade 请求，实现选择定制Ollama模型
+class ModelRequest(BaseModel):
+    model: str
+
+
+@app.post("/OllamaMade")
+async def receive_model(request: ModelRequest):
+    try:
+        model_name = request.model
+        default_config.set_OllamaCustomMade(tnf=True)
+        default_config.set_OllamaModelName(target_model=model_name)
+        print("config OllamaCustomMade:", default_config.OllamaCustomMade)
+        print("config OllamaModelName:", default_config.OllamaModelName)
+        print("====")
+        print("notice: 请确保已经启动 ollama serve !")
+
+        # 返回响应给前端
+        return JSONResponse(
+            content={"message": "Model received successfully", "model": model_name}
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail="An error occurred")
+
+
 @app.websocket("/ws/stream")
 async def initialize_workflow(websocket: WebSocket):
     await websocket.accept()
     # 如果json文件没有上传
-    # if not default_config.file_uploaded:
-    #     print("No json uploaded yet.")
-    #     return
+    if not default_config.file_uploaded:
+        print("No json uploaded yet.")
+        return
 
     json_file_path = default_config.get_path()
     print("----")
@@ -438,12 +496,14 @@ async def initialize_workflow(websocket: WebSocket):
     roles = []
     for message in data["Message"]:
         label_text = message["label_text"]
-        if label_text != "Bot2" and label_text.lower() != "start" and label_text.lower() != "end":
+        if (
+            label_text != "Bot2"
+            and label_text.lower() != "start"
+            and label_text.lower() != "end"
+        ):
             roles.append(label_text)
-    # 将roles传给前端
-    await websocket.send_text(
-        json.dumps({"roles": roles}, ensure_ascii=False)
-    )
+
+    await websocket.send_text(json.dumps({"roles": roles}, ensure_ascii=False))
     # 提取 message 部分信息并添加结点
     for message in data["Message"]:
         label_text = message["label_text"]
@@ -452,7 +512,7 @@ async def initialize_workflow(websocket: WebSocket):
         if label_text.lower() != "start" and label_text.lower() != "end":
 
             # 如果 label_text == "Bot2"，构造 conditional_map
-            if label_text == "Bot2":
+            if label_text == "Bot2" or label_text == "Bot02":
                 # 找到 Bot2 对应的 targets
                 bot2_targets = link_edges.get(label_text, [])
                 print("----")
@@ -467,30 +527,58 @@ async def initialize_workflow(websocket: WebSocket):
                         del conditional_map["End"]
                     workflow.add_node("Bot2", func_node_Bot02)
             else:
-
                 role = label_text
                 duty = description_text
-                description = ""
-                ### 角色定制逻辑在这里实现
-                ### 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
-                for chunk in default_config.prompt_creatation.generate_prompt(role=role, duty=duty):
-                    await asyncio.sleep(0.1)  # 模拟延迟
-                    description += chunk
-                    await websocket.send_text(
-                        json.dumps({"message": chunk, "role": role}, ensure_ascii=False)
-                    )
-                # print(description)
-                model_role = BuildChainAgent(role=role, duty=duty, description=description)
-                ###
+                print("OllamaCustonMade? ",default_config.is_OllamaCustonMade())
 
+                ### 角色定制逻辑在这里实现:
+                ## 1. Ollama 直接 model system prompt 进行模型级的定制
+                if default_config.is_OllamaCustonMade() == True:
+                    # "/OllamaMade" 响应触发 Ollama 定制运行
+                    OllamaBuild = OllamaCustomMade(
+                        model_name=default_config.OllamaModelName, role=role, duty=duty
+                    )
+                    model_role = OllamaBuild.get_ChatOllama()
+                    ollama_message = f"Ollama is auto-generating {role} by {default_config.OllamaModelName}, please waiting ~"
+                    await websocket.send_text(
+                        json.dumps(
+                            {"message": ollama_message, "role": role},
+                            ensure_ascii=False,
+                        )
+                    )
+                else:
+                    ## 2. BuildChainAgent 常规流程
+                    # 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
+                    description = ""
+                    for chunk in default_config.prompt_creatation.generate_prompt(
+                        role=role, duty=duty
+                    ):
+                        await asyncio.sleep(0.1)  # 模拟延迟
+                        description += chunk
+                        await websocket.send_text(
+                            json.dumps(
+                                {"message": chunk, "role": role}, ensure_ascii=False
+                            )
+                        )
+                    # print(description)
+                    default_config.promptList.append(description)
+
+                    model_role = BuildChainAgent(
+                        role=role, duty=duty, description=description
+                    )
+                ###
                 workflow.add_node(
-                    label_text,
-                    partial(func_node, node_name=label_text, chat_model=model_role),
+                    role,
+                    partial(func_node, node_name=role, chat_model=model_role),
                 )
 
     for source_label, targets in link_edges.items():
-
+        print("====")
+        print('source_label: ',source_label)
+        print('targets: ',targets)
+        print('====')
         if source_label.lower() == "start":
+            print(f"add edge: START, {targets[0]}")
             workflow.add_edge(START, targets[0])
 
         elif len(targets) > 1:
@@ -504,39 +592,52 @@ async def initialize_workflow(websocket: WebSocket):
                 print("----")
                 print("func_node_Bot2 chain: Bot2")
                 print("source label:", source_label)
-                print("conditional_map:", conditional_map)
+                print("Bot2 conditional_map:", conditional_map)
                 print("----")
                 workflow.add_conditional_edges(
                     source_label,
                     lambda state: supervisor_chain_Bot02(state, conditional_map),
                     conditional_map,
                 )
+                print("Bot2 conditional_map(after):", conditional_map)
             else:
                 # 20240801 含Bot2的示例删除反馈边的添加逻辑
-                members = [value for value in conditional_map.values() if value != END]
+                # members = [value for value in conditional_map.values() if value != END]
                 # for member in members:
                 #     workflow.add_edge(member, source_label)
                 print("----")
                 print("supervisor chain:", source_label)
                 print("source label:", source_label)
-                print("conditional_map:", conditional_map)
+                print("supervisor chain conditional_map:", conditional_map)
                 print("----")
                 workflow.add_conditional_edges(
                     source_label,
                     lambda state: supervisor_chain(state, conditional_map),
                     conditional_map,
                 )
+                print("supervisor chain conditional_map(after):", conditional_map)
 
         else:
             target_label = targets[0]
             if target_label.lower() == "end":
                 workflow.add_edge(source_label, END)
+                print(f"add edge: {source_label}, END")
             else:
                 workflow.add_edge(source_label, target_label)
-        # 将default_config.file_uploaded复原
-        default_config.file_uploaded = False
-        # 将角色创建判断置为true
-        default_config.is_role = True
+                print(f"add edge:{source_label}, {target_label}")
+
+    # 将default_config.file_uploaded复原
+    print("图创建成功!!!!!!!!!!!!!!!")
+    default_config.file_uploaded = False
+    default_config.is_role = True
+    await websocket.send_text(
+        json.dumps({"success": default_config.is_role}, ensure_ascii=False)
+    )
+    print("default_config.is_role:", default_config.is_role)
+    print("initial_workflow 角色生成完成")
+    #保存模板
+    default_config.messageSum.sum_prompt_to_file(default_config.promptList)
+    print("模板保存成功")
 
 
 @app.websocket("/ws/run_workflow")
@@ -550,6 +651,17 @@ async def websocket_run_workflow(websocket: WebSocket):
             return
 
         await run_workflow_and_send_updates(websocket)
+        final_state = default_config.final_state
+        final_state_messages = final_state["messages"]
+
+        default_config.messageSum.sum_message_to_file(messages=final_state_messages)
+        print("workflow run end!")
+        await websocket.send_text(
+                            json.dumps(
+                                {"message": "Work Finished! Please checkout ", "role": "Bot2"}, ensure_ascii=False
+                            )
+                        )
+
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
@@ -594,9 +706,16 @@ async def run_workflow_and_send_updates(websocket: WebSocket):
 
         ### Bot02: 留下释放的时间, 给用户进行输入
         await websocket.send_text(
-            json.dumps({"message": "随时提出修改意见"}, ensure_ascii=False)
+            json.dumps(
+                {
+                    "sender": "kuangweihua",
+                    "progress": "userRequest",
+                    "message": "随时提出修改意见",
+                },
+                ensure_ascii=False,
+            )
         )
-        await asyncio.sleep(10)
+        await asyncio.sleep(10)  # Add 3-second delay
 
 
 class ButtonClick(BaseModel):
@@ -614,8 +733,10 @@ async def handle_button_click(button_click: ButtonClick):
 
         default_config.initial_question = HumanMessage(
             content="请你根据以下需求说明书完成你的工作并向下属分配工作"
-                    + default_config.answer
+            + default_config.answer,
+            name="bot",
         )
+        print(default_config.initial_question)
 
         # 返回成功的响应
         return {"status": "success", "received_message": button_click.message}
