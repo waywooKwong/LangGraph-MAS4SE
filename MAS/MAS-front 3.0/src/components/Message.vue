@@ -120,7 +120,9 @@ export default {
       )
         .then(() => {
           console.log("跳转成功");
+
           this.$router.push({ name: "AgentMap" });
+
           this.handleButtonClick();
           this.$message({
             type: "success",
@@ -128,6 +130,7 @@ export default {
           });
         })
         .catch(() => {
+          // this.showButton = false;
           this.$message({
             type: "info",
             message: "已取消",
