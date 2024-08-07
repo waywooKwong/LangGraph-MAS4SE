@@ -554,6 +554,8 @@ export default {
   height: 100vh;
   position: relative; /* 使子元素能够相对定位 */
   overflow: hidden; /* 防止背景溢出 */
+
+  user-select: text;
 }
 
 
