@@ -15,6 +15,7 @@ class OllamaCustomMade:
         Your duty is {self.duty},
         Answer as your role and Process request according to your duty,
         the assistant, only."""
+        self.model = None
         
     def CustomMade(self):
         Modelfile_path = f"src/Ollama_Modelfile/{self.target_model_name}_Modelfile"
@@ -30,18 +31,19 @@ class OllamaCustomMade:
         print("ollama 模型已经创建:", self.target_model_name)
         
     def RemoveModel(self):
-        subprocess.run(['ollama', 'serve', self.target_model_name]) 
+        subprocess.run(['ollama', 'rm', self.target_model_name]) 
         print()
     
     def get_ChatOllama(self):
         self.CustomMade()
         model = ChatOllama(model=self.target_model_name)
+        self.model = model
         print("model:",model)
         print(f"ChatOllama 加载 Model SystemPrompt 定制的 {self.target_model_name} 成功")
         return model
         
-## 测试代码:
+# # 测试代码:
 # OllamaBuild = OllamaCustomMade(model_name='phi3',role='ProjectManager',duty='ManageProject')
 # model = OllamaBuild.get_ChatOllama()
 # result = model.invoke("hello?")
-# print("result:",result)
+# print("result:",result.content)

@@ -22,8 +22,7 @@
             <div class="menu-inner" ref="menuInner">
               <div class="history-header">
 
-                <button @click="saveDialog">上传数
-                  据库</button>
+                <button @click="saveDialog">上传数据库</button>
                 <!-- 新建聊天按钮 -->
                 <button class="new-chat-button" @click="createNewChat">新建对话</button>
                 <!-- 手动保存历史记录按钮 -->
@@ -555,6 +554,8 @@ export default {
   height: 100vh;
   position: relative; /* 使子元素能够相对定位 */
   overflow: hidden; /* 防止背景溢出 */
+
+  user-select: text;
 }
 
 
