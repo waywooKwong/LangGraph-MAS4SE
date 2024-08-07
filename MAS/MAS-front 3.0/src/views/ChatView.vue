@@ -412,7 +412,7 @@ export default {
 
       try {
         this.messages.push({
-          text: "waiting",
+          text: " ",
           sender: "智能客服机器人",
           status: "loading",
         });
@@ -433,7 +433,7 @@ export default {
         // this.messages.push({ text: response, sender: response.sender });
       } catch (error) {
         console.error(error);
-        this.messages.push({ text: "请求失败，请稍后再试。", sender: "bot", status: "false" });
+        this.messages.push({ text: "请求失败，请稍后再试。", sender: "智能客服机器人", status: "false" });
       } finally {
         this.saveMessages();
         this.query = "";

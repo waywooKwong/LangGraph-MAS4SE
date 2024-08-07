@@ -111,7 +111,7 @@ class BuildChainAgent:
                     格式按照严格的markdown格式输出\n
                     回答均使用中文,回答口吻必须用“我”来回答,生成答案必须按需换行\n
                     回答必须严格按照软件开发流程来回答，回答字数尽可能在2000字左右\n
-                    (警告！！！)回答时禁止重复上一轮的答案!!!\n
+                    (警告！！！)回答时禁止重复上一轮的回答!!!\n
                     """
         response_schemas = [
             # ResponseSchema(name="description", description="用户问题"),
