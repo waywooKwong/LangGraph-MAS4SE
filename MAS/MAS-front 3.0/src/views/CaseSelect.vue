@@ -8,10 +8,10 @@
       <div class="container">
         <div class="carousel" :data-slide="currentSlide">
           <div class="carousel__slide" @click="goToCase01">
-            案例一
+            案例一-得物
           </div>
           <div class="carousel__slide" @click="goToCase02">
-            案例二
+            案例二-微信点餐小程序
           </div>
           <div class="carousel__slide" @click="goToCase03">
             案例三-英文单词学习软件
@@ -51,7 +51,7 @@ export default {
     },
     goToCase01() {
         // 获取当前页面的参数 aaa
-      const userId = 'QC';  // 假设当前页面有一个属性 
+      const userId = '得物';  // 假设当前页面有一个属性 
 
       // 跳转并传递参数
       this.$router.push({ path: `/case-show` ,query: { id: userId }});
