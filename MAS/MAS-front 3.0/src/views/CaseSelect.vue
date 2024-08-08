@@ -14,14 +14,58 @@
 
       <div class="container">
         <div class="carousel" :data-slide="currentSlide">
-          <div class="carousel__slide" @click="goToCase01">案例一-balabala</div>
-          <div class="carousel__slide" @click="goToCase02">
-            案例二-代码监管软件
+          <div 
+            class="carousel__slide" 
+            @click="goToCase01"
+            @mouseover="hoverSlide(1)"
+            @mouseleave="leaveSlide"
+          >
+            <template v-if="hoveredSlide === 1">
+              <img src="@/assets/history_case/case_cover/UI01.png" alt="Case 1 Image">
+            </template>
+            <template v-else>
+              案例一-游戏定制
+            </template>
           </div>
-          <div class="carousel__slide" @click="goToCase03">
-            案例三-英文单词学习软件
+          <div 
+            class="carousel__slide" 
+            @click="goToCase02"
+            @mouseover="hoverSlide(2)"
+            @mouseleave="leaveSlide"
+          >
+            <template v-if="hoveredSlide === 2">
+              <img src="@/assets/history_case/case_cover/UI02.png" alt="Case 2 Image">
+            </template>
+            <template v-else>
+              案例二-代码监管软件
+            </template>
           </div>
-          <div class="carousel__slide" @click="goToCase04">案例四-成绩管理</div>
+          <div 
+            class="carousel__slide" 
+            @click="goToCase03"
+            @mouseover="hoverSlide(3)"
+            @mouseleave="leaveSlide"
+          >
+            <template v-if="hoveredSlide === 3">
+              <img src="@/assets/history_case/case_cover/UI03.png" alt="Case 3 Image">
+            </template>
+            <template v-else>
+              案例三-英文单词学习软件
+            </template>
+          </div>
+          <div 
+            class="carousel__slide" 
+            @click="goToCase04"
+            @mouseover="hoverSlide(4)"
+            @mouseleave="leaveSlide"
+          >
+            <template v-if="hoveredSlide === 4">
+              <img src="@/assets/history_case/case_cover/UI04.png" alt="Case 4 Image">
+            </template>
+            <template v-else>
+              案例四-成绩管理
+            </template>
+          </div>
         </div>
         <div class="next" @click="nextSlide">next</div>
         <div class="prev" @click="prevSlide">previous</div>
@@ -40,6 +84,7 @@ export default {
   data() {
     return {
       currentSlide: 1,
+      hoveredSlide: null,
     };
   },
   methods: {
@@ -53,35 +98,29 @@ export default {
       this.$router.push({ name: "ChatView" });
     },
     goToCase01() {
-      // 获取当前页面的参数 aaa
-      const userId = "balabala"; // 假设当前页面有一个属性
-
-      // 跳转并传递参数
+      const userId = "balabala";
       this.$router.push({ path: `/case-show`, query: { id: userId } });
     },
     goToCase02() {
-      // 获取当前页面的参数 aaa
-      const userId = "代码监管软件"; // 假设当前页面有一个属性
-
-      // 跳转并传递参数
+      const userId = "代码监管软件";
       this.$router.push({ path: `/case-show`, query: { id: userId } });
     },
     goToCase03() {
-      // 获取当前页面的参数 aaa
-      const userId = "英文单词学习软件"; // 假设当前页面有一个属性
-
-      // 跳转并传递参数
+      const userId = "英文单词学习软件";
       this.$router.push({ path: `/case-show`, query: { id: userId } });
     },
     goToCase04() {
-      // 获取当前页面的参数 aaa
-      const userId = "成绩管理"; // 假设当前页面有一个属性
-
-      // 跳转并传递参数
+      const userId = "成绩管理";
       this.$router.push({ path: `/case-show`, query: { id: userId } });
     },
     goToExternalLink() {
       window.open("http://10.22.176.112:7860", "_blank");
+    },
+    hoverSlide(index) {
+      this.hoveredSlide = index;
+    },
+    leaveSlide() {
+      this.hoveredSlide = null;
     },
   },
 };
@@ -93,15 +132,15 @@ export default {
 $primary-color: hsl(289, 100%, 50%);
 .main {
   height: 100vh;
-  position: relative; /* 使子元素能够相对定位 */
-  overflow: hidden; /* 防止背景溢出 */
+  position: relative;
+  overflow: hidden;
 }
 
 .main-case-window {
-  position: relative; /* 使 content 可以使用 z-index */
+  position: relative;
   height: 100%;
   background-color: transparent;
-  z-index: 2; /* 设置一个较高的 z-index 值 */
+  z-index: 2;
 }
 
 .go-chat-button {
@@ -154,9 +193,8 @@ $primary-color: hsl(289, 100%, 50%);
   color: #27273c;
   font-weight: bold;
   background-image: url("@/assets/history_case/case_cover/with_3QA.png");
-
-  background-size: cover; /* Ensures the background image covers the entire element */
-  background-position: center; /* Centers the background image */
+  background-size: cover;
+  background-position: center;
 
   display: flex;
   justify-content: center;
@@ -207,23 +245,17 @@ $primary-color: hsl(289, 100%, 50%);
 }
 
 .next {
-  right: 15%; // 调整这个值来向中心靠拢
+  right: 15%;
 }
 
 .prev {
-  left: 15%; // 调整这个值来向中心靠拢
+  left: 15%;
 }
 
 *,
 *:before,
 *:after {
   box-sizing: border-box;
-}
-
-.container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 h1 {
@@ -240,8 +272,8 @@ h1 {
     #ff1361 67%,
     #fff800 100%
   );
-  background-clip: text; /* 标准属性 */
-  -webkit-background-clip: text; /* WebKit 前缀 */
+  background-clip: text;
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
