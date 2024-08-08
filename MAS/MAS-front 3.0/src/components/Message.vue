@@ -8,8 +8,8 @@
       <div class="sender-name">{{ sender }}</div>
       <div class="message-bubble" :class="bubbleClass">
         <div>
-          <!-- 渲染 Markdown 文本 -->
-          <div v-html="renderedText"></div>
+          <!-- 如果是 Markdown 文本，则渲染为 HTML，否则显示错误消息 -->
+          <vue-markdown :source="text"></vue-markdown>
         </div>
         <div id="app">
           <LoadingSpinner v-if="text === ' ' && sender === '智能客服机器人'" />
@@ -19,9 +19,9 @@
           v-if="sender === '智能客服机器人' && status === 'true'"
           class="button-container"
         >
-          <el-button type="text" @click="open">
-            如果您对这个方案满意，请点击此处
-          </el-button>
+          <el-button type="text" @click="open"
+            >如果您对这个方案满意，请点击此处</el-button
+          >
         </div>
       </div>
     </div>
@@ -29,9 +29,7 @@
 </template>
 
 <script>
-import markdownIt from "markdown-it";
-import hljs from "highlight.js";
-import "highlight.js/styles/github.css";
+import VueMarkdown from "vue-markdown";
 import apiClient from "@/axios";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
@@ -39,6 +37,7 @@ export default {
   name: "ChatMessage",
   components: {
     LoadingSpinner,
+    VueMarkdown,
   },
   props: {
     text: String,
@@ -48,25 +47,6 @@ export default {
   data() {
     return {
       showModal: false,
-      md: markdownIt({
-        highlight: function (str, lang) {
-          if (lang && hljs.getLanguage(lang)) {
-            try {
-              return (
-                '<pre class="hljs"><code>' +
-                hljs.highlight(str, { language: lang, ignoreIllegals: true })
-                  .value +
-                "</code></pre>"
-              );
-            } catch (err) {}
-          }
-          return (
-            '<pre class="hljs"><code>' +
-            md.utils.escapeHtml(str) +
-            "</code></pre>"
-          );
-        },
-      }),
     };
   },
   computed: {
@@ -114,9 +94,6 @@ export default {
     },
     avatar() {
       return this.getAvatar(this.sender);
-    },
-    renderedText() {
-      return this.md.render(this.text);
     },
   },
   methods: {
@@ -193,40 +170,11 @@ export default {
         console.error("发送请求时发生错误:", error);
       }
     },
-    copyToClipboard(code) {
-      navigator.clipboard
-        .writeText(code)
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: "代码已复制到剪贴板",
-          });
-        })
-        .catch((err) => {
-          this.$message({
-            type: "error",
-            message: "复制代码失败",
-          });
-        });
-    },
   },
 };
 </script>
 
 <style scoped>
-/* 自定义代码块样式 */
-pre.hljs {
-  background: #000; /* 设置背景为黑色 */
-  color: #f8f8f2; /* 设置文本颜色为浅色，以提高对比度 */
-  border-radius: 8px; /* 设置圆角 */
-  padding: 10px; /* 增加内边距 */
-}
-
-pre.hljs code {
-  background: transparent; /* 确保代码块的背景透明，以便于使用 hljs 的样式 */
-  color: inherit; /* 确保代码的颜色继承自 hljs 样式 */
-}
-
 .message {
   display: flex;
   align-items: flex-start; /* 将消息对齐到上边 */

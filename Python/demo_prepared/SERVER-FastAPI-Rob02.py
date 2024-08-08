@@ -5,6 +5,7 @@
 为了提高测试效率，我暂时注释掉了 Robot001 以及 model_role 的相关生成
 请留意
 """
+from demo_prepared.SERVER import process_uploaded_file
 
 """
 20240802 代码说明-邝伟华
@@ -837,6 +838,17 @@ async def handle_button_click(create_newchat: NewChat):
         # 捕获异常并返回错误响应
         print(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    file_location = f"D:/WorkSpace/Pycharm/Langchain_Final/Python/demo_prepared/src/role_txt/{file.filename}"
+    with open(file_location, "wb+") as file_object:
+        file_object.write(file.file.read())
+
+        return {"filename": file.filename}
+
+
 
 
 if __name__ == "__main__":
