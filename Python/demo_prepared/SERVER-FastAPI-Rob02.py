@@ -15,6 +15,11 @@
 -Robot01: 获取项目需求说明书
 -Bot02: 对话一轮结束后根据用户反馈进行职责划分
 """
+"""
+20240807 王璞
+添加to_strict_json和convert_newline_escape规范json格式的函数
+在/ask中添加一条语句     answer = convert_newline_escape(answer)保证markdown格式可以正确传入前端
+"""
 import asyncio
 import operator
 import os
@@ -30,6 +35,7 @@ from ModelChoise import modelchoise
 from Class_02_BuildChainAgent import BuildChainAgent
 
 # Ollama model 接入
+from langchain_community.chat_models import ChatOllama
 from Class_04_OllamaCustomMade import OllamaCustomMade
 
 # 文档总结
@@ -104,8 +110,10 @@ class default_config:
         # 文件保存
         self.messageSum = MessagesSum()
 
-        #角色定制模板
-        self.promptList=[]
+        # 角色定制模板
+        self.promptList = []
+
+        self.agent = RobotAgent()
 
     def set_path(self, new_path):
         self.path = new_path
@@ -200,7 +208,7 @@ def func_node(state: AgentState, node_name, chat_model) -> AgentState:
     else:
         prompt = last_message.content
         print("prompt:", prompt)
-    
+
     ### 两种构建的选择
     if default_config.is_OllamaCustonMade() == True:
         response = chat_model.invoke(prompt)
@@ -384,24 +392,50 @@ class QueryRequest(BaseModel):
     query: str
 
 
-agent = RobotAgent()
-
 import re
 
 
+# 处理部分json格式解析错误
+def to_strict_json(json_str):
+    json_str = json_str.strip()
+    json_str = json_str.strip("`")
+    json_str = json_str.strip("json")
+    # 替换换行符和回车符为 JSON 兼容的转义字符
+    json_str = json_str.replace('\r\n', "\\n").replace('\n', "\\n")
+    json_str = json_str.strip("\\n")
+    json_str = json_str.strip("{")
+    json_str = json_str.strip("}")
+    json_str = json_str.strip("\\n")
+    json_str = json_str.strip()
+    json_str = f"{{{json_str}}}"
+    json_str = json_str.replace('\\', "\\\\")
+    json_str = re.sub(r'\\\\n', '\\n', json_str, count=2)
+
+    # 确保 JSON 字符串有效
+
+    # 转换为严格的 JSON 格式
+    return json_str
+
+
+def convert_newline_escape(json_str):
+    """将字符串中的 '\\n' 转换为实际的换行符 '\n'"""
+    # 替换字符串中的 '\\n' 为 '\n'
+    return json_str.replace('\\n', '\n')
+
+
+# 多模态对话
 @app.post("/ask")
 async def ask(request: QueryRequest):
     try:
-        response = agent.invoke(input=request.query)
+        response = default_config.agent.invoke(input=request.query)
         print(response)
-        cleaned_json_string = response.strip()
-        cleaned_json_string = cleaned_json_string.strip("`")
-        cleaned_json_string = cleaned_json_string.strip("json")
+        cleaned_json_string = to_strict_json(response)
 
         response_dict = json.loads(cleaned_json_string)
         sender = response_dict.get("sender", "字段不存在")
         progress = response_dict.get("progress", "字段不存在")
         answer = response_dict.get("answer", "字段不存在")
+        answer = convert_newline_escape(answer)
         default_config.answer = answer
         print("\n解析结果:")
         print(f"sender: {sender}")
@@ -415,6 +449,7 @@ async def ask(request: QueryRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# 接收json
 @app.post("/upload-agent")
 async def upload_agent(file: UploadFile = File(...)):
     if not default_config.is_conversation_finished():
@@ -497,9 +532,9 @@ async def initialize_workflow(websocket: WebSocket):
     for message in data["Message"]:
         label_text = message["label_text"]
         if (
-            label_text != "Bot2"
-            and label_text.lower() != "start"
-            and label_text.lower() != "end"
+                label_text != "Bot2"
+                and label_text.lower() != "start"
+                and label_text.lower() != "end"
         ):
             roles.append(label_text)
 
@@ -529,16 +564,23 @@ async def initialize_workflow(websocket: WebSocket):
             else:
                 role = label_text
                 duty = description_text
-                print("OllamaCustonMade? ",default_config.is_OllamaCustonMade())
+                print("OllamaCustonMade? ", default_config.is_OllamaCustonMade())
 
                 ### 角色定制逻辑在这里实现:
                 ## 1. Ollama 直接 model system prompt 进行模型级的定制
                 if default_config.is_OllamaCustonMade() == True:
                     # "/OllamaMade" 响应触发 Ollama 定制运行
-                    OllamaBuild = OllamaCustomMade(
-                        model_name=default_config.OllamaModelName, role=role, duty=duty
-                    )
-                    model_role = OllamaBuild.get_ChatOllama()
+                    # 01. 这是从零生成 定制 Ollama 开源模型
+                    # OllamaBuild = OllamaCustomMade(
+                    #     model_name=default_config.OllamaModelName, role=role, duty=duty
+                    # )
+                    # model_role = OllamaBuild.get_ChatOllama()
+                    
+                    # 02. 这是已经生成好 Ollama 直接拿模型运行的规程
+                    custom_model_name = role + '-' + default_config.OllamaModelName
+                    print(f"make sure custom model:{custom_model_name} exists")
+                    model_role = ChatOllama(model=custom_model_name)
+                    #
                     ollama_message = f"Ollama is auto-generating {role} by {default_config.OllamaModelName}, please waiting ~"
                     await websocket.send_text(
                         json.dumps(
@@ -551,7 +593,7 @@ async def initialize_workflow(websocket: WebSocket):
                     # 注意: 类 BuildChainAgent 中查看 load_documents 文件爬取角色文本为提高加载效率默认关闭
                     description = ""
                     for chunk in default_config.prompt_creatation.generate_prompt(
-                        role=role, duty=duty
+                            role=role, duty=duty
                     ):
                         await asyncio.sleep(0.1)  # 模拟延迟
                         description += chunk
@@ -567,6 +609,7 @@ async def initialize_workflow(websocket: WebSocket):
                         role=role, duty=duty, description=description
                     )
                 ###
+                print(f"{role} for model_role:\n{model_role}")
                 workflow.add_node(
                     role,
                     partial(func_node, node_name=role, chat_model=model_role),
@@ -574,8 +617,8 @@ async def initialize_workflow(websocket: WebSocket):
 
     for source_label, targets in link_edges.items():
         print("====")
-        print('source_label: ',source_label)
-        print('targets: ',targets)
+        print('source_label: ', source_label)
+        print('targets: ', targets)
         print('====')
         if source_label.lower() == "start":
             print(f"add edge: START, {targets[0]}")
@@ -635,7 +678,7 @@ async def initialize_workflow(websocket: WebSocket):
     )
     print("default_config.is_role:", default_config.is_role)
     print("initial_workflow 角色生成完成")
-    #保存模板
+    # 保存模板
     default_config.messageSum.sum_prompt_to_file(default_config.promptList)
     print("模板保存成功")
 
@@ -643,6 +686,7 @@ async def initialize_workflow(websocket: WebSocket):
 @app.websocket("/ws/run_workflow")
 async def websocket_run_workflow(websocket: WebSocket):
     await websocket.accept()
+    print("如果需要 Ollama 定制, 请使用按钮选择源模型")
     try:
         # 如果所有角色没有创建成功
         if not default_config.is_role:
@@ -657,10 +701,10 @@ async def websocket_run_workflow(websocket: WebSocket):
         default_config.messageSum.sum_message_to_file(messages=final_state_messages)
         print("workflow run end!")
         await websocket.send_text(
-                            json.dumps(
-                                {"message": "Work Finished! Please checkout ", "role": "Bot2"}, ensure_ascii=False
-                            )
-                        )
+            json.dumps(
+                {"message": "Work Finished! Please checkout ", "role": "Bot2"}, ensure_ascii=False
+            )
+        )
 
     except WebSocketDisconnect:
         print("Client disconnected")
@@ -722,6 +766,7 @@ class ButtonClick(BaseModel):
     message: str
 
 
+# 用户确认
 @app.post("/button-clicked")
 async def handle_button_click(button_click: ButtonClick):
     try:
@@ -733,13 +778,61 @@ async def handle_button_click(button_click: ButtonClick):
 
         default_config.initial_question = HumanMessage(
             content="请你根据以下需求说明书完成你的工作并向下属分配工作"
-            + default_config.answer,
+                    + default_config.answer,
             name="bot",
         )
         print(default_config.initial_question)
 
         # 返回成功的响应
         return {"status": "success", "received_message": button_click.message}
+    except Exception as e:
+        # 捕获异常并返回错误响应
+        print(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+class NewChat(BaseModel):
+    message: str
+
+
+# 新建对话
+@app.post("/create_newChat")
+async def handle_button_click(create_newchat: NewChat):
+    try:
+        # 打印接收到的消息
+        print(f"/create_newChat Received message from client: {create_newchat.message}")
+
+        # 可以根据需要进行更多处理
+        default_config.OllamaCustomMade = False
+        default_config.OllamaModelName = None
+        default_config.conversation_finished = False  # 标志对话是否完成
+        default_config.initial_question = HumanMessage(content="", name="user")
+        # self.showButton = False
+        # self.user_is_satisfy = False
+        default_config.file_uploaded = False
+        # 客服机器人的回答
+        default_config.answer = ""
+        # 是否完成角色创建
+        default_config.is_role = False
+
+        # Rob02: hasRequest, userRequest
+        default_config.hasRequest = False
+        default_config.userRequest = "我的需求已满足, 请直接退出, 返回 'Finish'"
+
+        # 收集最终的 state 总结获得文档(.md)
+        default_config.final_state = None
+        # 文件保存
+        default_config.messageSum = MessagesSum()
+
+        default_config.agent = RobotAgent()
+
+        # 角色定制模板
+        default_config.promptList = []
+        print("=====================================================")
+        print("新建对话成功!!!!!")
+
+        # 返回成功的响应
+        return {"status": "success", "received_message": create_newchat.message}
     except Exception as e:
         # 捕获异常并返回错误响应
         print(f"An error occurred: {e}")

@@ -13,7 +13,7 @@
       <!-- 聊天窗口头部 -->
       <div class="chat-header">
        
-        <h2>智能对话客服-案例</h2>
+        <h2>历史成功案例-{{this.userId}}设计</h2>
         
       </div>
 
@@ -88,6 +88,7 @@ export default {
       console.log(`User ID: ${userId}`);
       this.userId=userId;
       this.userIdDialogVisible = false;
+      //alert('已加载'+this.userId);
       // 在这里进一步处理用户ID的逻辑，连接数据库，检查用户id下是否含有历史记录，如果有历史记录，则取出放到历史记录框中
       try {
         // 发送请求以获取用户ID下的历史记录
@@ -119,7 +120,7 @@ export default {
     },
 
     goToChatView() {
-      this.$router.push({ name: "ChatView" });
+      this.$router.push({ name: "CaseSelect" });
     },
   },
 };

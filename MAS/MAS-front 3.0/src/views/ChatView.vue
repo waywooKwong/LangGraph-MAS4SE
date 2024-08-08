@@ -399,6 +399,22 @@ export default {
     removeFile(index) {
       this.files.splice(index, 1);
     },
+    //新建对话向后端发送响应
+     async send_newChat() {
+      this.showButton = false;
+      try {
+        const response = await apiClient.post("/create_newChat", {
+          message: "创建了新对话！！！",
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        console.log("服务器响应:", data);
+      } catch (error) {
+        console.error("发送请求时发生错误:", error);
+      }
+    },
     // 与客服机器人对话
     async sendQuery() {
       if (this.query.trim() === "") return;
@@ -434,7 +450,14 @@ export default {
         // this.messages.push({ text: response, sender: response.sender });
       } catch (error) {
         console.error(error);
-        this.messages.push({ text: "请求失败，请稍后再试。", sender: "智能客服机器人", status: "false" });
+        
+        this.messages = this.messages.map(msg => 
+          msg.status === "loading" ? {
+            text: "请求失败，请稍后再试。"|| JSON.stringify(response, null, 2),
+            sender: "智能客服机器人" || "bot",
+            status:  "false"
+          } : msg
+        )
       } finally {
         this.saveMessages();
         this.query = "";
@@ -506,6 +529,7 @@ export default {
     createNewChat() {
       this.messages = [];
       this.saveMessages();
+      this.send_newChat();
     },
     continueChat(history) {
       this.messages = history.messages;

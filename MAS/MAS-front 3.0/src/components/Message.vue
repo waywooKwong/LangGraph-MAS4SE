@@ -59,9 +59,9 @@ export default {
         return "project-manager";
       } else if (this.sender === "TechLeader") {
         return "tech-leader";
-      } else if (this.sender === "QA1") {
+      } else if (this.sender === "CodeFormat_QA1") {
         return "qa1";
-      } else if (this.sender === "QA2") {
+      } else if (this.sender === "SchedulePlan_QA2") {
         return "qa2";
       } else if (this.sender === "Bot02") {
         return "bot02";
@@ -80,9 +80,9 @@ export default {
         return "project-manager-bubble";
       } else if (this.sender === "TechLeader") {
         return "tech-leader-bubble";
-      } else if (this.sender === "QA1") {
+      } else if (this.sender === "CodeFormat_QA1") {
         return "qa1-bubble";
-      } else if (this.sender === "QA2") {
+      } else if (this.sender === "SchedulePlan_QA2") {
         return "qa2-bubble";
       } else if (this.sender === "Bot02") {
         return "bot02-bubble";
@@ -120,7 +120,7 @@ export default {
       )
         .then(() => {
           console.log("跳转成功");
-          this.$emit('disable-dropdown');
+          this.$emit("disable-dropdown");
           this.$router.push({ name: "AgentMap" });
           this.handleButtonClick();
           this.$message({
@@ -144,16 +144,16 @@ export default {
         return "/icons/ProjectManager.png";
       } else if (sender === "TechLeader") {
         return "/icons/TechLeader.png";
-      } else if (sender === "QA1") {
+      } else if (sender === "CodeFormat_QA1") {
         return "/icons/QA1.png";
-      } else if (sender === "QA2") {
+      } else if (sender === "SchedulePlan_QA2") {
         return "/icons/QA2.png";
       } else if (sender === "Bot02") {
         return "/icons/Bot02.png";
       } else if (sender === "bot") {
         return "/icons/Bot.png";
       } else {
-        return "text";
+        return "/icons/默认.png";
       }
     },
     async handleButtonClick() {
