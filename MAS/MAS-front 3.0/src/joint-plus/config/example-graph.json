@@ -63,7 +63,7 @@
           "text": "ProjectManager"
         },
         "description": {
-          "text": "Manage the whole project"
+          "text": "Analyze the requirements document, generate a project development plan (Gantt chart), and assign tasks to subordinates"
         },
         "icon": {
           "xlinkHref": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDI0IDI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9ImJsYWNrIiB3aWR0aD0iMThweCIgaGVpZ2h0PSIxOHB4Ij48Zz48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjI0IiB3aWR0aD0iMjQiLz48L2c+PGc+PGcvPjxnPjxwYXRoIGQ9Ik04LDhINnY3YzAsMS4xLDAuOSwyLDIsMmg5di0ySDhWOHoiLz48cGF0aCBkPSJNMjAsM2gtOGMtMS4xLDAtMiwwLjktMiwydjZjMCwxLjEsMC45LDIsMiwyaDhjMS4xLDAsMi0wLjksMi0yVjVDMjIsMy45LDIxLjEsMywyMCwzeiBNMjAsMTFoLThWN2g4VjExeiIvPjxwYXRoIGQ9Ik00LDEySDJ2N2MwLDEuMSwwLjksMiwyLDJoOXYtMkg0VjEyeiIvPjwvZz48L2c+PGcgZGlzcGxheT0ibm9uZSI+PGcgZGlzcGxheT0iaW5saW5lIi8+PGcgZGlzcGxheT0iaW5saW5lIj48cGF0aCBkPSJNOCw4SDZ2N2MwLDEuMSwwLjksMiwyLDJoOXYtMkg4Vjh6Ii8+PHBhdGggZD0iTTIwLDNoLThjLTEuMSwwLTIsMC45LTIsMnY2YzAsMS4xLDAuOSwyLDIsMmg4YzEuMSwwLDItMC45LDItMlY1QzIyLDMuOSwyMS4xLDMsMjAsM3ogTTIwLDExaC04VjdoOFYxMXoiLz48cGF0aCBkPSJNNCwxMkgydjdjMCwxLjEsMC45LDIsMiwyaDl2LTJINFYxMnoiLz48L2c+PC9nPjwvc3ZnPg=="
@@ -107,7 +107,7 @@
           "text": "TechLeader"
         },
         "description": {
-          "text": "Team Technology Leader"
+          "text": "Extract technical key points, generate project timeline diagrams, and assign tasks to subordinates"
         },
         "icon": {
           "xlinkHref": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDI0IDI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9ImJsYWNrIiB3aWR0aD0iMThweCIgaGVpZ2h0PSIxOHB4Ij48Zz48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjI0IiB3aWR0aD0iMjQiLz48L2c+PGc+PGcvPjxnPjxwYXRoIGQ9Ik04LDhINnY3YzAsMS4xLDAuOSwyLDIsMmg5di0ySDhWOHoiLz48cGF0aCBkPSJNMjAsM2gtOGMtMS4xLDAtMiwwLjktMiwydjZjMCwxLjEsMC45LDIsMiwyaDhjMS4xLDAsMi0wLjksMi0yVjVDMjIsMy45LDIxLjEsMywyMCwzeiBNMjAsMTFoLThWN2g4VjExeiIvPjxwYXRoIGQ9Ik00LDEySDJ2N2MwLDEuMSwwLjksMiwyLDJoOXYtMkg0VjEyeiIvPjwvZz48L2c+PGcgZGlzcGxheT0ibm9uZSI+PGcgZGlzcGxheT0iaW5saW5lIi8+PGcgZGlzcGxheT0iaW5saW5lIj48cGF0aCBkPSJNOCw4SDZ2N2MwLDEuMSwwLjksMiwyLDJoOXYtMkg4Vjh6Ii8+PHBhdGggZD0iTTIwLDNoLThjLTEuMSwwLTIsMC45LTIsMnY2YzAsMS4xLDAuOSwyLDIsMmg4YzEuMSwwLDItMC45LDItMlY1QzIyLDMuOSwyMS4xLDMsMjAsM3ogTTIwLDExaC04VjdoOFYxMXoiLz48cGF0aCBkPSJNNCwxMkgydjdjMCwxLjEsMC45LDIsMiwyaDl2LTJINFYxMnoiLz48L2c+PC9nPjwvc3ZnPg=="
@@ -148,10 +148,10 @@
           "stroke": "#E8E8E8"
         },
         "label": {
-          "text": "CodeFormat_QA1"
+          "text": "Software Developer"
         },
         "description": {
-          "text": "CodeFormat"
+          "text": "Generate front-end architecture diagram, database design, data structure design, algorithm design"
         },
         "icon": {
           "xlinkHref": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDI0IDI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9ImJsYWNrIiB3aWR0aD0iMThweCIgaGVpZ2h0PSIxOHB4Ij48Zz48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjI0IiB3aWR0aD0iMjQiLz48L2c+PGc+PGcvPjxnPjxwYXRoIGQ9Ik04LDhINnY3YzAsMS4xLDAuOSwyLDIsMmg5di0ySDhWOHoiLz48cGF0aCBkPSJNMjAsM2gtOGMtMS4xLDAtMiwwLjktMiwydjZjMCwxLjEsMC45LDIsMiwyaDhjMS4xLDAsMi0wLjksMi0yVjVDMjIsMy45LDIxLjEsMywyMCwzeiBNMjAsMTFoLThWN2g4VjExeiIvPjxwYXRoIGQ9Ik00LDEySDJ2N2MwLDEuMSwwLjksMiwyLDJoOXYtMkg0VjEyeiIvPjwvZz48L2c+PGcgZGlzcGxheT0ibm9uZSI+PGcgZGlzcGxheT0iaW5saW5lIi8+PGcgZGlzcGxheT0iaW5saW5lIj48cGF0aCBkPSJNOCw4SDZ2N2MwLDEuMSwwLjksMiwyLDJoOXYtMkg4Vjh6Ii8+PHBhdGggZD0iTTIwLDNoLThjLTEuMSwwLTIsMC45LTIsMnY2YzAsMS4xLDAuOSwyLDIsMmg4YzEuMSwwLDItMC45LDItMlY1QzIyLDMuOSwyMS4xLDMsMjAsM3ogTTIwLDExaC04VjdoOFYxMXoiLz48cGF0aCBkPSJNNCwxMkgydjdjMCwxLjEsMC45LDIsMiwyaDl2LTJINFYxMnoiLz48L2c+PC9nPjwvc3ZnPg=="
