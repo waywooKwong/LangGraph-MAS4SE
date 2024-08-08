@@ -81,7 +81,7 @@ export default {
       this.$router.push({ path: `/case-show`, query: { id: userId } });
     },
     goToExternalLink() {
-      window.open("http://127.0.0.1:7860", "_blank");
+      window.open("http://10.22.176.112:7860", "_blank");
     },
   },
 };
