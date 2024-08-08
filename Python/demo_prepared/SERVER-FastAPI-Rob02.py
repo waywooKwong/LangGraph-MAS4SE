@@ -840,13 +840,7 @@ async def handle_button_click(create_newchat: NewChat):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    file_location = f"D:/WorkSpace/Pycharm/Langchain_Final/Python/demo_prepared/src/role_txt/{file.filename}"
-    with open(file_location, "wb+") as file_object:
-        file_object.write(file.file.read())
 
-        return {"filename": file.filename}
 
 
 

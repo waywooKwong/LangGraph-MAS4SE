@@ -136,7 +136,7 @@ class BuildChainAgent:
             3. **任务执行**：根据角色的职责，生成详尽的回答，确保符合软件开发流程，并解决用户的实际需求。
             
             请根据这些要求生成您的回答，并确保所有输出均符合上述规则和格式要求。每个部分都应详细且准确，图示和代码需清晰、易于理解。尽量以主体内容为主，降低图示和代码片段在回复中的比重。
-
+            
                     """
         response_schemas = [
             # ResponseSchema(name="description", description="用户问题"),
@@ -230,9 +230,9 @@ class BuildChainAgent:
         chain_first = create_retrieval_chain(history_chain, documents_chain)
         ################# system prompt 2(需要个性化定制)
         template_second = (
-            "你的职责是:"
-            + self.duty
-            + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
+                "你的职责是:"
+                + self.duty
+                + "根据{role_text}的内容，给出你的设计实现方案。保持 json 格式输出"
         )
         prompt_template_second = ChatPromptTemplate.from_template(template_second)
 
@@ -250,10 +250,10 @@ class BuildChainAgent:
         # )
 
         chain_second = (
-            {"role_text": chain_first}
-            | prompt_template_second
-            | self.chat_model
-            | StrOutputParser()
+                {"role_text": chain_first}
+                | prompt_template_second
+                | self.chat_model
+                | StrOutputParser()
         )
 
         return chain_second
@@ -302,7 +302,7 @@ class BuildChainAgent:
 
     def process(self, input: str) -> str:
         prompt_str_input = self.prompt_template.format(
-            description=self.description, input=input, role=self.role
+            description=self.description, input=input, role=self.role, duty=self.duty
         )
         # print("输入的提示词字符串：", prompt_str_input)
         # output_completion: AIMessage = self.chat_model.invoke(input=prompt_str_input)
