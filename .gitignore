@@ -1,9 +1,6 @@
 node_modules
-workflow_graph
 *.pyc
 __pycache__
-
-axios.ts
 # Logs
 logs
 *.log
