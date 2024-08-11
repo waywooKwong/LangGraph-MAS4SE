@@ -23,47 +23,61 @@
 
 ## 开发日志
 
+### from 20240715 to 20240809
+
+1. 项目名称：MAS4SE Multi-Agent System for Software Engineering 
+2. 项目简介：LangGraph框架搭建的可视化多智能体工作流系统，LangChain+Ollama
+3. 确保你的本地已配置：
+
+   - Python 3.9 + LangChain + LangGraph
+   - Node.js + Vue3
+   - Ollama
+   - Redis
+
+#### **使用流程**
+
+1. 保存仓库至本地
+
+   ```
+   git clone https://github.com/waywooKwong/CSI-LangChain-LLM-Chatbot.git
+   ```
+
+2. 前端启动
+
+   ```
+   cd MAS4SE-frontend
+   npm run serve
+   ```
+
+3. 后端启动
+
+   ```
+   cd MAS4SE-backend
+   python run.py
+   ```
+
+4. 数据库启动
+
+   ```
+   cd MAS4SE-frontend/src/database
+   cd Redis redis-server.exe
+   node server.cjs
+   ```
+
+
+
 ### from 20240701 to 20240707
 
 1. 第一周实训内容：**遵循软件开发完整流程实现一个具有完整前后端功能的完整小项目**
+
 2. 项目名称：CSI-ATM
+
 3. 项目简介：简易的ATM系统，分为用户端和管理员端。
 
    用户服务实现用户存款、转账与取款功能，管理员服务实现管理员登录与操作流水日志查询
+
 4. 确保你的本地已配置：
 
    - VScode
    - Node.js
    - MySQL Workbench
-
-#### **使用流程**
-
-1. 保存CSI-ATM文件夹至本地
-
-   ```
-   git clone https://github.com/waywooKwong/CSI-LangChain-LLM-Chatbot.git 
-   ```
-2. 切换到 CSI-ATM文件夹
-
-   ```
-   cd CSI-ATM
-   ```
-3. 安装依赖包
-
-   ```
-   npm install
-   ```
-4. 配置数据库
-
-   ```
-   cd server
-   -> Server.cjs 中修改 MySQL config配置
-   -> MySQl 中运行 create_and_insert.sql 初始化数据表
-   ```
-5. 运行网页
-
-   ```
-   npm run dev
-   ```
-
-   推荐测试运行时 F12 检测响应状态

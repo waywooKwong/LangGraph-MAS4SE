@@ -1,38 +1,69 @@
-# CSI-ATM
 
-This template should help get you started developing with Vue 3 in Vite.
+**本仓库是南开大学软件学院2024年中软国际暑期实训的代码仓库**
 
-## 1. Setup
+欢迎交流分享经验，引用参考任意仓库内容请先与我们沟通，抵制抄袭行为
 
-确保你本地已经配置
+@copyright
 
-- Node.js
-- MySQL Workbench
+通过 Github 或者邮箱 2211992@mail.nankai.edu.cn 与我们联系
 
-```
-npm install
-```
+## 项目名称
 
-## 2. Database
+中软国际-基于 LangChain 技术的 LLM 智能客服系统实战项目
 
- /Server 文件夹下，MySQL 运行 create_and_insert.sql 创建信息存储环境
+## 成员介绍
 
-server.cjs 中配置本地的 MySQL config 信息
+第十三组项目成员：邝伟华、王璞、余文祥、钱程
 
-```
-node server.cjs
-```
+* 项目经理（PM）邝伟华
+* 开发经理（TTL）王璞
+* 代码规范（QA）余文祥
+* 日志维护（QA）钱程
+* **开发测试 （Dev&Test）全体成员**
 
-出现下述语句说明连接成功，其它情况请检查你的服务器配置
+## 开发日志
 
-```
-Server running on http://localhost:3000
-MySQL connected...
-```
+### from 20240701 to 20240707
 
-## 3. Run
+1. 第一周实训内容：**遵循软件开发完整流程实现一个具有完整前后端功能的完整小项目**
+2. 项目名称：CSI-ATM
+3. 项目简介：简易的ATM系统，分为用户端和管理员端。
 
-```
-npm run dev
-```
+   用户服务实现用户存款、转账与取款功能，管理员服务实现管理员登录与操作流水日志查询
+4. 确保你的本地已配置：
 
+   - VScode
+   - Node.js
+   - MySQL Workbench
+
+#### **使用流程**
+
+1. 保存CSI-ATM文件夹至本地
+
+   ```
+   git clone https://github.com/waywooKwong/CSI-LangChain-LLM-Chatbot.git 
+   ```
+2. 切换到 CSI-ATM文件夹
+
+   ```
+   cd CSI-ATM
+   ```
+3. 安装依赖包
+
+   ```
+   npm install
+   ```
+4. 配置数据库
+
+   ```
+   cd server
+   -> Server.cjs 中修改 MySQL config配置
+   -> MySQl 中运行 create_and_insert.sql 初始化数据表
+   ```
+5. 运行网页
+
+   ```
+   npm run dev
+   ```
+
+   推荐测试运行时 F12 检测响应状态
