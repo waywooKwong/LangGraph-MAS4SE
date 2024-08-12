@@ -1,0 +1,46 @@
+{
+  "name": "@joint/format-visio",
+  "title": "JointJS+ FormatVisio",
+  "version": "4.0.1",
+  "description": "JointJS+ Visio Formatter",
+  "main": "dist/joint-visio.js",
+  "types": "dist/joint-visio.d.ts",
+  "browser": {
+    "dist/joint-visio.js": "./dist/joint-visio.js",
+    "src/index.mjs": "./src/index.mjs"
+  },
+  "homepage": "https://jointjs.com",
+  "author": {
+    "name": "client IO",
+    "url": "http://client.io"
+  },
+  "contributors": [
+    "Roman Bruckner <roman@client.io> (https://github.com/kumilingus)",
+    "James Williams <james@jointjs.com> (https://github.com/jamesgeorgewilliams)",
+    "Artur Khakhlou <arthur@jointjs.com> (https://github.com/Geliogabalus)"
+  ],
+  "bugs": {
+    "url": "https://github.com/clientIO/joint/issues"
+  },
+  "licenses": [
+    {
+      "type": "JointJS+ License",
+      "url": "https://www.jointjs.com/license"
+    }
+  ],
+  "private": true,
+  "dependencies": {
+    "@joint/core": "~4.0.2",
+    "hot-formula-parser": "~3.0.2",
+    "jszip": "~3.9.1",
+    "stream": "~0.0.2"
+  },
+  "keywords": [
+    "jointjs",
+    "plus",
+    "format",
+    "visio"
+  ],
+  "scripts": {},
+  "devDependencies": {}
+}

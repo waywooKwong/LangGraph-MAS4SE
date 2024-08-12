@@ -7,7 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@joint/plus": "file:../../../build/package/joint-plus.tgz",
+    "@joint/plus": "file:./build/package/joint-plus.tgz",
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "browserify-zlib": "^0.2.0",

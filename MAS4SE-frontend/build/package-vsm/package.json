@@ -1,0 +1,44 @@
+{
+  "name": "@joint/shapes-vsm",
+  "title": "JointJS+ ShapesVSM",
+  "version": "4.0.1",
+  "description": "JointJS+ Value Stream Mapping Shapes",
+  "main": "dist/joint-vsm-shapes.js",
+  "types": "dist/joint-vsm-shapes.d.ts",
+  "browser": {
+    "build/index.mjs": "./build/index.mjs",
+    "dist/joint-vsm-shapes.js": "./dist/joint-vsm-shapes.js"
+  },
+  "homepage": "https://jointjs.com",
+  "author": {
+    "name": "client IO",
+    "url": "https://client.io"
+  },
+  "contributors": [
+    "James Williams <james@jointjs.com> (https://github.com/jamesgeorgewilliams)"
+  ],
+  "bugs": {
+    "url": "https://github.com/clientIO/joint/issues"
+  },
+  "licenses": [
+    {
+      "type": "JointJS+ License",
+      "url": "https://www.jointjs.com/license"
+    }
+  ],
+  "private": true,
+  "dependencies": {
+    "@joint/core": "~4.0.2"
+  },
+  "keywords": [
+    "jointjs",
+    "plus",
+    "shapes",
+    "vsm",
+    "value",
+    "stream",
+    "mapping"
+  ],
+  "scripts": {},
+  "devDependencies": {}
+}

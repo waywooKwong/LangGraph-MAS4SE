@@ -1,0 +1,31 @@
+{
+  "name": "@joint/plus",
+  "title": "JointJS+",
+  "version": "4.0.1",
+  "description": "HTML5 diagramming toolkit extending JointJS",
+  "main": "index.ts",
+  "homepage": "https://jointjs.com",
+  "author": {
+    "name": "client IO",
+    "url": "https://client.io"
+  },
+  "bugs": {
+    "url": "https://github.com/clientIO/joint/issues"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "@joint/core": "~4.0.2"
+  },
+  "keywords": [
+    "jointjs",
+    "plus",
+    "diagram",
+    "flowchart",
+    "graph",
+    "visualization"
+  ],
+  "devDependencies": {},
+  "module": "joint-plus.mjs"
+}

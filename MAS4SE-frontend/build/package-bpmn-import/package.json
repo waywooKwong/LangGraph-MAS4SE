@@ -1,0 +1,40 @@
+{
+  "name": "@joint/format-bpmn-import",
+  "title": "JointJS+ FormatBPMNImport",
+  "version": "4.0.1",
+  "description": "JointJS+ BPMN XML Import",
+  "types": "dist/joint.format.bpmnImport.d.ts",
+  "homepage": "https://jointjs.com",
+  "author": {
+    "name": "client IO",
+    "url": "https://client.io"
+  },
+  "contributors": [
+    "Roman Bruckner <roman@client.io> (https://github.com/kumilingus)",
+    "Vojtech Kohout <vojtech@jointjs.com> (https://github.com/Tharos)",
+    "Zbynek Stara <zbynek@jointjs.com> (https://github.com/zbynekstara)"
+  ],
+  "bugs": {
+    "url": "https://github.com/clientIO/joint/issues"
+  },
+  "licenses": [
+    {
+      "type": "JointJS+ License",
+      "url": "https://www.jointjs.com/license"
+    }
+  ],
+  "private": true,
+  "devDependencies": {
+    "@joint/core": "~4.0.2"
+  },
+  "keywords": [
+    "jointjs",
+    "plus",
+    "format",
+    "bpmn",
+    "import",
+    "xml"
+  ],
+  "main": "dist/joint.format.bpmnImport.js",
+  "scripts": {}
+}
