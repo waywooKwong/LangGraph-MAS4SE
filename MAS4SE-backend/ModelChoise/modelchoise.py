@@ -1,5 +1,11 @@
 import os
 
+"""
+20240813 模型调用说明
+zhipuai 不能成功调用
+建议调用 ali-qwen / 讯飞 spark
+"""
+
 
 # 环境变量设置 def os_setenv():
 def get_ollama():

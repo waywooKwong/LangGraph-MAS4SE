@@ -46,8 +46,7 @@ from langchain_community.agent_toolkits.load_tools import load_tools
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-from ModelChoise import Model
-from ModelChoise.modelchoise import get_tongyi_chat_model
+from ModelChoise import Model, modelchoise
 from Class_01_PromptGenerator import PromptGenerator
 from langchain_core.prompts import PromptTemplate
 from typing import Dict, Any
@@ -79,23 +78,26 @@ class RobotAgent:
     """
 
     def __init__(self):
-        os.environ["SERPAPI_API_KEY"] = "b0b73f4f0f7a24ef9a1cbba1629e6ac5f4221b5dfb491af209a0a1ae6c241338"
-        os.environ[
-            "USER_AGENT"] = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                             "Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+        os.environ["SERPAPI_API_KEY"] = (
+            "b0b73f4f0f7a24ef9a1cbba1629e6ac5f4221b5dfb491af209a0a1ae6c241338"
+        )
+        os.environ["USER_AGENT"] = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
+        )
         # os.environ["TOKENIZERS_PARALLELISM"]=True
         self.base_dir = "src/role_txt"
         self.embedding_dir = "src/embedding_models/m3e-base"
 
         # self.chat_model = Model.get_zhupuai_model()
-        self.chat_model = ChatOllama(model="qwen2")
+        self.chat_model = modelchoise.get_tongyi_chat_model()
         self.docs = self.load_documents()
         self.embeddings = self.load_embeddings()
         self.vector_retriever = self.create_vector_retriever()
         self.retriever_chain = self.create_retriever_chain()
         self.chat_history = []
         self.agent = self.initialize_agent()
-        self.prompt_template_str = ("""
+        self.prompt_template_str = """
         您现在是一家著名软件开发咨询公司的智能聊天客服机器人，您的主要任务是满足用户的需求，详细分析用户的要求，并提取出核心需求。
 
         1. **核心任务**：
@@ -149,26 +151,34 @@ class RobotAgent:
         **输出格式**：{format_instructions}
 
                     """
-                                    )
         response_schemas = [
             # ResponseSchema(name="description", description="用户问题"),
-            ResponseSchema(name="sender", description="发送者，对你来说就是‘智能客服机器人’"),
-            ResponseSchema(name="progress",
-                           description="状态判断，如果需求说明书已经生成那么返回‘true’,否则返回‘false’"),
+            ResponseSchema(
+                name="sender", description="发送者，对你来说就是‘智能客服机器人’"
+            ),
+            ResponseSchema(
+                name="progress",
+                description="状态判断，如果需求说明书已经生成那么返回‘true’,否则返回‘false’",
+            ),
             ResponseSchema(name="answer", description="与用户对话的内容"),
         ]
-        self.output_parser = StructuredOutputParser.from_response_schemas(response_schemas=response_schemas)
+        self.output_parser = StructuredOutputParser.from_response_schemas(
+            response_schemas=response_schemas
+        )
         self.format_instructions = self.output_parser.get_format_instructions()
         self.prompt_template = PromptTemplate.from_template(
             template=self.prompt_template_str,
-            partial_variables={"format_instructions": self.format_instructions}
+            partial_variables={"format_instructions": self.format_instructions},
         )
+
     def detect_encoding(self, file_path):
         import chardet
-        with open(file_path, 'rb') as f:
+
+        with open(file_path, "rb") as f:
             raw_data = f.read(10000)  # 读取文件的一部分来检测编码
         result = chardet.detect(raw_data)
-        return result['encoding']
+        return result["encoding"]
+
     def load_documents(self):
         docs = []
         for filename in os.listdir(self.base_dir):
@@ -193,7 +203,7 @@ class RobotAgent:
             documents=documents,
             embedding=self.embeddings,
             location=":memory:",
-            collection_name="Qdrant_vectorstore"
+            collection_name="Qdrant_vectorstore",
         )
         return vector.as_retriever()
 
@@ -203,21 +213,28 @@ class RobotAgent:
             messages=[
                 MessagesPlaceholder(variable_name="chat_history"),
                 ("user", """需求的描述是{input}"""),
-                ("user",
-                 "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation.")
+                (
+                    "user",
+                    "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation.",
+                ),
             ]
         )
-        history_chain = create_history_aware_retriever(llm=self.chat_model, prompt=history_prompt,
-                                                       retriever=self.vector_retriever)
+        history_chain = create_history_aware_retriever(
+            llm=self.chat_model, prompt=history_prompt, retriever=self.vector_retriever
+        )
 
         # 加载文档处理的内容
         ################## system prompt 1(需要个性化定制)
-        doc_prompt = ChatPromptTemplate.from_messages([
-            ("system",
-             "你现在是一家著名软件开发咨询公司的智能聊天客服机器人,请在你的指着视角解读你接受到的需求文本如下：{context}"),
-            MessagesPlaceholder(variable_name="chat_history"),
-            ("user", "{input}")
-        ])
+        doc_prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "你现在是一家著名软件开发咨询公司的智能聊天客服机器人,请在你的指着视角解读你接受到的需求文本如下：{context}",
+                ),
+                MessagesPlaceholder(variable_name="chat_history"),
+                ("user", "{input}"),
+            ]
+        )
         documents_chain = create_stuff_documents_chain(self.chat_model, doc_prompt)
         chain_first = create_retrieval_chain(history_chain, documents_chain)
         ################# system prompt 2(需要个性化定制)
@@ -238,16 +255,18 @@ class RobotAgent:
         # )
 
         chain_second = (
-                {"role_text": chain_first} | prompt_template_second | self.chat_model | StrOutputParser()
+            {"role_text": chain_first}
+            | prompt_template_second
+            | self.chat_model
+            | StrOutputParser()
         )
 
         return chain_second
 
     def retriever_tool(self, query):
-        raw_response = self.retriever_chain.invoke({
-            "chat_history": self.chat_history,
-            "input": query
-        })
+        raw_response = self.retriever_chain.invoke(
+            {"chat_history": self.chat_history, "input": query}
+        )
         return raw_response["output"]
 
     def initialize_agent(self):
@@ -272,8 +291,7 @@ class RobotAgent:
 
     def load_embeddings(self):
         embeddings = HuggingFaceEmbeddings(
-            model_name=self.embedding_dir,
-            model_kwargs={'device': 'cpu'}
+            model_name=self.embedding_dir, model_kwargs={"device": "cpu"}
         )
         print("Embedding from huggingface: \n", embeddings)
         return embeddings
@@ -281,10 +299,12 @@ class RobotAgent:
     def invoke(self, input: str) -> str:
         # Invoke the retriever chain
         prompt_str_input = self.prompt_template.format(user_input=input)
-        response = self.agent.invoke({
-            "input": prompt_str_input,
-            "chat_history": self.chat_history,
-        })
+        response = self.agent.invoke(
+            {
+                "input": prompt_str_input,
+                "chat_history": self.chat_history,
+            }
+        )
         print("Response:", response)
         # Update chat history
         self.chat_history.append(HumanMessage(content=prompt_str_input))

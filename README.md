@@ -92,3 +92,6 @@ MessageSum
    - VScode
    - Node.js
    - MySQL Workbench
+
+
+致谢：我们使用 Jointjs+来实现WebUI的交互连接部分，https://www.jointjs.com/demos/chatbot

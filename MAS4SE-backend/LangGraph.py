@@ -38,6 +38,11 @@ from Class_02_BuildChainAgent import BuildChainAgent
 
 # Ollama model 接入
 from langchain_community.chat_models import ChatOllama
+from langchain_community.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatTongyi
+
+from langchain_experimental.llms import ollama_functions
+
 from Class_04_OllamaCustomMade import OllamaCustomMade
 
 # 文档总结
