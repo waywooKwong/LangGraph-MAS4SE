@@ -14,13 +14,13 @@ Muiti-Agents System Workflow for Software Engineering
 
 ## Members
 
-邝伟华、王璞、钱程、余文祥
+Origin version: Weihua Kuang (邝伟华)、Pu Wang (王璞)、Cheng Qian (钱程)、Wenxiang Yu (余文祥)
 
-## Log
+This repository is maintained by Weihua Kuang (@**waywooKwong**).
 
-1. 项目名称：MAS4SE Multi-Agent System for Software Engineering
-2. 项目简介：LangGraph 框架搭建的可视化多智能体工作流系统，LangChain+Ollama
-3. 确保你的本地已配置：
+## How to run
+
+Please ensure you have the following environments :
 
 - Python 3.9 + LangChain + LangGraph
 - Node.js + Vue3
@@ -29,26 +29,24 @@ Muiti-Agents System Workflow for Software Engineering
 
 ![basic workflow](src/basic_workflow.png)
 
-### How to run
-
-1. 保存仓库至本地
+1. Clone this repo
 
    ```
    git clone https://github.com/waywooKwong/CSI-LangChain-LLM-Chatbot.git
    ```
-2. 前端启动
+2. run Web UI
 
    ```
    cd MAS4SE-frontend
    npm run serve
    ```
-3. 后端启动
+3. run backend function server
 
    ```
    cd MAS4SE-backend
    python run.py
    ```
-4. 数据库启动
+4. run database server
 
    ```
    cd MAS4SE-frontend/src/database
@@ -56,15 +54,15 @@ Muiti-Agents System Workflow for Software Engineering
    node server.cjs
    ```
 
-注意：
+Attention：
 
-1. embedding_models 编码模型 m3e-base 需要本地配置
+1. embedding_models:  m3e-base needs to be downloaded local.
 
 ```
 MAS4SE-backend/src/embedding_models/m3e-base
 ```
 
-2. 前后端交互
+2. Interaction between frontend & backend
 
 ```
 前端 JointUI 向后端传递连接结点关系
@@ -75,8 +73,10 @@ MessageSum
 
 ## Thanks
 
-致谢：我们使用 Jointjs+来实现WebUI的交互连接部分，https://www.jointjs.com/demos/chatbot
+We use JointJS+ to implement the interactive workflow part of Web UI.
+
+https://www.jointjs.com/demos/chatbot
 
 ## Contact us
 
-通过 Github 或者邮箱 2211992@mail.nankai.edu.cn 与我们联系
+Push issues under this repo, or eamil Weihua Kuang by weihua.kwong@mai.nankai.edu.cn
