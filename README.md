@@ -79,4 +79,4 @@ https://www.jointjs.com/demos/chatbot
 
 ## Contact us
 
-Push issues under this repo, or eamil Weihua Kuang by weihua.kwong@mai.nankai.edu.cn
+Push issues under this repo, or eamil Weihua Kuang by weihua.kwong@mail.nankai.edu.cn
