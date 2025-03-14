@@ -1,42 +1,35 @@
-**本仓库是南开大学软件学院2024年中软国际暑期实训的代码仓库**
+## News
 
-欢迎交流分享经验，引用参考任意仓库内容请先与我们沟通，抵制抄袭行为
+new generation from 15/03/2025,
 
-@copyright
+mainly based on stable version of LangGraph & LangChain,
 
-通过 Github 或者邮箱 2211992@mail.nankai.edu.cn 与我们联系
+ensembling MCP from Anthropic and Browser use.
 
-## 项目名称
+## Project Name
 
-中软国际-基于 LangChain 技术的 LLM 智能客服系统实战项目
+Muiti-Agents System Workflow for Software Engineering
 
 ![function_structure](src/fuction_structure.png)
 
-## 成员介绍
+## Members
 
-第十三组项目成员：邝伟华、王璞、余文祥、钱程
+邝伟华、王璞、钱程、余文祥
 
-* 项目经理（PM）邝伟华
-* 开发经理（TTL）王璞
-* 代码规范（QA）余文祥
-* 日志维护（QA）钱程
-* **开发测试 （Dev&Test）全体成员**
-
-## 开发日志
-
-### from 20240715 to 20240809
+## Log
 
 1. 项目名称：MAS4SE Multi-Agent System for Software Engineering
-2. 项目简介：LangGraph框架搭建的可视化多智能体工作流系统，LangChain+Ollama
+2. 项目简介：LangGraph 框架搭建的可视化多智能体工作流系统，LangChain+Ollama
 3. 确保你的本地已配置：
-   - Python 3.9 + LangChain + LangGraph
-   - Node.js + Vue3
-   - Ollama
-   - Redis
+
+- Python 3.9 + LangChain + LangGraph
+- Node.js + Vue3
+- Ollama
+- Redis
 
 ![basic workflow](src/basic_workflow.png)
 
-#### **使用流程**
+### How to run
 
 1. 保存仓库至本地
 
@@ -80,18 +73,10 @@ MAS4SE-backend/frontend_json_process/json_simplified
 MessageSum
 ```
 
-### from 20240701 to 20240707
-
-1. 第一周实训内容：**遵循软件开发完整流程实现一个具有完整前后端功能的完整小项目**
-2. 项目名称：CSI-ATM
-3. 项目简介：简易的ATM系统，分为用户端和管理员端。
-
-   用户服务实现用户存款、转账与取款功能，管理员服务实现管理员登录与操作流水日志查询
-4. 确保你的本地已配置：
-
-   - VScode
-   - Node.js
-   - MySQL Workbench
-
+## Thanks
 
 致谢：我们使用 Jointjs+来实现WebUI的交互连接部分，https://www.jointjs.com/demos/chatbot
+
+## Contact us
+
+通过 Github 或者邮箱 2211992@mail.nankai.edu.cn 与我们联系
