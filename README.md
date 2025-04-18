@@ -2,21 +2,32 @@
 
 new generation from 15/03/2025,
 
-mainly based on stable version of LangGraph & LangChain,
+mainly based on stable version of LangGraph & LangChain, ensembling MCP from Anthropic and Browser use.
 
-ensembling MCP from Anthropic and Browser use.
+more info refer to new project repo: [AdGraph](https://github.com/waywooKwong/aigc-AdGraph)
 
-## Project Name
+## Project
 
-Muiti-Agents System Workflow for Software Engineering
+**Multi-Agent System Workflow for Software Engineering**
+
+In software development scenarios, multiple roles—such as project managers, tech leads, and QA engineers—collaborate to deliver a project demo that meets customer requirements. By building role-specific agents powered by domain expertise, we can significantly reduce development costs and streamline the process. To this end, we propose  **MAS4SE (Multi-Agent System for Software Engineering)** , a platform built upon the open-source LLM framework **LangChain** and the multi-agent orchestration framework  **LangGraph** .
 
 ![function_structure](src/fuction_structure.png)
 
-## Members
+## Demo
 
-Origin version: Weihua Kuang (邝伟华)、Pu Wang (王璞)、Cheng Qian (钱程)、Wenxiang Yu (余文祥)
 
-This repository is maintained by Weihua Kuang (@**waywooKwong**).
+1. Historical cases showcase
+  ![01-样例展示界面](src/gif/01-样例展示界面.gif)
+
+2. Agent customized by User, Workflow UI like Coze
+   ![02-类Coze用户自定义智能体交互界面](src/gif/02-类Coze用户自定义智能体交互界面.gif)
+
+3. Chat with Service Bot
+   ![03-对话交互](src/gif/03-对话交互.gif)
+
+4. Collaboration process of Agents
+   ![04-智能体协作生成](src/gif/04-智能体协作生成.gif)
 
 ## How to run
 
@@ -70,6 +81,12 @@ MAS4SE-backend/frontend_json_process/json_simplified
 工作流运行完成后生成的文本
 MessageSum
 ```
+
+## Developers
+
+Origin version: Weihua Kuang (邝伟华)、Pu Wang (王璞)、Cheng Qian (钱程)、Wenxiang Yu (余文祥)
+
+This repository is maintained by Weihua Kuang (@**waywooKwong**).
 
 ## Thanks
 
