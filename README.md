@@ -16,16 +16,12 @@ In software development scenarios, multiple roles—such as project managers, te
 
 ## Demo
 
-
 1. Historical cases showcase
-  ![01-样例展示界面](src/gif/01-样例展示界面.gif)
-
+   ![01-样例展示界面](src/gif/01-样例展示界面.gif)
 2. Agent customized by User, Workflow UI like Coze
    ![02-类Coze用户自定义智能体交互界面](src/gif/02-类Coze用户自定义智能体交互界面.gif)
-
 3. Chat with Service Bot
    ![03-对话交互](src/gif/03-对话交互.gif)
-
 4. Collaboration process of Agents
    ![04-智能体协作生成](src/gif/04-智能体协作生成.gif)
 
@@ -87,6 +83,12 @@ MessageSum
 Origin version: Weihua Kuang (邝伟华)、Pu Wang (王璞)、Cheng Qian (钱程)、Wenxiang Yu (余文祥)
 
 This repository is maintained by Weihua Kuang (@**waywooKwong**).
+
+### Codes summary
+图片中展示的是精简后只保留核心功能代码的工作量，但要注意，仓库中保存的历史v1版本是完整原始开发的代码。
+包含冒烟测试代码以及预学习的模型组件代码，实际的工作量（指Python）部分应当是当前的 2-3 倍。
+
+![1745376684020](src/code_summary.png)
 
 ## Thanks
 
